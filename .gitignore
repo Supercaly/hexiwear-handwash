@@ -3,3 +3,9 @@ BUILD/
 .vscode/
 
 *.pyc
+
+mbed-os/
+FXAS21002/
+FXOS8700/
+Hexi_OLED_SSD1351/
+uTensor/

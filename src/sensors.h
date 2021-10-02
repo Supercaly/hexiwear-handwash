@@ -5,6 +5,8 @@
 #include "FXAS21002.h"
 #include "FXOS8700.h"
 
+//#define LOG_REALTIME_SENSOR_DATA
+
 struct Sensor_Data
 {
     float ax, ay, az;
@@ -35,6 +37,8 @@ public:
 private:
     FXOS8700 _acc;
     FXAS21002 _gyr;
+    Serial _log;
+    void _log_sensor(Sensor_Data d);
 };
 
 #endif // _SENSORS_H_

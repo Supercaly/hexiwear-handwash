@@ -4,6 +4,7 @@
 Stat_Display::Stat_Display(SSD1351 *oled) : _oled(oled),
                                             _time_none(0), _time_wash(0), _time_san(0)
 {
+    init_display();
 }
 
 Stat_Display::~Stat_Display()

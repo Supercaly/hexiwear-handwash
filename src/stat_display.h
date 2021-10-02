@@ -13,7 +13,6 @@ public:
 
     void new_event(Label event);
 
-    void init_display();
     void update_display();
 
 private:
@@ -21,6 +20,8 @@ private:
     int _time_none;
     int _time_wash;
     int _time_san;
+
+    void init_display();
 };
 
 #endif // _STAT_DISPLAY_H_
