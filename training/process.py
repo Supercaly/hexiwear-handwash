@@ -1,7 +1,10 @@
 import statistics
+import os
 import numpy as np
 import tensorflow as tf
 import time
+
+from utensor_cgen.api.export import tflm_keras_export
 
 def compute_features(file_path, overlap = 1):
     assert(overlap >= 0.0 and overlap <= 1.0)
@@ -45,7 +48,17 @@ input_file_path = "../../../Raccolta Dati/export/sum.csv"
 
 start_time = time.time()
 
-data = np.array(compute_features(input_file_path,0.5))
+# check if computed features are stored in a file
+if os.path.isfile("./comp_feats.txt"):
+    with open("./comp_feats.txt", "r") as f:
+        feats = [[int(e) if i == 24 or i == 25 else float(e) for i, e in enumerate(l[:-1].split(", "))] for l in f.readlines()]
+        data = np.array(feats)
+else:
+    feats = compute_features(input_file_path,0.5)
+    with open("./comp_feats.txt", "w+") as f:
+        [f.write(", ".join(str(e) for e in l)+"\n") for l in feats]
+    data = np.array(feats)
+
 np.random.shuffle(data)
 split_idx = int(data.shape[0] * 0.8)
 training, test = data[:split_idx, :], data[split_idx:, :]
@@ -76,3 +89,21 @@ for i in range(len(y_check)):
     print("  got: {} [{}], expected: {}".format(predictions[i], np.argmax(predictions[i]), y_check[i]))
 
 print("Complete in {}".format(time.time()-start_time))
+
+print("Saving model...")
+
+def rep_dataset_gen():
+    for _ in range(128):
+        idx = np.random.randint(0, x_test.shape[0]-1)
+        sample = x_test[idx]
+        sample = sample[tf.newaxis, ...]
+        sample = tf.cast(sample, dtype=tf.float32)
+        yield [sample]
+
+model.save("mlp_handwash_model")
+tflm_keras_export(
+    "mlp_handwash_model", 
+    model_name="mlp_hw_model", 
+    representive_dataset=rep_dataset_gen)
+
+print("Model saved!")
