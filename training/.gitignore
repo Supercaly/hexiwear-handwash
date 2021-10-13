@@ -1,0 +1,6 @@
+constants/
+models/
+
+mlp_handwash_model/
+
+comp_feats.txt
