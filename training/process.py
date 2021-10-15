@@ -27,7 +27,7 @@ def compute_features(file_path, overlap = 1):
             stds = tuple([statistics.stdev(x) for x in current_cols[:6]])
             maxes = tuple([max(x) for x in current_cols[:6]])
             mins = tuple([min(x) for x in current_cols[:6]])
-            state = 0 if statistics.mean(current_cols[6]) < 0.5 else 1
+            state = statistics.mode(current_cols[6])
             hand = 0 if statistics.mean(current_cols[7]) < 0.5 else 1
             features_val.append([
                 avgs[0],avgs[1],avgs[2],avgs[3],avgs[4],avgs[5],
@@ -72,7 +72,7 @@ print("")
 model = tf.keras.Sequential([
     tf.keras.layers.Dense(256, input_dim=25, activation="relu"),
     tf.keras.layers.Dense(256, activation="relu"),
-    tf.keras.layers.Dense(3, activation="softmax")
+    tf.keras.layers.Dense(3, activation="relu")
 ])
 model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=["accuracy"])
 
