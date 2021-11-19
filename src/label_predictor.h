@@ -2,38 +2,39 @@
 #define _LABEL_PREDICTOR_H_
 
 #include "label.h"
+#include "handwash_model.h"
 #include "sensors.h"
 
 #include <math.h>
 
-#include "../training/models/mlp_hw_model/mlp_hw_model.hpp"
-#include "uTensor.h"
-#include "input_image.h"
+#include "tensorflow/lite/schema/schema_generated.h"
+#include "tensorflow/lite/micro/micro_error_reporter.h"
+#include "tensorflow/lite/micro/micro_interpreter.h"
+#include "tensorflow/lite/micro/all_ops_resolver.h"
+#include "tensorflow/lite/micro/system_setup.h"
 
 class Label_Predictor
 {
 public:
-    Label_Predictor(Mlp_hw_model *model);
+    Label_Predictor();
+    Label_Predictor(const tflite::Model *model,
+                    tflite::ErrorReporter *error_reporter,
+                    tflite::MicroInterpreter *interpreter);
     ~Label_Predictor();
 
     Label predict(float *ax,
-        float *ay,
-        float *az,
-        float *gx,
-        float *gy,
-        float *gz,
-        float hand);
+                  float *ay,
+                  float *az,
+                  float *gx,
+                  float *gy,
+                  float *gz,
+                  float hand);
 
 private:
-    Mlp_hw_model *_model;
-    uTensor::Tensor _actions;
-    float *prev_ax, 
-        *prev_ay, 
-        *prev_az, 
-        *prev_gx, 
-        *prev_gy, 
-        *prev_gz;
-    #define PREV_DATA_CAPACITY SENSORS_DATA_CAPACITY/2
+    const tflite::Model *_model;
+    tflite::ErrorReporter *_error_reporter;
+    tflite::MicroInterpreter *_interpreter;
+    TfLiteTensor *_input, *_output;
 
     Label action_to_label();
 };
