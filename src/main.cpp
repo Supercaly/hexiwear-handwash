@@ -1,26 +1,25 @@
-#include "mbed.h"
-#include "Hexi_OLED_SSD1351.h"
+#include "sensor_collector.h"
 #include "stat_display.h"
-#include "sensors.h"
 #include "label.h"
 #include "label_predictor.h"
 #include "log.h"
 #include "handwash_model.h"
 
-#include <string.h>
-
+#include "mbed.h"
+#include "Hexi_OLED_SSD1351.h"
 #include "tensorflow/lite/micro/all_ops_resolver.h"
 #include "tensorflow/lite/micro/micro_error_reporter.h"
 #include "tensorflow/lite/micro/micro_interpreter.h"
 #include "tensorflow/lite/micro/system_setup.h"
 #include "tensorflow/lite/schema/schema_generated.h"
 
+#include <string.h>
+
 SSD1351 g_oled(PTB22, PTB21, PTC13, PTB20, PTE6, PTD15);
-Queue<Label, 5> g_labels_queue;
-Sensors g_sensors;
+
 Mutex g_sensors_lock;
-constexpr int k_tensor_arena_size = 3000;
-uint8_t k_tensor_arena[k_tensor_arena_size];
+Sensor_Collector g_sens_collector;
+Queue<Label, 5> g_labels_queue;
 
 void sensor_collect_thread_loop()
 {
@@ -28,82 +27,45 @@ void sensor_collect_thread_loop()
 
     while (true)
     {
-        g_sensors.reset();
         timer.reset();
         timer.start();
 
         // Enter critical section
         g_sensors_lock.lock();
-        log("Begin sensor data aquisition\n");
-        g_sensors.acquire_data();
+        g_sens_collector.collect();
         timer.stop();
-        log("End sensor data aquisition\n");
         g_sensors_lock.unlock();
         // Exit critical section
 
-        log("Got %d samples in %dms!\n",
-            g_sensors.data_size,
-            timer.read_ms());
+        log_info("Got %d samples in %dms!\n", SAMPLE_MATRIX_ELEMENT_SIZE, timer.read_ms());
     }
 }
 
 void prediction_thread_loop()
 {
-    tflite::InitializeTarget();
-    static tflite::MicroErrorReporter static_error_reporter;
+    Sample_Matrix local_samples;
+    Label_Predictor predictor;
+    Tflite_Error status;
 
-    const tflite::Model *model = tflite::GetModel(g_handwash_model_data);
-    if (model->version() != TFLITE_SCHEMA_VERSION)
-    {
-        error("Provided model has schema version %d, "
-              "but supported version is %d.",
-              model->version(), TFLITE_SCHEMA_VERSION);
-        return;
-    }
-    // TODO: Replace all ops resolver
-    static tflite::AllOpsResolver static_ops_resolver;
-    static tflite::MicroInterpreter static_interpreter(
-        model, static_ops_resolver, k_tensor_arena, k_tensor_arena_size, &static_error_reporter);
-    TfLiteStatus allocate_status = static_interpreter.AllocateTensors();
-    if (allocate_status != kTfLiteOk)
-    {
-        error("Tensor allocation failed");
-        return;
-    }
-
-    // Allocate memory for the input arrays
-    float *ax = (float *)calloc(SENSORS_DATA_CAPACITY, sizeof(float));
-    float *ay = (float *)calloc(SENSORS_DATA_CAPACITY, sizeof(float));
-    float *az = (float *)calloc(SENSORS_DATA_CAPACITY, sizeof(float));
-    float *gx = (float *)calloc(SENSORS_DATA_CAPACITY, sizeof(float));
-    float *gy = (float *)calloc(SENSORS_DATA_CAPACITY, sizeof(float));
-    float *gz = (float *)calloc(SENSORS_DATA_CAPACITY, sizeof(float));
-    if (gz == NULL)
-    {
-        error("can't allocate memory for sensor data copy");
-    }
-
-    Label_Predictor p(model, &static_error_reporter, &static_interpreter);
+    predictor.init();
+    log_error(tflite_error_to_cstr(status));
 
     while (true)
     {
         // Enter critical section
-        // Copy the data to a local buffer so the critical
-        // section last for only a for-loop
+        // Copy the data to a local memory so the critical
+        // section last as short as possible
         g_sensors_lock.lock();
-        for (int i = 0; i < SENSORS_DATA_CAPACITY; ++i)
-        {
-            ax[i] = g_sensors.data[i].ax;
-            ay[i] = g_sensors.data[i].ay;
-            az[i] = g_sensors.data[i].az;
-            gx[i] = g_sensors.data[i].gx;
-            gy[i] = g_sensors.data[i].gy;
-            gz[i] = g_sensors.data[i].gz;
-        }
+        local_samples = g_sens_collector.getSamples();
+        //local_samples._ax[0] = 123.0;
+        log_info("%f %f\n", g_sens_collector.getSamples()._ax[0], local_samples._ax[0]);
         g_sensors_lock.unlock();
         // Exit critical section
 
-        Label label = p.predict(ax, ay, az, gx, gy, gz, 0);
+        Label label = LABEL_WASH; // predictor.predict(local_samples, 0);
+        status = predictor.predict(local_samples, 0, &label);
+        log_error(tflite_error_to_cstr(status));
+
         g_labels_queue.put(&label);
     }
 }
@@ -118,7 +80,7 @@ void display_thread_loop()
         if (event.status == osEventMessage)
         {
             Label label = *(Label *)event.value.p;
-            log("\nGot label %s\n\n", label_to_cstr(label));
+            log_info("\nGot label %s\n\n", label_to_cstr(label));
             stat.new_event(label);
         }
     }
@@ -187,14 +149,14 @@ int main2()
     input = interpreter->input(0);
     output = interpreter->output(0);
 
-    log("name: %s\n", input->name);
-    log("name: %s\n", output->name);
-    log("bytes: %d\n", input->bytes);
-    log("bytes: %d\n", output->bytes);
+    log_info("name: %s\n", input->name);
+    log_info("name: %s\n", output->name);
+    log_info("bytes: %d\n", input->bytes);
+    log_info("bytes: %d\n", output->bytes);
     tflite::RuntimeShape in_dim = tflite::GetTensorShape(input);
-    log("in shape: {%dx%d}\n", in_dim.Dims(0), in_dim.Dims(1));
+    log_info("in shape: {%dx%d}\n", in_dim.Dims(0), in_dim.Dims(1));
     tflite::RuntimeShape out_dim = tflite::GetTensorShape(output);
-    log("out shape: {%dx%d}\n", out_dim.Dims(0), out_dim.Dims(1));
+    log_info("out shape: {%dx%d}\n", out_dim.Dims(0), out_dim.Dims(1));
 
     for (int i = 0; i < 12; i++)
     {
@@ -231,13 +193,13 @@ int main2()
         }
 
         float *res = tflite::GetTensorData<float>(output);
-        log("%d) got [%f,%f,%f] expected [%d]\n",
-            i, res[0], res[1], res[2], correct_result_array[i]);
+        log_info("%d) got [%f,%f,%f] expected [%d]\n",
+                 i, res[0], res[1], res[2], correct_result_array[i]);
     }
     return 0;
 }
 
-int main3()
+int real_main()
 {
     Thread sensor_thread;
     Thread prediction_thread;
@@ -292,13 +254,13 @@ int main1()
 
         //log("- %f %f %f\n", gd[0], gd[1], gd[2]);
 
-        #define DTR 3.141592653589793 / 180
+#define DTR 3.141592653589793 / 180
 
         gd[0] = (int16_t)((db[1] << 8) | db[2]) * 0.0625 * DTR;
         gd[1] = (int16_t)((db[3] << 8) | db[4]) * 0.0625 * DTR;
         gd[2] = (int16_t)((db[5] << 8) | db[6]) * 0.0625 * DTR;
 
-        log("+ %f %f %f\n", gd[0], gd[1], gd[2]);
+        log_info("+ %f %f %f\n", gd[0], gd[1], gd[2]);
         //acc.acquire_accel_data_g(ad);
         //gyr.acquire_gyro_data_dps(gd);
 
@@ -314,9 +276,21 @@ int main()
 {
     oled_text_properties_t txt_prop = {0};
     g_oled.GetTextProperties(&txt_prop);
-
     g_oled.DimScreenOFF();
     g_oled.FillScreen(COLOR_BLACK);
-    main1();
+
+    //main1();
+    Thread t;
+    t.start(sensor_collect_thread_loop);
+    Thread t2;
+    t2.start(prediction_thread_loop);
+
+    DigitalOut status_led(LED_RED);
+    while (true)
+    {
+        status_led = !status_led;
+        wait_ms(500);
+    }
+
     return 0;
 }
