@@ -1,23 +1,25 @@
 #ifndef _LOG_H_
 #define _LOG_H_
 
-#define PRINT_LOG
+#define LOG_ENABLED
 
-#ifdef PRINT_LOG
-#include "mbed.h"
-Serial serial_out(USBTX, USBRX);
-#endif // PRINT_LOG
+#ifdef __cplusplus
+extern "C"
+{
+#endif // __cplusplus
 
-#ifdef PRINT_LOG
-#define log(...) serial_out.printf(__VA_ARGS__)
+#ifdef LOG_ENABLED
+#define log_info(...) _log(__VA_ARGS__)
+#define log_error(...) _log(__VA_ARGS__)
+    void _log(const char *format, ...);
+
 #else
-#define log(...)
-#endif // PRINT_LOG
-
-#ifdef PRINT_LOG
-#define error(...) serial_out.printf(__VA_ARGS__)
-#else
+#define info(...)
 #define error(...)
-#endif // PRINT_LOG
+#endif // LOG_ENABLED
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 
 #endif // _LOG_H_
