@@ -3,13 +3,26 @@
 
 #include "assert.h"
 
-enum Label
+enum class Label
 {
-    LABEL_NONE,
-    LABEL_WASH,
-    LABEL_SAN,
+    NONE,
+    WASH,
+    SAN
 };
 
-const char *label_to_cstr(Label label);
+static const char *label_to_cstr(Label label)
+{
+    switch (label)
+    {
+    case Label::NONE:
+        return "none";
+    case Label::WASH:
+        return "wash";
+    case Label::SAN:
+        return "san";
+    default:
+        assert(0 && "label_to_cstr: unreachable");
+    }
+}
 
 #endif // _LABEL_H_

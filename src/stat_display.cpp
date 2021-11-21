@@ -15,13 +15,13 @@ void Stat_Display::new_event(Label event)
 {
     switch (event)
     {
-    case LABEL_NONE:
+    case Label::NONE:
         _time_none += 10;
         break;
-    case LABEL_WASH:
+    case Label::WASH:
         _time_wash += 10;
         break;
-    case LABEL_SAN:
+    case Label::SAN:
         _time_san += 10;
         break;
     default:

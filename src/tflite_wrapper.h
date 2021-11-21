@@ -9,7 +9,7 @@
 #include "tensorflow/lite/micro/all_ops_resolver.h"
 #include "tensorflow/lite/micro/system_setup.h"
 
-enum Tflite_Error
+enum class Tflite_Error
 {
     OK,
     VERSION_MISMATCH,
@@ -23,15 +23,15 @@ static const char *tflite_error_to_cstr(Tflite_Error error)
 {
     switch (error)
     {
-    case OK:
+    case Tflite_Error::OK:
         return "no error";
-    case VERSION_MISMATCH, :
+    case Tflite_Error::VERSION_MISMATCH:
         return "version mismatch";
-    case CANT_ALLOCATE_TENSOR:
+    case Tflite_Error::CANT_ALLOCATE_TENSOR:
         return "cannot allocate tensor";
-    case NOT_INITIALIZED:
+    case Tflite_Error::NOT_INITIALIZED:
         return "not initialized";
-    case INVOKE_ERROR:
+    case Tflite_Error::INVOKE_ERROR:
         return "invocation error";
     default:
         return "unknown error";

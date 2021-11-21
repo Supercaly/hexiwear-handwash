@@ -62,7 +62,7 @@ void prediction_thread_loop()
         g_sensors_lock.unlock();
         // Exit critical section
 
-        Label label = LABEL_WASH; // predictor.predict(local_samples, 0);
+        Label label = Label::WASH; // predictor.predict(local_samples, 0);
         status = predictor.predict(local_samples, 0, &label);
         log_error(tflite_error_to_cstr(status));
 
