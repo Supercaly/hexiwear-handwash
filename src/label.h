@@ -1,8 +1,6 @@
 #ifndef _LABEL_H_
 #define _LABEL_H_
 
-#include "assert.h"
-
 enum class Label
 {
     NONE,
@@ -21,7 +19,7 @@ static const char *label_to_cstr(Label label)
     case Label::SAN:
         return "san";
     default:
-        assert(0 && "label_to_cstr: unreachable");
+        return "unknown label";
     }
 }
 
