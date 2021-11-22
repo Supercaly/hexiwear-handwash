@@ -11,12 +11,12 @@ public:
     ~Sample_Matrix();
     Sample_Matrix(const Sample_Matrix &other);
 
-    float _ax[SAMPLE_MATRIX_ELEMENT_SIZE];
-    float _ay[SAMPLE_MATRIX_ELEMENT_SIZE];
-    float _az[SAMPLE_MATRIX_ELEMENT_SIZE];
-    float _gx[SAMPLE_MATRIX_ELEMENT_SIZE];
-    float _gy[SAMPLE_MATRIX_ELEMENT_SIZE];
-    float _gz[SAMPLE_MATRIX_ELEMENT_SIZE];
+    float ax[SAMPLE_MATRIX_ELEMENT_SIZE];
+    float ay[SAMPLE_MATRIX_ELEMENT_SIZE];
+    float az[SAMPLE_MATRIX_ELEMENT_SIZE];
+    float gx[SAMPLE_MATRIX_ELEMENT_SIZE];
+    float gy[SAMPLE_MATRIX_ELEMENT_SIZE];
+    float gz[SAMPLE_MATRIX_ELEMENT_SIZE];
 };
 
 #endif // SAMPLE_MATRIX_H

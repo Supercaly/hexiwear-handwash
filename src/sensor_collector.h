@@ -14,17 +14,14 @@ public:
 
     void collect();
 
-    const Sample_Matrix getSamples() { return _raw_data; }
+    const Sample_Matrix *getSamples() { return _raw_data; }
 
 private:
     FXOS8700 _accelerometer;
     FXAS21002 _gyroscope;
 
-    float _tmp_acc_data[3];
-    float _tmp_gyr_data[3];
-
     int _collected_size;
-    Sample_Matrix _raw_data;
+    Sample_Matrix *_raw_data;
 };
 
 #endif // SENSOR_COLLECTOR_H

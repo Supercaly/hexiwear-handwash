@@ -3,17 +3,9 @@
 #include "label.h"
 #include "label_predictor.h"
 #include "log.h"
-#include "handwash_model.h"
 
 #include "mbed.h"
 #include "Hexi_OLED_SSD1351.h"
-#include "tensorflow/lite/micro/all_ops_resolver.h"
-#include "tensorflow/lite/micro/micro_error_reporter.h"
-#include "tensorflow/lite/micro/micro_interpreter.h"
-#include "tensorflow/lite/micro/system_setup.h"
-#include "tensorflow/lite/schema/schema_generated.h"
-
-#include <string.h>
 
 SSD1351 g_oled(PTB22, PTB21, PTC13, PTB20, PTE6, PTD15);
 
@@ -43,12 +35,16 @@ void sensor_collect_thread_loop()
 
 void prediction_thread_loop()
 {
-    Sample_Matrix local_samples;
-    Label_Predictor predictor;
+    Sample_Matrix *local_samples;
+    std::unique_ptr<Label_Predictor> predictor(new Label_Predictor);
     Tflite_Error status;
 
-    predictor.init();
-    log_error(tflite_error_to_cstr(status));
+    status = predictor->init();
+    if (status != Tflite_Error::OK)
+    {
+        log_error("%s\n", tflite_error_to_cstr(status));
+        return;
+    }
 
     while (true)
     {
@@ -56,15 +52,15 @@ void prediction_thread_loop()
         // Copy the data to a local memory so the critical
         // section last as short as possible
         g_sensors_lock.lock();
-        local_samples = g_sens_collector.getSamples();
-        //local_samples._ax[0] = 123.0;
-        log_info("%f %f\n", g_sens_collector.getSamples()._ax[0], local_samples._ax[0]);
+        local_samples = new Sample_Matrix(*g_sens_collector.getSamples());
         g_sensors_lock.unlock();
         // Exit critical section
 
-        Label label = Label::WASH; // predictor.predict(local_samples, 0);
-        status = predictor.predict(local_samples, 0, &label);
-        log_error(tflite_error_to_cstr(status));
+        Label label;
+        status = predictor->predict(local_samples, 0, &label);
+        log_error("%s\n", tflite_error_to_cstr(status));
+
+        delete local_samples;
 
         g_labels_queue.put(&label);
     }
@@ -86,6 +82,7 @@ void display_thread_loop()
     }
 }
 
+/*
 int main2()
 {
     oled_text_properties_t txt_prop = {0};
@@ -198,8 +195,9 @@ int main2()
     }
     return 0;
 }
+*/
 
-int real_main()
+int main()
 {
     Thread sensor_thread;
     Thread prediction_thread;
@@ -218,6 +216,7 @@ int real_main()
     return 0;
 }
 
+/*
 int main1()
 {
     DigitalOut status_led(LED_GREEN);
@@ -271,8 +270,9 @@ int main1()
         wait_ms(1000);
     }
 }
+*/
 
-int main()
+int main2()
 {
     oled_text_properties_t txt_prop = {0};
     g_oled.GetTextProperties(&txt_prop);
@@ -284,6 +284,21 @@ int main()
     t.start(sensor_collect_thread_loop);
     Thread t2;
     t2.start(prediction_thread_loop);
+
+    // Sample_Matrix m1;
+    // m1._ax[0] = 1;
+    // m1._ax[1] = 2;
+    // m1._ax[2] = 3;
+    // m1._ax[3] = 4;
+    // m1._ax[4] = 5;
+    // Sample_Matrix *m2 = new Sample_Matrix(m1);
+
+    // for (int i = 0; i < 10; ++i)
+    // {
+    //     m2->_ax[i]+=10;
+    //     log_info("%f %f\n", m1._ax[i], m2->_ax[i]);
+    // }
+    // log_info("ciao %d %d\n", sizeof(m1), sizeof(uintptr_t));
 
     DigitalOut status_led(LED_RED);
     while (true)

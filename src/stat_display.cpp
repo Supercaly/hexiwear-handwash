@@ -1,36 +1,7 @@
 #include "stat_display.h"
-#include <assert.h>
 
 Stat_Display::Stat_Display(SSD1351 *oled) : _oled(oled),
                                             _time_none(0), _time_wash(0), _time_san(0)
-{
-    init_display();
-}
-
-Stat_Display::~Stat_Display()
-{
-}
-
-void Stat_Display::new_event(Label event)
-{
-    switch (event)
-    {
-    case Label::NONE:
-        _time_none += 10;
-        break;
-    case Label::WASH:
-        _time_wash += 10;
-        break;
-    case Label::SAN:
-        _time_san += 10;
-        break;
-    default:
-        assert(0 && "new_event: unreachable");
-    }
-    update_display();
-}
-
-void Stat_Display::init_display()
 {
     oled_text_properties_t txt_prop = {0};
     _oled->GetTextProperties(&txt_prop);
@@ -52,14 +23,33 @@ void Stat_Display::init_display()
     update_display();
 }
 
+Stat_Display::~Stat_Display() {}
+
+void Stat_Display::new_event(Label event)
+{
+    switch (event)
+    {
+    case Label::NONE:
+        _time_none += 10;
+        break;
+    case Label::WASH:
+        _time_wash += 10;
+        break;
+    case Label::SAN:
+        _time_san += 10;
+        break;
+    }
+    update_display();
+}
+
 void Stat_Display::update_display()
 {
     char none_str[10];
     char wash_str[10];
     char san_str[10];
-    sprintf(none_str, "%ds", _time_none);
-    sprintf(wash_str, "%ds", _time_wash);
-    sprintf(san_str, "%ds", _time_san);
+    sprintf(none_str, "%llus", _time_none);
+    sprintf(wash_str, "%llus", _time_wash);
+    sprintf(san_str, "%llus", _time_san);
 
     _oled->Label((uint8_t *)none_str, 45, 30);
     _oled->Label((uint8_t *)wash_str, 45, 50);

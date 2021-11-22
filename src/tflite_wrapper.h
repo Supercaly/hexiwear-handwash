@@ -1,6 +1,7 @@
 #ifndef TFLITE_WRAPPER_H
 #define TFLITE_WRAPPER_H
 
+#include "handwash_model.h"
 #include "log.h"
 
 #include "tensorflow/lite/schema/schema_generated.h"
@@ -56,8 +57,8 @@ public:
         if (_model->version() != TFLITE_SCHEMA_VERSION)
         {
             log_error("Provided model has schema version %d, "
-                      "but supported version is %d.",
-                      model->version(), TFLITE_SCHEMA_VERSION);
+                      "but supported version is %d.\n",
+                      _model->version(), TFLITE_SCHEMA_VERSION);
             return Tflite_Error::VERSION_MISMATCH;
         }
 
@@ -71,7 +72,7 @@ public:
         TfLiteStatus allocate_status = static_interpreter.AllocateTensors();
         if (allocate_status != kTfLiteOk)
         {
-            log_error("Tensor allocation failed");
+            log_error("Tensor allocation failed\n");
             return Tflite_Error::CANT_ALLOCATE_TENSOR;
         }
 
@@ -80,7 +81,7 @@ public:
 
         _init = true;
 
-        log_info("Tflite_Wrapper initialized");
+        log_info("Tflite_Wrapper initialized\n");
         return Tflite_Error::OK;
     }
 
@@ -94,7 +95,7 @@ public:
             return error;
         }
 
-        if (predict != NULL)
+        if (predicted != NULL)
         {
             *predicted = prob_to_class(output);
         }
@@ -116,7 +117,7 @@ private:
     {
         if (!_init)
         {
-            log_error("Tflite_Wrapper::predict called without initialization");
+            log_error("Tflite_Wrapper::predict called without initialization\n");
             return Tflite_Error::NOT_INITIALIZED;
         }
 
