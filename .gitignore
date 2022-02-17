@@ -1,15 +1,16 @@
-_pycache_/
-BUILD/
-.vscode/
+# MacOs' stuff
+.DS_Store
 
+# Python's stuff 
+_pycache_/
 *.pyc
 
+# vs code's stuff
+.vscode/
+
+# mbed os' stuff
+BUILD/
 mbed-os/
 FXAS21002/
 FXOS8700/
 Hexi_OLED_SSD1351/
-uTensor/
-
-tensorflow/
-third_party/
-examples/
