@@ -1,5 +1,5 @@
-#ifndef _LABEL_PREDICTOR_H_
-#define _LABEL_PREDICTOR_H_
+#ifndef LABEL_PREDICTOR_H_
+#define LABEL_PREDICTOR_H_
 
 #include "sample_matrix.h"
 #include "label.h"
@@ -20,4 +20,4 @@ private:
     Tflite_Wrapper<25, 3, k_tensor_arena_size> _ml;
 };
 
-#endif // _LABEL_PREDICTOR_H_
+#endif // LABEL_PREDICTOR_H_

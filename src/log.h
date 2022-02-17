@@ -1,7 +1,7 @@
-#ifndef _LOG_H_
-#define _LOG_H_
+#ifndef LOG_H_
+#define LOG_H_
 
-#define LOG_ENABLED
+#include "config.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -9,17 +9,20 @@ extern "C"
 #endif // __cplusplus
 
 #ifdef LOG_ENABLED
-#define log_info(...) _log(__VA_ARGS__)
-#define log_error(...) _log(__VA_ARGS__)
-    void _log(const char *format, ...);
+
+#define log_info(...) _log_impl(__VA_ARGS__)
+#define log_error(...) _log_impl(__VA_ARGS__)
+    void _log_impl(const char *format, ...);
 
 #else
-#define info(...)
-#define error(...)
+
+#define log_info(...)
+#define log_error(...)
+
 #endif // LOG_ENABLED
 
 #ifdef __cplusplus
 }
 #endif // __cplusplus
 
-#endif // _LOG_H_
+#endif // LOG_H_

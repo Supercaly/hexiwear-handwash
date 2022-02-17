@@ -4,7 +4,7 @@
 
 Serial _serial_out(USBTX, USBRX);
 
-void _log(const char *format, ...)
+void _log_impl(const char *format, ...)
 {
     va_list args;
     va_start(args, format);

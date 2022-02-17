@@ -1,5 +1,5 @@
-#ifndef SENSOR_COLLECTOR_H
-#define SENSOR_COLLECTOR_H
+#ifndef SENSOR_COLLECTOR_H_
+#define SENSOR_COLLECTOR_H_
 
 #include "sample_matrix.h"
 
@@ -24,4 +24,4 @@ private:
     Sample_Matrix *_raw_data;
 };
 
-#endif // SENSOR_COLLECTOR_H
+#endif // SENSOR_COLLECTOR_H_

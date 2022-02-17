@@ -1,5 +1,5 @@
-#ifndef TFLITE_WRAPPER_H
-#define TFLITE_WRAPPER_H
+#ifndef TFLITE_WRAPPER_H_
+#define TFLITE_WRAPPER_H_
 
 #include "handwash_model.h"
 #include "log.h"
@@ -161,4 +161,4 @@ private:
     }
 };
 
-#endif // TFLITE_WRAPPER_H
+#endif // TFLITE_WRAPPER_H_

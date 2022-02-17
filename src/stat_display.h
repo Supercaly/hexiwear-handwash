@@ -1,5 +1,5 @@
-#ifndef _STAT_DISPLAY_H_
-#define _STAT_DISPLAY_H_
+#ifndef STAT_DISPLAY_H_
+#define STAT_DISPLAY_H_
 
 #include "label.h"
 
@@ -22,4 +22,4 @@ private:
     uint64_t _time_san;
 };
 
-#endif // _STAT_DISPLAY_H_
+#endif // STAT_DISPLAY_H_

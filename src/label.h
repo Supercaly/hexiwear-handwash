@@ -1,5 +1,5 @@
-#ifndef _LABEL_H_
-#define _LABEL_H_
+#ifndef LABEL_H_
+#define LABEL_H_
 
 enum class Label
 {
@@ -23,4 +23,4 @@ static const char *label_to_cstr(Label label)
     }
 }
 
-#endif // _LABEL_H_
+#endif // LABEL_H_
