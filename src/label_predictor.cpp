@@ -1,5 +1,6 @@
 #include "label_predictor.h"
-#include "handwash_model.h"
+#include "../model/handwash_model.h"
+#include "config.h"
 
 #include <math.h>
 
@@ -12,7 +13,7 @@ Tflite_Error Label_Predictor::init()
     return _ml.init(g_handwash_model_data);
 }
 
-Tflite_Error Label_Predictor::predict(Sample_Matrix *sample, float hand, Label *label)
+Tflite_Error Label_Predictor::predict(RawSensorData *sample, float hand, Label *label)
 {
     log_info("data:    %f %f %f %f %f %f %f\n", sample->ax[0], sample->ay[0], sample->az[0], sample->gx[0], sample->gy[0], sample->gz[0], hand);
     log_info("data:    %f %f %f %f %f %f %f\n", sample->ax[1], sample->ay[1], sample->az[1], sample->gx[1], sample->gy[1], sample->gz[1], hand);
@@ -27,7 +28,7 @@ Tflite_Error Label_Predictor::predict(Sample_Matrix *sample, float hand, Label *
 
     // NOTE: This works only because the overlap is 0.5 so the prev data
     // and the new have the same size. For different overlap you need two for loops.
-    for (int i = 0; i < SAMPLE_MATRIX_ELEMENT_SIZE; ++i)
+    for (int i = 0; i < RAW_SENSOR_DATA_BLOCK_CAP; ++i)
     {
         // Compute the sum of every component for the avg
         sum_ax += sample->ax[i];
@@ -66,12 +67,12 @@ Tflite_Error Label_Predictor::predict(Sample_Matrix *sample, float hand, Label *
             max_gz = sample->gz[i];
     }
 
-    float avg_ax = sum_ax / SAMPLE_MATRIX_ELEMENT_SIZE,
-          avg_ay = sum_ay / SAMPLE_MATRIX_ELEMENT_SIZE,
-          avg_az = sum_az / SAMPLE_MATRIX_ELEMENT_SIZE,
-          avg_gx = sum_gx / SAMPLE_MATRIX_ELEMENT_SIZE,
-          avg_gy = sum_gy / SAMPLE_MATRIX_ELEMENT_SIZE,
-          avg_gz = sum_gz / SAMPLE_MATRIX_ELEMENT_SIZE;
+    float avg_ax = sum_ax / RAW_SENSOR_DATA_BLOCK_CAP,
+          avg_ay = sum_ay / RAW_SENSOR_DATA_BLOCK_CAP,
+          avg_az = sum_az / RAW_SENSOR_DATA_BLOCK_CAP,
+          avg_gx = sum_gx / RAW_SENSOR_DATA_BLOCK_CAP,
+          avg_gy = sum_gy / RAW_SENSOR_DATA_BLOCK_CAP,
+          avg_gz = sum_gz / RAW_SENSOR_DATA_BLOCK_CAP;
 
     sum_ax = 0.0;
     sum_ay = 0.0;
@@ -79,7 +80,7 @@ Tflite_Error Label_Predictor::predict(Sample_Matrix *sample, float hand, Label *
     sum_gx = 0.0;
     sum_gy = 0.0;
     sum_gz = 0.0;
-    for (int i = 0; i < SAMPLE_MATRIX_ELEMENT_SIZE; ++i)
+    for (int i = 0; i < RAW_SENSOR_DATA_BLOCK_CAP; ++i)
     {
         // Compute the standard deviation sum for each component
         sum_ax += (sample->ax[i] - avg_ax) * (sample->ax[i] - avg_ax);
@@ -90,12 +91,12 @@ Tflite_Error Label_Predictor::predict(Sample_Matrix *sample, float hand, Label *
         sum_gz += (sample->gz[i] - avg_gz) * (sample->gz[i] - avg_gz);
     }
 
-    std_ax = sqrt(sum_ax / (SAMPLE_MATRIX_ELEMENT_SIZE - 1));
-    std_ay = sqrt(sum_ay / (SAMPLE_MATRIX_ELEMENT_SIZE - 1));
-    std_az = sqrt(sum_az / (SAMPLE_MATRIX_ELEMENT_SIZE - 1));
-    std_gx = sqrt(sum_gx / (SAMPLE_MATRIX_ELEMENT_SIZE - 1));
-    std_gy = sqrt(sum_gy / (SAMPLE_MATRIX_ELEMENT_SIZE - 1));
-    std_gz = sqrt(sum_gz / (SAMPLE_MATRIX_ELEMENT_SIZE - 1));
+    std_ax = sqrt(sum_ax / (RAW_SENSOR_DATA_BLOCK_CAP - 1));
+    std_ay = sqrt(sum_ay / (RAW_SENSOR_DATA_BLOCK_CAP - 1));
+    std_az = sqrt(sum_az / (RAW_SENSOR_DATA_BLOCK_CAP - 1));
+    std_gx = sqrt(sum_gx / (RAW_SENSOR_DATA_BLOCK_CAP - 1));
+    std_gy = sqrt(sum_gy / (RAW_SENSOR_DATA_BLOCK_CAP - 1));
+    std_gz = sqrt(sum_gz / (RAW_SENSOR_DATA_BLOCK_CAP - 1));
 
     float input_data[25] = {
         avg_ax,

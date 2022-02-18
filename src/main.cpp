@@ -5,8 +5,9 @@
 
 #include "mbed.h"
 
+// Define global thread variables declared in global_thread_vars.h
 Mutex g_sensors_lock;
-Sensor_Collector g_sens_collector;
+Sample_Matrix g_raw_sensor_data;
 Queue<Label, 5> g_labels_queue;
 
 int main()
@@ -14,8 +15,8 @@ int main()
     Thread sensor_thread;
     Thread prediction_thread;
     Thread display_thread;
-    sensor_thread.start(sensor_collect_thread_loop);
-    prediction_thread.start(prediction_thread_loop);
+    sensor_thread.start(collector_thread_loop);
+    prediction_thread.start(predictor_thread_loop);
     display_thread.start(display_thread_loop);
 
     DigitalOut status_led(LED_RED);
