@@ -1,86 +1,13 @@
-#include "sensor_collector.h"
-#include "stat_display.h"
-#include "label.h"
-#include "label_predictor.h"
-#include "log.h"
+#include "collector_thread.h"
+#include "display_thread.h"
+#include "global_thread_vars.h"
+#include "predictor_thread.h"
 
 #include "mbed.h"
-#include "Hexi_OLED_SSD1351.h"
-
-SSD1351 g_oled(PTB22, PTB21, PTC13, PTB20, PTE6, PTD15);
 
 Mutex g_sensors_lock;
 Sensor_Collector g_sens_collector;
 Queue<Label, 5> g_labels_queue;
-
-void sensor_collect_thread_loop()
-{
-    Timer timer;
-
-    while (true)
-    {
-        timer.reset();
-        timer.start();
-
-        // Enter critical section
-        g_sensors_lock.lock();
-        g_sens_collector.collect();
-        timer.stop();
-        g_sensors_lock.unlock();
-        // Exit critical section
-
-        log_info("Got %d samples in %dms!\n", SAMPLE_MATRIX_ELEMENT_SIZE, timer.read_ms());
-    }
-}
-
-void prediction_thread_loop()
-{
-    Sample_Matrix *local_samples;
-    std::unique_ptr<Label_Predictor> predictor(new Label_Predictor);
-    Tflite_Error status;
-
-    status = predictor->init();
-    if (status != Tflite_Error::OK)
-    {
-        log_error("%s\n", tflite_error_to_cstr(status));
-        return;
-    }
-
-    while (true)
-    {
-        // Enter critical section
-        // Copy the data to a local memory so the critical
-        // section last as short as possible
-        g_sensors_lock.lock();
-        local_samples = new Sample_Matrix(*g_sens_collector.getSamples());
-        g_sensors_lock.unlock();
-        // Exit critical section
-
-        Label label;
-        status = predictor->predict(local_samples, 0, &label);
-        log_error("%s\n", tflite_error_to_cstr(status));
-
-        delete local_samples;
-
-        g_labels_queue.put(&label);
-    }
-}
-
-void display_thread_loop()
-{
-    Stat_Display stat(&g_oled);
-
-    while (true)
-    {
-        osEvent event = g_labels_queue.get();
-        if (event.status == osEventMessage)
-        {
-            Label label = *(Label *)event.value.p;
-            log_info("\nGot label %s\n\n", label_to_cstr(label));
-            stat.new_event(label);
-        }
-    }
-}
 
 int main()
 {

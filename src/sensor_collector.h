@@ -2,7 +2,6 @@
 #define SENSOR_COLLECTOR_H_
 
 #include "sample_matrix.h"
-
 #include "FXAS21002.h"
 #include "FXOS8700.h"
 
