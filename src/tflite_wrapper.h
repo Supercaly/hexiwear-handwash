@@ -1,6 +1,7 @@
 #ifndef TFLITE_WRAPPER_H_
 #define TFLITE_WRAPPER_H_
 
+#include "label.h"
 #include "log.h"
 
 #include "model/handwash_model.h"
@@ -87,8 +88,8 @@ public:
         return TFliteError::OK;
     }
 
-    // Predict a class form input data.
-    TFliteError predict_class(float *input, uint8_t *predicted)
+    // Predict a label form input data.
+    TFliteError predict_label(float *input, Label *predicted)
     {
         float output[output_size];
         TFliteError error = predict(input, output);
@@ -99,7 +100,7 @@ public:
 
         if (predicted != NULL)
         {
-            *predicted = prob_to_class(output);
+            *predicted = Label(prob_to_class(output));
         }
 
         return TFliteError::OK;

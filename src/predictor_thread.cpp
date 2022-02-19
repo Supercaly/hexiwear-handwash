@@ -155,8 +155,8 @@ void predictor_thread_loop()
 
         float *features = compute_features(local_samples, hand);
 
-        uint8_t predicted_label;
-        status = tfwrapper->predict_class(features, &predicted_label);
+        Label predicted_label;
+        status = tfwrapper->predict_label(features, &predicted_label);
 
         if (status != TFliteError::OK)
         {
@@ -165,7 +165,6 @@ void predictor_thread_loop()
 
         delete local_samples;
 
-        Label label = Label(predicted_label);
-        g_labels_queue.put(&label);
+        g_labels_queue.put(&predicted_label);
     }
 }
