@@ -11,7 +11,7 @@
 #define TENSOR_ARENA_SIZE 3000
 
 // Compute features from rae data.
-float *compute_features(RawSensorData *data, float hand)
+static float *compute_features(RawSensorData *data, float hand)
 {
     // FIXME: Review all this code
     log_info("data:    %f %f %f %f %f %f %f\n", data->ax[0], data->ay[0], data->az[0], data->gx[0], data->gy[0], data->gz[0], hand);

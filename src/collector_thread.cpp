@@ -3,13 +3,16 @@
 #include "global_thread_vars.h"
 #include "log.h"
 
+#include "FXAS21002/FXAS21002.h"
+#include "FXOS8700/FXOS8700.h"
+
 static void collect_sensor_data(FXOS8700 *acc, FXAS21002 *gyr)
 {
     int size = 0;
     float tmp_acc[3];
     float tmp_gyr[3];
 
-    log_info("\033[33mBegin raw sensor data acquisition\n\033[0m");
+    log_info("Begin raw sensor data acquisition\n");
 
     // Collect raw sensor data until the data block is full
     while (size < RAW_SENSOR_DATA_BLOCK_CAP)
@@ -31,7 +34,7 @@ static void collect_sensor_data(FXOS8700 *acc, FXAS21002 *gyr)
         wait_ms(8);
     }
 
-    log_info("\033[33mEnd raw sensor data acquisition\n\033[0m");
+    log_info("End raw sensor data acquisition\n");
 }
 
 void collector_thread_loop()
