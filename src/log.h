@@ -10,14 +10,20 @@ extern "C"
 
 #ifdef LOG_ENABLED
 
-#define log_info(...) _log_impl(__VA_ARGS__)
-#define log_error(...) _log_impl(__VA_ARGS__)
     void _log_impl(const char *format, ...);
+#define log_info(format, ...) _log_impl("\033[33m[INFO]:\033[0m " format, ##__VA_ARGS__)
+#define log_error(format, ...) _log_impl("\033[31m[ERROR]:\033[0m " format, ##__VA_ARGS__)
 
 #else
 
-#define log_info(...)
-#define log_error(...)
+#define log_info(...) \
+    do                \
+    {                 \
+    } while (0)
+#define log_error(...) \
+    do                 \
+    {                  \
+    } while (0)
 
 #endif // LOG_ENABLED
 
