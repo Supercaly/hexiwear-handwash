@@ -3,14 +3,15 @@
 
 #include "log.h"
 
-#include "../model/handwash_model.h"
-#include "../tensorflow/lite/micro/all_ops_resolver.h"
-#include "../tensorflow/lite/micro/micro_error_reporter.h"
-#include "../tensorflow/lite/micro/micro_interpreter.h"
-#include "../tensorflow/lite/micro/system_setup.h"
-#include "../tensorflow/lite/schema/schema_generated.h"
+#include "model/handwash_model.h"
+#include "tensorflow/lite/micro/all_ops_resolver.h"
+#include "tensorflow/lite/micro/micro_error_reporter.h"
+#include "tensorflow/lite/micro/micro_interpreter.h"
+#include "tensorflow/lite/micro/system_setup.h"
+#include "tensorflow/lite/schema/schema_generated.h"
 
-enum class Tflite_Error
+// Represent an error during Tensorflow lite execution.
+enum class TFliteError
 {
     OK,
     VERSION_MISMATCH,
@@ -20,34 +21,35 @@ enum class Tflite_Error
 };
 
 // Converts an error to a cstr.
-static const char *tflite_error_to_cstr(Tflite_Error error)
+static const char *tflite_error_to_cstr(TFliteError error)
 {
     switch (error)
     {
-    case Tflite_Error::OK:
+    case TFliteError::OK:
         return "no error";
-    case Tflite_Error::VERSION_MISMATCH:
+    case TFliteError::VERSION_MISMATCH:
         return "version mismatch";
-    case Tflite_Error::CANT_ALLOCATE_TENSOR:
+    case TFliteError::CANT_ALLOCATE_TENSOR:
         return "cannot allocate tensor";
-    case Tflite_Error::NOT_INITIALIZED:
+    case TFliteError::NOT_INITIALIZED:
         return "not initialized";
-    case Tflite_Error::INVOKE_ERROR:
+    case TFliteError::INVOKE_ERROR:
         return "invocation error";
     default:
         return "unknown error";
     }
 }
 
+// Wrapper class for Tensorflow lite.
 template <size_t input_size, size_t output_size, size_t tensor_arena_size>
-class Tflite_Wrapper
+class TFliteWrapper
 {
 public:
-    Tflite_Wrapper() : _init(false) {}
-    ~Tflite_Wrapper() {}
+    TFliteWrapper() : _init(false) {}
+    ~TFliteWrapper() {}
 
     // Initialize the tensorflow interpreter and load the model.
-    Tflite_Error init(const unsigned char *model_data)
+    TFliteError init(const unsigned char *model_data)
     {
         tflite::InitializeTarget();
         static tflite::MicroErrorReporter static_error_reporter;
@@ -56,10 +58,10 @@ public:
         _model = tflite::GetModel(g_handwash_model_data);
         if (_model->version() != TFLITE_SCHEMA_VERSION)
         {
-            log_error("Provided model has schema version %d, "
+            log_error("TFliteWrapper: provided model has schema version %d, "
                       "but supported version is %d.\n",
                       _model->version(), TFLITE_SCHEMA_VERSION);
-            return Tflite_Error::VERSION_MISMATCH;
+            return TFliteError::VERSION_MISMATCH;
         }
 
         // TODO: Replace all ops resolver
@@ -72,8 +74,8 @@ public:
         TfLiteStatus allocate_status = static_interpreter.AllocateTensors();
         if (allocate_status != kTfLiteOk)
         {
-            log_error("Tensor allocation failed\n");
-            return Tflite_Error::CANT_ALLOCATE_TENSOR;
+            log_error("TFliteWrapper: tensor allocation failed\n");
+            return TFliteError::CANT_ALLOCATE_TENSOR;
         }
 
         _input = _interpreter->input_tensor(0);
@@ -81,16 +83,16 @@ public:
 
         _init = true;
 
-        log_info("Tflite_Wrapper initialized\n");
-        return Tflite_Error::OK;
+        log_info("TFliteWrapper: initialized\n");
+        return TFliteError::OK;
     }
 
     // Predict a class form input data.
-    Tflite_Error predict_class(float *input, uint8_t *predicted)
+    TFliteError predict_class(float *input, uint8_t *predicted)
     {
         float output[output_size];
-        Tflite_Error error = predict(input, output);
-        if (error != Tflite_Error::OK)
+        TFliteError error = predict(input, output);
+        if (error != TFliteError::OK)
         {
             return error;
         }
@@ -100,7 +102,7 @@ public:
             *predicted = prob_to_class(output);
         }
 
-        return Tflite_Error::OK;
+        return TFliteError::OK;
     }
 
 private:
@@ -113,12 +115,12 @@ private:
     uint8_t _tensor_arena[tensor_arena_size];
 
     // Predict a probability array from input data.
-    Tflite_Error predict(float *input, float *output)
+    TFliteError predict(float *input, float *output)
     {
         if (!_init)
         {
-            log_error("Tflite_Wrapper::predict called without initialization\n");
-            return Tflite_Error::NOT_INITIALIZED;
+            log_error("TFliteWrapper::predict called without initialization\n");
+            return TFliteError::NOT_INITIALIZED;
         }
 
         for (size_t idx = 0; idx < input_size; ++idx)
@@ -128,7 +130,7 @@ private:
 
         if (_interpreter->Invoke() != kTfLiteOk)
         {
-            return Tflite_Error::INVOKE_ERROR;
+            return TFliteError::INVOKE_ERROR;
         }
 
         if (output != NULL)
@@ -139,7 +141,7 @@ private:
             }
         }
 
-        return Tflite_Error::OK;
+        return TFliteError::OK;
     }
 
     // Convert a probability array to a single class.

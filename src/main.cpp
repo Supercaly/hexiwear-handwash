@@ -7,7 +7,7 @@
 
 // Define global thread variables declared in global_thread_vars.h
 Mutex g_sensors_lock;
-Sample_Matrix g_raw_sensor_data;
+RawSensorData g_raw_sensor_data;
 Queue<Label, 5> g_labels_queue;
 
 int main()
