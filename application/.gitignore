@@ -1,0 +1,6 @@
+# mbed os' stuff
+BUILD/
+mbed-os/
+FXAS21002/
+FXOS8700/
+Hexi_OLED_SSD1351/
