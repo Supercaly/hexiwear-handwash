@@ -4,13 +4,42 @@
 #include "label.h"
 #include "log.h"
 
+#include "Hexi_KW40Z/Hexi_KW40Z.h"
+#include "Hexi_OLED_SSD1351/Hexi_OLED_SSD1351.h"
 #include "mbed.h"
 
 SSD1351 g_oled(PTB22, PTB21, PTC13, PTB20, PTE6, PTD15);
+KW40Z kw40z_device(PTE24, PTE25);
+DisplayWrapper display(&g_oled, &kw40z_device);
+
+static void btn_up_fn()
+{
+    display.btnUpFn();
+}
+
+static void btn_down_fn()
+{
+    display.btnDownFn();
+}
+
+static void btn_left_fn()
+{
+    display.btnLeftFn();
+}
+
+static void btn_right_fn()
+{
+    display.btnRightFn();
+}
 
 void display_thread_loop()
 {
-    DisplayWrapper *display = new DisplayWrapper(&g_oled);
+    // attach button callbacks that redirect input to display wrapper
+    kw40z_device.attach_buttonUp(btn_up_fn);
+    kw40z_device.attach_buttonDown(btn_down_fn);
+    kw40z_device.attach_buttonLeft(btn_left_fn);
+    kw40z_device.attach_buttonRight(btn_right_fn);
+
     int none_count = 0, wash_count = 0, san_count = 0;
 
     while (true)
@@ -35,7 +64,7 @@ void display_thread_loop()
                 break;
             }
 
-            display->label_screen(none_count, wash_count, san_count);
+            display.update_label_stats(none_count, wash_count, san_count);
         }
     }
 }
