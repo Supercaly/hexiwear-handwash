@@ -133,7 +133,7 @@ if __name__ == "__main__":
         sys.exit(1)
 
     bmp_files = [f for f in os.listdir(args.input) if os.path.isfile(os.path.join(args.input,f)) and f.endswith(".bmp")]
-    all_data = [(var_name_from_file(file),raw_bytes_from_bmp(read_bmp_file(file))) for file in bmp_files]
+    all_data = [(var_name_from_file(file),raw_bytes_from_bmp(read_bmp_file(os.path.join(args.input,file)))) for file in bmp_files]
 
     Path(args.output).mkdir(parents=True,exist_ok=True)
 
@@ -144,7 +144,7 @@ if __name__ == "__main__":
     h_file.write("\n")
     h_file.write("#include <stdint.h>\n")
     h_file.write("\n")
-    h_file.write("#define IMAGE_SIZE (96*96*2)\n")
+    h_file.write("#define IMAGE_SIZE (96 * 96 * 2)\n")
     h_file.write("\n")
     for var in all_data:
         h_file.write(c_array_decl(var[0]))
