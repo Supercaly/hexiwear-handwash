@@ -6,7 +6,15 @@
 #   size:            96x96
 #   bit per pixel:   24
 #   compression:     BI_RGB
+# 
+# The output produced by this script is in the form R5B6G5 and the pixels starts
+# from top-left
+#
+# This script was created following:
+# - https://en.wikipedia.org/wiki/BMP_file_format
+# - https://github.com/javl/image2cpp
 
+from math import ceil
 import sys
 import os
 from pathlib import Path
@@ -17,13 +25,15 @@ def bytes_to_int(bs):
     return int.from_bytes([int.from_bytes(a, 'little') for a in bs], 'little')
     
 # flip vertically a bytes list
-def flip_vertical(bytes):
+def flip_vertical(bytes, w, h):
+    # Note: at this moment the image is converted to 16bpp
+    row_size = ceil(16*w/32)*4
     res = []
-    r = 95
+    r = h-1
     c = 0
     while r >= 0:
-        while c < 192:
-            b1 = bytes[r*192+c]
+        while c < row_size:
+            b1 = bytes[r*row_size+c]
             res.append(b1)
             c+=1
         r-=1
@@ -46,8 +56,8 @@ def raw_bytes_from_bmp(bs):
     if dib_header == 40:
         print("  DIB header type: BITMAPINFOHEADER")
 
-        w = bytes_to_int(full_dib_header[4:8])
-        h = bytes_to_int(full_dib_header[8:12])
+        img_width = bytes_to_int(full_dib_header[4:8])
+        img_height = bytes_to_int(full_dib_header[8:12])
         bit_count = bytes_to_int(full_dib_header[14:16])
         compression = bytes_to_int(full_dib_header[16:20])
         size = bytes_to_int(full_dib_header[20:24])
@@ -55,7 +65,7 @@ def raw_bytes_from_bmp(bs):
         vres = bytes_to_int(full_dib_header[28:32])
         colors = bytes_to_int(full_dib_header[32:36])
 
-        print(f"  size:            {w}x{h}")
+        print(f"  size:            {img_width}x{img_height}")
         print(f"  bit per pixel:   {bit_count}")
         print(f"  compression:     {compression}")
         print(f"  image size:      {size}")
@@ -76,18 +86,19 @@ def raw_bytes_from_bmp(bs):
         result = []
         row = 0
         col = 0
-        while row < 96:
-            while col < 288:
-                r = int.from_bytes(raw[row*288+col+2], 'little')
-                g = int.from_bytes(raw[row*288+col+1], 'little')
-                b = int.from_bytes(raw[row*288+col+0], 'little')
+        row_size = ceil(bit_count*img_width/32)*4
+        while row < img_width:
+            while col < row_size:
+                r = int.from_bytes(raw[row*row_size+col+2], 'little')
+                g = int.from_bytes(raw[row*row_size+col+1], 'little')
+                b = int.from_bytes(raw[row*row_size+col+0], 'little')
                 rgb = ((r & 0b11111000) << 8) | ((g & 0b11111100) << 3) | ((b & 0b11111000) >> 3)
                 result.append(((rgb >> 8) & 0xff).to_bytes(1,'little'))
                 result.append((rgb & 0xff).to_bytes(1,'little'))
                 col+=3
             col = 0
             row+=1
-        return flip_vertical(result)
+        return flip_vertical(result, img_width, img_height)
     else:
         print(f"ERROR: unknown dib header {dib_header}")
         sys.exit(1)
@@ -138,9 +149,10 @@ if __name__ == "__main__":
     Path(args.output).mkdir(parents=True,exist_ok=True)
 
     # generate output .h file
+    guard_name = args.name.upper()+"_H_"
     h_file = open(os.path.join(args.output,args.name+".h"), "w+")
-    h_file.write("#ifndef OUTPUT_H_\n")
-    h_file.write("#define OUTPUT_H_\n")
+    h_file.write(f"#ifndef {guard_name}\n")
+    h_file.write(f"#define {guard_name}\n")
     h_file.write("\n")
     h_file.write("#include <stdint.h>\n")
     h_file.write("\n")
@@ -149,7 +161,7 @@ if __name__ == "__main__":
     for var in all_data:
         h_file.write(c_array_decl(var[0]))
         h_file.write("\n")
-    h_file.write("#endif // OUTPUT_H_")
+    h_file.write(f"#endif // {guard_name}")
     h_file.close()
     
     # generate output .c file
