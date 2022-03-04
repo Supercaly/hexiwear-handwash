@@ -34,6 +34,8 @@ static void btn_right_fn()
 
 void display_thread_loop()
 {
+    // initialize display
+    display.init_display();
     // attach button callbacks that redirect input to display wrapper
     kw40z_device.attach_buttonUp(btn_up_fn);
     kw40z_device.attach_buttonDown(btn_down_fn);
