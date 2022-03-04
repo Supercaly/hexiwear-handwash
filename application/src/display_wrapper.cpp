@@ -1,23 +1,12 @@
 #include "display_wrapper.h"
 
-// TODO: Create proper screen pages pointing to real graphical resources
-page_t page1 = {
-    .down = &page2,
-    .image = menuItem_main_bmp,
-};
-
-page_t page2 = {
-    .up = &page1,
-    .image = menuItem_settings_bmp,
-};
-
 DisplayWrapper::DisplayWrapper(SSD1351 *oled, KW40Z *kw40z) : _oled(oled),
                                                               _kw40z(kw40z),
                                                               _haptic(PTB9),
                                                               _haptic_timer(this, &DisplayWrapper::stop_haptic, osTimerOnce)
 {
-    current_page = &page1;
-    init_display();
+    _wrist = 0;
+    _current_page = &page_settings_menu;
 }
 
 DisplayWrapper::~DisplayWrapper() {}
@@ -26,7 +15,7 @@ void DisplayWrapper::init_display()
 {
     _oled->DimScreenOFF();
     clear_screen();
-    draw_page(current_page, oled_transition_t::OLED_TRANSITION_NONE);
+    draw_page(_current_page, oled_transition_t::OLED_TRANSITION_NONE);
 }
 
 void DisplayWrapper::clear_screen()
@@ -34,9 +23,23 @@ void DisplayWrapper::clear_screen()
     _oled->FillScreen(COLOR_BLACK);
 }
 
-void DisplayWrapper::draw_page(page_t *page, oled_transition_t transition)
+void DisplayWrapper::draw_page(Page *page, oled_transition_t transition)
 {
     _oled->DrawScreen(page->image, 0, 0, 96, 96, transition);
+    if (page->onDraw != NULL)
+    {
+        page->onDraw(this);
+    }
+}
+
+void DisplayWrapper::label(const char *txt, int x, int y)
+{
+    _oled->Label((uint8_t *)txt, x, y);
+}
+
+void DisplayWrapper::image(const uint8_t *image, int x, int y)
+{
+    _oled->DrawImage(image, 20, 20, 56, 56);
 }
 
 /*
@@ -47,49 +50,54 @@ void DisplayWrapper::draw_page(page_t *page, oled_transition_t transition)
 
 void DisplayWrapper::btnUpFn()
 {
-    if (current_page->up != NULL)
+    if (_current_page->up != NULL)
     {
         start_haptic();
-        current_page = current_page->up;
-        draw_page(current_page, oled_transition_t::OLED_TRANSITION_DOWN_TOP);
+        _current_page = _current_page->up;
+        draw_page(_current_page, oled_transition_t::OLED_TRANSITION_TOP_DOWN);
     }
 }
 
 void DisplayWrapper::btnDownFn()
 {
-    if (current_page->down != NULL)
+    if (_current_page->down != NULL)
     {
+        _current_page = _current_page->down;
         start_haptic();
-        current_page = current_page->down;
-        draw_page(current_page, oled_transition_t::OLED_TRANSITION_TOP_DOWN);
+        draw_page(_current_page, oled_transition_t::OLED_TRANSITION_DOWN_TOP);
     }
 }
 
 void DisplayWrapper::btnLeftFn()
 {
-    if (current_page->left != NULL)
+    if (_current_page->left != NULL)
     {
         start_haptic();
-        current_page = current_page->left;
-        draw_page(current_page, oled_transition_t::OLED_TRANSITION_LEFT_RIGHT);
+        _current_page = _current_page->left;
+        draw_page(_current_page, oled_transition_t::OLED_TRANSITION_LEFT_RIGHT);
     }
 }
 
 void DisplayWrapper::btnRightFn()
 {
-    if (current_page->right != NULL)
+    if (_current_page->right != NULL)
     {
         start_haptic();
-        current_page = current_page->right;
-        draw_page(current_page, oled_transition_t::OLED_TRANSITION_RIGHT_LEFT);
+        _current_page = _current_page->right;
+        draw_page(_current_page, oled_transition_t::OLED_TRANSITION_RIGHT_LEFT);
+    }
+    else if (_current_page->action != NULL)
+    {
+        start_haptic();
+        _current_page->action(this);
     }
 }
 
 void DisplayWrapper::update_label_stats(int none_count, int wash_count, int san_count)
 {
-    this->none_count = none_count;
-    this->wash_count = wash_count;
-    this->san_count = san_count;
+    _none_count = none_count;
+    _wash_count = wash_count;
+    _san_count = san_count;
 
     // if (current_screen == 1)
     // {
