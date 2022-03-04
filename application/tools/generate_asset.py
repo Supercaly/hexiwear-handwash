@@ -23,90 +23,114 @@ import argparse
 # converts list of bytes to int
 def bytes_to_int(bs):
     return int.from_bytes([int.from_bytes(a, 'little') for a in bs], 'little')
-    
-# flip vertically a bytes list
-def flip_vertical(bytes, w, h):
-    # Note: at this moment the image is converted to 16bpp
-    row_size = ceil(16*w/32)*4
-    res = []
-    r = h-1
-    c = 0
-    while r >= 0:
-        while c < row_size:
-            b1 = bytes[r*row_size+c]
-            res.append(b1)
-            c+=1
-        r-=1
-        c = 0
-    return res
 
-# process a bmp image with given raw bytes and returns his bytes-array
-def raw_bytes_from_bmp(bs):
-    # remove unused BMP header
-    bs = bs[14:]
+class Image:
+    def __init__(self, path):
+        self.path = path
+        self.name = Path(path).stem.lower()
+        self.load_bmp_file()
 
-    # read DIB header name
-    dib_header = bytes_to_int(bs[:4])
-    print(f"DIB header:  {dib_header}")
+    # reads the bmp file for this image and loads it'values in memory
+    def load_bmp_file(self):
+        bs = []
+        # open bmp file
+        with open(self.path, 'rb') as bmp_file:
+            byte = bmp_file.read(1)
+            while byte:
+                bs.append(byte)
+                byte = bmp_file.read(1)
 
-    # read full DIB header
-    full_dib_header = bs[:dib_header]
+        # remove unused BMP header
+        bs = bs[14:]
 
-    # read image of version BITMAPINFOHEADER 
-    if dib_header == 40:
-        print("  DIB header type: BITMAPINFOHEADER")
+        # read DIB header name
+        dib_header = bytes_to_int(bs[:4])
+        print(f"DIB header:  {dib_header}")
 
-        img_width = bytes_to_int(full_dib_header[4:8])
-        img_height = bytes_to_int(full_dib_header[8:12])
-        bit_count = bytes_to_int(full_dib_header[14:16])
-        compression = bytes_to_int(full_dib_header[16:20])
-        size = bytes_to_int(full_dib_header[20:24])
-        hres = bytes_to_int(full_dib_header[24:28])
-        vres = bytes_to_int(full_dib_header[28:32])
-        colors = bytes_to_int(full_dib_header[32:36])
+        # read full DIB header
+        full_dib_header = bs[:dib_header]
 
-        print(f"  size:            {img_width}x{img_height}")
-        print(f"  bit per pixel:   {bit_count}")
-        print(f"  compression:     {compression}")
-        print(f"  image size:      {size}")
-        print(f"  pixel per meter: {hres}x{vres}")
-        print(f"  colors:          {colors}")
+        # read image of version BITMAPINFOHEADER 
+        if dib_header == 40:
+            print("  DIB header type: BITMAPINFOHEADER")
 
-        raw = bs[40:]
-        bs = bs[size:]
-        
-        print(f"  data bytes: {len(raw)}")
-        print(f"  Remaining bytes: {len(bs)}")
+            self.img_width = bytes_to_int(full_dib_header[4:8])
+            self.img_height = bytes_to_int(full_dib_header[8:12])
+            self.bit_count = bytes_to_int(full_dib_header[14:16])
+            self.compression = bytes_to_int(full_dib_header[16:20])
+            self.size = bytes_to_int(full_dib_header[20:24])
+            hres = bytes_to_int(full_dib_header[24:28])
+            vres = bytes_to_int(full_dib_header[28:32])
+            colors = bytes_to_int(full_dib_header[32:36])
 
-        if bit_count != 24:
-            print(f"ERROR: bmp image has {bit_count}bpp, but must have 24bpp to be processed!")
+            print(f"  size:            {self.img_width}x{self.img_height}")
+            print(f"  bit per pixel:   {self.bit_count}")
+            print(f"  compression:     {self.compression}")
+            print(f"  image size:      {self.size}")
+            print(f"  pixel per meter: {hres}x{vres}")
+            print(f"  colors:          {colors}")
+
+            raw = bs[40:]
+            bs = bs[self.size:]
+            
+            print(f"  data bytes: {len(raw)}")
+            print(f"  Remaining bytes: {len(bs)}")
+
+            if self.bit_count != 24:
+                print(f"ERROR: bmp image has {self.bit_count}bpp, but must have 24bpp to be processed!")
+                sys.exit(1)
+
+            # map 24-bit R8G8B8 to 16-bit R5G6B5
+            result = []
+            row = 0
+            col = 0
+            row_size = ceil(self.bit_count*self.img_width/32)*4
+            while row < self.img_width:
+                while col < row_size:
+                    r = int.from_bytes(raw[row*row_size+col+2], 'little')
+                    g = int.from_bytes(raw[row*row_size+col+1], 'little')
+                    b = int.from_bytes(raw[row*row_size+col+0], 'little')
+                    rgb = ((r & 0b11111000) << 8) | ((g & 0b11111100) << 3) | ((b & 0b11111000) >> 3)
+                    result.append(((rgb >> 8) & 0xff).to_bytes(1,'little'))
+                    result.append((rgb & 0xff).to_bytes(1,'little'))
+                    col+=3
+                col = 0
+                row+=1
+            self.bit_count = 16
+            self.size = self.img_width * self.img_height * 2
+            self.data = result
+            self.flip_vertical()
+        else:
+            print(f"ERROR: unknown dib header {dib_header}")
             sys.exit(1)
 
-        # map 24-bit R8G8B8 to 16-bit R5G6B5
-        result = []
-        row = 0
-        col = 0
-        row_size = ceil(bit_count*img_width/32)*4
-        while row < img_width:
-            while col < row_size:
-                r = int.from_bytes(raw[row*row_size+col+2], 'little')
-                g = int.from_bytes(raw[row*row_size+col+1], 'little')
-                b = int.from_bytes(raw[row*row_size+col+0], 'little')
-                rgb = ((r & 0b11111000) << 8) | ((g & 0b11111100) << 3) | ((b & 0b11111000) >> 3)
-                result.append(((rgb >> 8) & 0xff).to_bytes(1,'little'))
-                result.append((rgb & 0xff).to_bytes(1,'little'))
-                col+=3
-            col = 0
-            row+=1
-        return flip_vertical(result, img_width, img_height)
-    else:
-        print(f"ERROR: unknown dib header {dib_header}")
-        sys.exit(1)
+    # flip the image vertically
+    def flip_vertical(self):
+        row_size = ceil(self.bit_count*self.img_width/32)*4
+        res = []
+        r = self.img_height-1
+        c = 0
+        while r >= 0:
+            while c < row_size:
+                b1 = self.data[r*row_size+c]
+                res.append(b1)
+                c+=1
+            r-=1
+            c = 0
+        self.data = res
 
+    # returns the var name for this image 
+    def var_name(self):
+        return self.name+"_bmp"
+
+    def byte_count(self):
+        return int(self.bit_count/8)
+
+   
 # format raw data as a string with a c array
-def raw_data_to_c_array(var_name, bytes):
-    result = "const uint8_t "+var_name+"[IMAGE_SIZE] = {"
-    for i,b in enumerate(bytes):
+def c_array_def(image: Image):
+    result = f"const uint8_t {image.var_name()}[IMAGE_SIZE_{image.img_width}_{image.img_height}] = {{"
+    for i,b in enumerate(image.data):
         if i % 16 == 0:
             result+="\n\t"
         result+="0x"+b.hex()+","
@@ -114,21 +138,8 @@ def raw_data_to_c_array(var_name, bytes):
     return result
 
 # format a string with c array declaration
-def c_array_decl(var_name):
-    return "extern const uint8_t "+var_name+"[IMAGE_SIZE];\n"
-
-# reads raw bytes from a bmp file with given name
-def read_bmp_file(file_name):
-    with open(file_name, 'rb') as bmp_file:
-        bytes = []
-        byte = bmp_file.read(1)
-        while byte:
-            bytes.append(byte)
-            byte = bmp_file.read(1)
-    return bytes
-
-def var_name_from_file(file_name):
-    return f"{Path(file_name).stem.lower()}_bmp"
+def c_array_decl(image: Image):
+    return f"extern const uint8_t {image.var_name()}[IMAGE_SIZE_{image.img_width}_{image.img_height}];\n"
 
 if __name__ == "__main__":
     # read command line args
@@ -144,31 +155,31 @@ if __name__ == "__main__":
         sys.exit(1)
 
     bmp_files = [f for f in os.listdir(args.input) if os.path.isfile(os.path.join(args.input,f)) and f.endswith(".bmp")]
-    all_data = [(var_name_from_file(file),raw_bytes_from_bmp(read_bmp_file(os.path.join(args.input,file)))) for file in bmp_files]
+    images = [Image(os.path.join(args.input, name)) for name in bmp_files]
+    sizes = list(set([(img.img_width, img.img_height, img.byte_count()) for img in images]))
 
     Path(args.output).mkdir(parents=True,exist_ok=True)
 
     # generate output .h file
     guard_name = args.name.upper()+"_H_"
-    h_file = open(os.path.join(args.output,args.name+".h"), "w+")
-    h_file.write(f"#ifndef {guard_name}\n")
-    h_file.write(f"#define {guard_name}\n")
-    h_file.write("\n")
-    h_file.write("#include <stdint.h>\n")
-    h_file.write("\n")
-    h_file.write("#define IMAGE_SIZE (96 * 96 * 2)\n")
-    h_file.write("\n")
-    for var in all_data:
-        h_file.write(c_array_decl(var[0]))
+    with open(os.path.join(args.output,args.name+".h"), "w+") as h_file:
+        h_file.write(f"#ifndef {guard_name}\n")
+        h_file.write(f"#define {guard_name}\n")
         h_file.write("\n")
-    h_file.write(f"#endif // {guard_name}")
-    h_file.close()
+        h_file.write("#include <stdint.h>\n")
+        h_file.write("\n")
+        for sz in sizes:
+            h_file.write(f"#define IMAGE_SIZE_{sz[0]}_{sz[1]} ({sz[0]} * {sz[1]} * {sz[2]})\n")
+        h_file.write("\n")
+        for img in images:
+            h_file.write(c_array_decl(img))
+            h_file.write("\n")
+        h_file.write(f"#endif // {guard_name}")
     
     # generate output .c file
-    c_file = open(os.path.join(args.output,args.name+".c"), 'w+')
-    c_file.write(f"#include \"{args.name}.h\"\n")
-    c_file.write("\n")
-    for var in all_data:
-        c_file.write(raw_data_to_c_array(var[0],var[1]))
+    with open(os.path.join(args.output,args.name+".c"), 'w+') as c_file:
+        c_file.write(f"#include \"{args.name}.h\"\n")
         c_file.write("\n")
-    c_file.close()
+        for img in images:
+            c_file.write(c_array_def(img))
+            c_file.write("\n")

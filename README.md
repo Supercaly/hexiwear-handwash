@@ -24,6 +24,11 @@ Before compiling the code remember to fix mbed-os build system:
 
 follow [this guide](https://github.com/ARMmbed/mbed-os/pull/7437/files) for more info on this process.
 
+The source code of the application relys on some generated .c/.h files, to generate them run the script `generate_asset.py` like this
+```console
+$ python3 generate_asset.py --input path/to/assets --output src/generated --name menu_resources
+```
+
 ### Program the KW40Z
 
 Tho have access to the Bluetooth Low Energy and the buttons of the Hexiwear you need to flash the KW40Z binary file downloadable [here](https://github.com/MikroElektronika/HEXIWEAR/blob/master/SW/KW40%20IAR/HEXIWEAR_bluetooth/binary/HEXIWEAR_KW40_v100.bin).
