@@ -5,7 +5,7 @@
 #include "log.h"
 
 #include "Hexi_KW40Z/Hexi_KW40Z.h"
-#include "oled/oled_SSD1351.h"
+#include "oled_ssd1351/oled_ssd1351.h"
 #include "mbed.h"
 
 oled::SSD1351 g_oled(PTB22, PTB21, PTC13, PTB20, PTE6, PTD15);
