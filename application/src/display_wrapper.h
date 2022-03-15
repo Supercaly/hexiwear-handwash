@@ -4,7 +4,7 @@
 #include "menu_page.h"
 
 #include "Hexi_KW40Z/Hexi_KW40Z.h"
-#include "Hexi_OLED_SSD1351/Hexi_OLED_SSD1351.h"
+#include "oled/oled_SSD1351.h"
 #include "mbed.h"
 
 class Page;
@@ -12,7 +12,7 @@ class Page;
 class DisplayWrapper
 {
 public:
-    DisplayWrapper(SSD1351 *oled, KW40Z *kw40z);
+    DisplayWrapper(oled::SSD1351 *oled, KW40Z *kw40z);
     ~DisplayWrapper();
 
     // Init the display
@@ -29,7 +29,7 @@ public:
     int none_count() { return _none_count; }
     int wash_count() { return _wash_count; }
     int san_count() { return _san_count; }
-    
+
     int wrist() { return _wrist; }
     void wrist(int w) { _wrist = w; }
 
@@ -38,7 +38,7 @@ public:
     void image(const uint8_t *image, int x, int y);
 
 private:
-    SSD1351 *_oled;
+    oled::SSD1351 *_oled;
     KW40Z *_kw40z;
 
     Page *_current_page;
@@ -46,7 +46,7 @@ private:
     int _wrist;
 
     void clear_screen();
-    void draw_page(Page *page, oled_transition_t transition);
+    void draw_page(Page *page, oled::Transition transition);
 
     int _none_count, _wash_count, _san_count;
 
