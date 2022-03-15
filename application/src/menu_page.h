@@ -2,7 +2,6 @@
 #define MENU_PAGE_H_
 
 #include "display_wrapper.h"
-#include "Hexi_OLED_SSD1351/Hexi_OLED_SSD1351.h"
 #include <stdint.h>
 
 class DisplayWrapper;

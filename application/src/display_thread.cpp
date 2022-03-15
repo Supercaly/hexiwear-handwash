@@ -5,10 +5,10 @@
 #include "log.h"
 
 #include "Hexi_KW40Z/Hexi_KW40Z.h"
-#include "Hexi_OLED_SSD1351/Hexi_OLED_SSD1351.h"
+#include "oled_ssd1351/oled_ssd1351.h"
 #include "mbed.h"
 
-SSD1351 g_oled(PTB22, PTB21, PTC13, PTB20, PTE6, PTD15);
+oled::SSD1351 g_oled(PTB22, PTB21, PTC13, PTB20, PTE6, PTD15);
 KW40Z kw40z_device(PTE24, PTE25);
 DisplayWrapper display(&g_oled, &kw40z_device);
 
