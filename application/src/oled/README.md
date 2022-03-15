@@ -25,7 +25,7 @@ $ mbed add url/of/library
 
 ## Fonts
 
-Fonts are stored in a .h/.c file using a custom format made by the HEXIWEAR team. To generate new fonts you can use their custom tool that can be found at [this link]().
+Fonts are stored in a `.h` and `.c` files using a custom format made by the HEXIWEAR team. To generate new fonts you can use their custom tool that can be found at [this link](https://github.com/MikroElektronika/HEXIWEAR/tree/master/SW/ResourceCollectionTool).
 
 ## Usage
 
