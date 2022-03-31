@@ -1,7 +1,7 @@
 #ifndef RAW_SENSOR_DATA_H_
 #define RAW_SENSOR_DATA_H_
 
-#include "config.h"
+#include "common/config.h"
 
 #include <string.h>
 

@@ -1,7 +1,7 @@
 #include "display_thread.h"
-#include "global_thread_vars.h"
-#include "label.h"
-#include "log.h"
+#include "common/global_thread_vars.h"
+#include "data/label.h"
+#include "common/log.h"
 
 #include "generated/menu_resources.h"
 #include "menu/menu.h"

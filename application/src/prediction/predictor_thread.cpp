@@ -1,9 +1,10 @@
 #include "predictor_thread.h"
-#include "global_thread_vars.h"
-#include "log.h"
-#include "model/handwash_model.h"
-#include "raw_sensor_data.h"
+#include "common/global_thread_vars.h"
+#include "common/log.h"
+#include "data/raw_sensor_data.h"
 #include "tflite_wrapper.h"
+
+#include "../model/handwash_model.h"
 
 // TODO: Move those constantsa in config
 #define FEATURES_SIZE 25
