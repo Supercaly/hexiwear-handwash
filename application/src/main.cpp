@@ -1,7 +1,7 @@
-#include "collector_thread.h"
-#include "display_thread.h"
-#include "global_thread_vars.h"
-#include "predictor_thread.h"
+#include "collection/collector_thread.h"
+#include "common/global_thread_vars.h"
+#include "prediction/predictor_thread.h"
+#include "ui/display_thread.h"
 
 #include "mbed.h"
 

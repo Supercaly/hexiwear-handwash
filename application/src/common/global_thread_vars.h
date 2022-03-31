@@ -1,9 +1,10 @@
 #ifndef GLOBAL_THREAD_VARS_H_
 #define GLOBAL_THREAD_VARS_H_
 
-#include "label.h"
+#include "data/label.h"
+#include "data/raw_sensor_data.h"
+
 #include "mbed.h"
-#include "raw_sensor_data.h"
 
 extern Mutex g_sensors_lock;
 

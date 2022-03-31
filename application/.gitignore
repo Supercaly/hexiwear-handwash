@@ -7,4 +7,4 @@ Hexi_OLED_SSD1351/
 oled_ssd1351/
 
 # generated stuff
-src/generated
+generated/

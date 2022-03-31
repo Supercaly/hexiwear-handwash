@@ -1,7 +1,7 @@
 #include "collector_thread.h"
-#include "config.h"
-#include "global_thread_vars.h"
-#include "log.h"
+#include "common/config.h"
+#include "common/global_thread_vars.h"
+#include "common/log.h"
 
 #include "FXAS21002/FXAS21002.h"
 #include "FXOS8700/FXOS8700.h"
