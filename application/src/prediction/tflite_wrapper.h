@@ -4,7 +4,7 @@
 #include "data/label.h"
 #include "common/log.h"
 
-#include "../model/handwash_model.h"
+#include "generated/model/handwash_model.h"
 #include "tensorflow/tensorflow/lite/micro/all_ops_resolver.h"
 #include "tensorflow/tensorflow/lite/micro/micro_error_reporter.h"
 #include "tensorflow/tensorflow/lite/micro/micro_interpreter.h"

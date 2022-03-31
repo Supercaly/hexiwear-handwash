@@ -1,5 +1,5 @@
 #include "wrist_page.h"
-#include "generated/menu_resources.h"
+#include "generated/resources/menu_resources.h"
 
 WristPage::WristPage() : _wrist(0)
 {

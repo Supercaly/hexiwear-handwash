@@ -3,7 +3,7 @@
 #include "data/label.h"
 #include "common/log.h"
 
-#include "generated/menu_resources.h"
+#include "generated/resources/menu_resources.h"
 #include "menu/menu.h"
 #include "menu/navigator.h"
 #include "menu/stats_page.h"
