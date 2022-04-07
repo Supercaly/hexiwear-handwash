@@ -4,9 +4,9 @@
 #include "data/raw_sensor_data.h"
 #include "tflite_wrapper.h"
 
-#include "../model/handwash_model.h"
+#include "model/handwash_model.h"
 
-// TODO: Move those constantsa in config
+// TODO: Move those constants in config
 #define FEATURES_SIZE 25
 #define OUT_SIZE 3
 #define TENSOR_ARENA_SIZE 3000
@@ -166,6 +166,6 @@ void predictor_thread_loop()
 
         delete local_samples;
 
-        g_labels_queue.put(&predicted_label);
+        g_labels_queue.try_put(&predicted_label);
     }
 }

@@ -3,8 +3,8 @@
 #include "common/global_thread_vars.h"
 #include "common/log.h"
 
-#include "FXAS21002/FXAS21002.h"
-#include "FXOS8700/FXOS8700.h"
+#include "FXAS21002.h"
+#include "FXOS8700.h"
 
 static void collect_sensor_data(FXOS8700 *acc, FXAS21002 *gyr)
 {
@@ -31,7 +31,7 @@ static void collect_sensor_data(FXOS8700 *acc, FXAS21002 *gyr)
 
         // This parameter can be changed to adjust the timing;
         // at the moment it's set to have a sample rate of 100Hz.
-        wait_ms(8);
+        ThisThread::sleep_for(8ms);
     }
 
     log_info("End raw sensor data acquisition\n");
@@ -62,6 +62,8 @@ void collector_thread_loop()
         g_sensors_lock.unlock();
         // Exit critical section
 
-        log_info("Got %d samples in %dms!\n", RAW_SENSOR_DATA_BLOCK_CAP, timer.read_ms());
+        log_info("Got %d samples in %lldms!\n",
+                 RAW_SENSOR_DATA_BLOCK_CAP,
+                 chrono::duration_cast<chrono::milliseconds>(timer.elapsed_time()).count());
     }
 }

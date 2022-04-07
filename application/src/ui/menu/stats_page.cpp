@@ -1,5 +1,5 @@
 #include "stats_page.h"
-#include "generated/resources/menu_resources.h"
+#include "resources/menu_resources.h"
 
 StatsPage::StatsPage(Navigator *nav) : _nav(nav)
 {
