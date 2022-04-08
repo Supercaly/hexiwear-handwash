@@ -1,6 +1,6 @@
 # Hexiwear library for FXAS21002 gyroscope sensor
 
-*** This library is a port under mbed-os 6 of [this library](https://os.mbed.com/users/AswinSivakumar/code/FXAS21002/).***
+***This library is a port under mbed-os 6 of [this library](https://os.mbed.com/users/AswinSivakumar/code/FXAS21002/).***
 
 This library provides full access to the FXAS21002 gyroscope sensor inside the Hexiwear.
 
