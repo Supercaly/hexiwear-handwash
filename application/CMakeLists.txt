@@ -14,16 +14,16 @@ project(${APP_TARGET})
 add_executable(${PROJECT_NAME})
 
 add_subdirectory(${MBED_PATH})
-add_subdirectory(FXAS21002)
-add_subdirectory(FXOS8700)
+add_subdirectory(hexiwear_FXAS21002)
+add_subdirectory(hexiwear_FXOS8700)
 add_subdirectory(hexiwear_kw40z)
 add_subdirectory(oled_ssd1351)
 
 target_link_libraries(${PROJECT_NAME} 
     mbed-os
     mbed-events
-    FXAS21002
-    FXOS8700
+    hexiwear_FXAS21002
+    hexiwear_FXOS8700
     hexiwear_kw40z
     oled_ssd1351
 )
