@@ -1,6 +1,8 @@
 # Hexiwear library for FXOS8700 accelerometer and magnetometer sensor
 
-This library provides full access to the FXOS8700 accelerometer and magnetometer sensor inside the Hexiwear under mbed-os 6.
+***This library is a port under mbed-os 6 of [this library](https://os.mbed.com/users/AswinSivakumar/code/FXOS8700/).***
+
+This library provides full access to the FXOS8700 accelerometer and magnetometer sensor inside the Hexiwear.
 
 ## Getting started
 
