@@ -11,7 +11,7 @@ To use this library with the new mbed-cli 2 build system you need to follow this
 3. add the library to your main `CMakeLists.txt` file
 
 ```cmake
-add_subdirectory(lib)
+add_subdirectory(hexiwear_FXAS21002)
  
 target_link_libraries(${APP_TARGET} 
     mbed-os 
