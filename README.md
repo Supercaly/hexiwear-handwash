@@ -1,4 +1,7 @@
 # Hexiwear hand wash
+
+***NOTE: This branch is and old version of the project using `mbed os 5` further development can be found in the `master` branch using `mbed os 6`***
+
 Repository for the Hexiwear hand wash project.
 
 ## Get Started
