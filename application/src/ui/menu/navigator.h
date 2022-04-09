@@ -1,8 +1,10 @@
 #ifndef NAVIGATOR_H_
 #define NAVIGATOR_H_
 
+#include "common/haptic_feedback.h"
+
 #include "mbed.h"
-#include "oled_ssd1351/oled_ssd1351.h"
+#include "oled_ssd1351.h"
 #include <stack>
 
 class Navigator;
@@ -59,12 +61,8 @@ public:
 
 private:
     oled::SSD1351 *_display;
-    DigitalOut _haptic;
-    RtosTimer _haptic_timer;
+    HapticFeedback _haptic;
     std::stack<Page *> _nav_stack;
-
-    // Callback to stop the haptic
-    void stop_haptic();
 };
 
 #endif // NAVIGATOR_H_

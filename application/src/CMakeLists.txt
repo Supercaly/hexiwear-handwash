@@ -16,6 +16,7 @@ target_sources(${PROJECT_NAME}
     PRIVATE
         main.cpp
         collection/collector_thread.cpp
+        common/haptic_feedback.cpp
         prediction/predictor_thread.cpp
         ui/display_thread.cpp 
         ui/menu/navigator.cpp
