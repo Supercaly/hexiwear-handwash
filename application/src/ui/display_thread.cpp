@@ -1,17 +1,17 @@
 #include "display_thread.h"
 #include "common/global_thread_vars.h"
-#include "data/label.h"
 #include "common/log.h"
+#include "data/label.h"
 
-#include "generated/resources/menu_resources.h"
 #include "menu/menu.h"
 #include "menu/navigator.h"
 #include "menu/stats_page.h"
 #include "menu/wrist_page.h"
+#include "resources/menu_resources.h"
 
-#include "Hexi_KW40Z/Hexi_KW40Z.h"
+#include "kw40z.h"
 #include "mbed.h"
-#include "oled_ssd1351/oled_ssd1351.h"
+#include "oled_ssd1351.h"
 #include <stdint.h>
 
 oled::SSD1351 g_oled(PTB22, PTB21, PTC13, PTB20, PTE6, PTD15);
@@ -65,14 +65,13 @@ void display_thread_loop()
 
     while (true)
     {
-        osEvent event = g_labels_queue.get();
-        if (event.status == osEventMessage)
+        Label *label;
+        if (g_labels_queue.try_get_for(Kernel::wait_for_u32_forever, &label))
         {
             // Got a new label from predictor
-            Label label = *(Label *)event.value.p;
-            log_info("Got label %s\n\n", label_to_cstr(label));
+            log_info("Got label %s\n\n", label_to_cstr(*label));
 
-            switch (label)
+            switch (*label)
             {
             case Label::NONE:
                 stats_page.update_none();

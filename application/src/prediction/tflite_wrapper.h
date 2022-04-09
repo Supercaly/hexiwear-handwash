@@ -4,12 +4,12 @@
 #include "data/label.h"
 #include "common/log.h"
 
-#include "generated/model/handwash_model.h"
-#include "tensorflow/tensorflow/lite/micro/all_ops_resolver.h"
-#include "tensorflow/tensorflow/lite/micro/micro_error_reporter.h"
-#include "tensorflow/tensorflow/lite/micro/micro_interpreter.h"
-#include "tensorflow/tensorflow/lite/micro/system_setup.h"
-#include "tensorflow/tensorflow/lite/schema/schema_generated.h"
+#include "model/handwash_model.h"
+#include "tensorflow/lite/micro/all_ops_resolver.h"
+#include "tensorflow/lite/micro/micro_error_reporter.h"
+#include "tensorflow/lite/micro/micro_interpreter.h"
+#include "tensorflow/lite/micro/system_setup.h"
+#include "tensorflow/lite/schema/schema_generated.h"
 
 // Represent an error during Tensorflow lite execution.
 enum class TFliteError

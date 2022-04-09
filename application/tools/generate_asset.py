@@ -20,6 +20,13 @@ import os
 from pathlib import Path
 import argparse
 
+print_messages = False
+
+# Print a message only if print_messages is True
+def message(msg):
+    if print_messages:
+        print(msg)
+
 # converts list of bytes to int
 def bytes_to_int(bs):
     return int.from_bytes([int.from_bytes(a, 'little') for a in bs], 'little')
@@ -45,14 +52,14 @@ class Image:
 
         # read DIB header name
         dib_header = bytes_to_int(bs[:4])
-        print(f"DIB header:  {dib_header}")
+        message(f"DIB header:  {dib_header}")
 
         # read full DIB header
         full_dib_header = bs[:dib_header]
 
         # read image of version BITMAPINFOHEADER 
         if dib_header == 40:
-            print("  DIB header type: BITMAPINFOHEADER")
+            message("  DIB header type: BITMAPINFOHEADER")
 
             self.img_width = bytes_to_int(full_dib_header[4:8])
             self.img_height = bytes_to_int(full_dib_header[8:12])
@@ -63,18 +70,18 @@ class Image:
             vres = bytes_to_int(full_dib_header[28:32])
             colors = bytes_to_int(full_dib_header[32:36])
 
-            print(f"  size:            {self.img_width}x{self.img_height}")
-            print(f"  bit per pixel:   {self.bit_count}")
-            print(f"  compression:     {self.compression}")
-            print(f"  image size:      {self.size}")
-            print(f"  pixel per meter: {hres}x{vres}")
-            print(f"  colors:          {colors}")
+            message(f"  size:            {self.img_width}x{self.img_height}")
+            message(f"  bit per pixel:   {self.bit_count}")
+            message(f"  compression:     {self.compression}")
+            message(f"  image size:      {self.size}")
+            message(f"  pixel per meter: {hres}x{vres}")
+            message(f"  colors:          {colors}")
 
             raw = bs[40:]
             bs = bs[self.size:]
             
-            print(f"  data bytes: {len(raw)}")
-            print(f"  Remaining bytes: {len(bs)}")
+            message(f"  data bytes: {len(raw)}")
+            message(f"  Remaining bytes: {len(bs)}")
 
             if self.bit_count != 24:
                 print(f"ERROR: bmp image has {self.bit_count}bpp, but must have 24bpp to be processed!")

@@ -1,8 +1,7 @@
 #include "navigator.h"
 
 Navigator::Navigator(oled::SSD1351 *oled, Page *root) : _display(oled),
-                                                        _haptic(PTB9),
-                                                        _haptic_timer(this, &Navigator::stop_haptic, osTimerOnce)
+                                                        _haptic(PTB9)
 {
     _display->dim_screen_off();
     _nav_stack.push(root);
@@ -52,19 +51,12 @@ void Navigator::navigate_back()
     }
 }
 
-void Navigator::do_haptic()
-{
-    _haptic_timer.start(50);
-    _haptic = 1;
-}
-
-void Navigator::stop_haptic()
-{
-    _haptic = 0;
-    _haptic_timer.stop();
-}
-
 void Navigator::redraw()
 {
     _nav_stack.top()->on_draw(_display);
+}
+
+void Navigator::do_haptic()
+{
+    _haptic.vibrate();
 }

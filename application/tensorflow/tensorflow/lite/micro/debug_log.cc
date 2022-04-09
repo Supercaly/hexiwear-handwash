@@ -42,7 +42,6 @@ limitations under the License.
 
 extern "C" void DebugLog(const char* s) {
 #ifndef TF_LITE_STRIP_ERROR_STRINGS
-  Serial ps(USBTX, USBRX);
-  ps.printf("%s", s);
+  printf("%s", s);
 #endif
 }

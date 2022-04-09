@@ -5,6 +5,14 @@
 
 #include "mbed.h"
 
+// Override default console for enabling printfs
+BufferedSerial serial_out(USBTX, USBRX, 9600);
+
+FileHandle *mbed::mbed_override_console(int fd)
+{
+    return &serial_out;
+}
+
 // Define global thread variables declared in global_thread_vars.h
 Mutex g_sensors_lock;
 RawSensorData g_raw_sensor_data;
@@ -23,7 +31,7 @@ int main()
     while (true)
     {
         status_led = !status_led;
-        wait_ms(500);
+        ThisThread::sleep_for(500ms);
     }
 
     return 0;
