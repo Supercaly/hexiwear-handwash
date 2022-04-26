@@ -23,4 +23,5 @@ target_sources(${PROJECT_NAME}
         ui/menu/wrist_page.cpp
         ui/menu/menu.cpp
         ui/menu/stats_page.cpp
+        ui/menu/recorder_page.cpp
 )

@@ -7,6 +7,7 @@
 #include "menu/navigator.h"
 #include "menu/stats_page.h"
 #include "menu/wrist_page.h"
+#include "menu/recorder_page.h"
 #include "resources/menu_resources.h"
 
 #include "kw40z.h"
@@ -19,6 +20,7 @@ KW40Z kw40z_device(PTE24, PTE25);
 
 WristPage wrist_page;
 StatsPage stats_page(&menu_nav);
+RecorderPage recorder_page;
 MenuItem settings_menu_wrist = {
     .image = wrist_menu_bmp,
     .item = &wrist_page};
@@ -27,11 +29,15 @@ Menu settings_menu(settings_menu_list, 1);
 MenuItem main_menu_settings = {
     .image = settings_menu_bmp,
     .item = &settings_menu};
+MenuItem main_menu_rec = {
+    .image = recorder_menu_bmp,
+    .item = &recorder_page
+};
 MenuItem main_menu_stats = {
     .image = stats_menu_bmp,
     .item = &stats_page};
-MenuItem main_menu_list[] = {main_menu_settings, main_menu_stats};
-Menu main_menu(main_menu_list, 2);
+MenuItem main_menu_list[] = {main_menu_settings, main_menu_rec, main_menu_stats};
+Menu main_menu(main_menu_list, 3);
 
 Navigator menu_nav(&g_oled, &main_menu);
 
