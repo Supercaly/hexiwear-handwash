@@ -3,7 +3,7 @@
 #
 # Note: This script works only with .bmp images that uses the following format:
 #   DIB header:      BITMAPINFOHEADER
-#   size:            96x96
+#   size:            any
 #   bit per pixel:   24
 #   compression:     BI_RGB
 # 
@@ -92,7 +92,7 @@ class Image:
             row = 0
             col = 0
             row_size = ceil(self.bit_count*self.img_width/32)*4
-            while row < self.img_width:
+            while row < self.img_height:
                 while col < row_size:
                     r = int.from_bytes(raw[row*row_size+col+2], 'little')
                     g = int.from_bytes(raw[row*row_size+col+1], 'little')
@@ -190,3 +190,5 @@ if __name__ == "__main__":
         for img in images:
             c_file.write(c_array_def(img))
             c_file.write("\n")
+
+    print(f"Asset generation completed!")
