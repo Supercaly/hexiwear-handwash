@@ -22,6 +22,7 @@ add_subdirectory(oled_ssd1351)
 target_link_libraries(${PROJECT_NAME} 
     mbed-os
     mbed-events
+    mbed-storage
     hexiwear_FXAS21002
     hexiwear_FXOS8700
     hexiwear_kw40z
