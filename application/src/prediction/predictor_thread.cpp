@@ -126,6 +126,8 @@ static float *compute_features(RawSensorData *data, float hand)
         hand,
     };
 
+    g_data_recorder.record_data();
+
     return input_data;
 }
 

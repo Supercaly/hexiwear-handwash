@@ -1,4 +1,5 @@
 #include "recorder_page.h"
+#include "common/global_thread_vars.h"
 #include "resources/menu_resources.h"
 
 RecorderPage::RecorderPage()
@@ -18,7 +19,9 @@ void RecorderPage::draw(oled::SSD1351 *display, oled::Transition t)
 void RecorderPage::on_draw(oled::SSD1351 *display)
 {
     display->set_dynamic_area(_area);
-    display->draw_image(_recording ? stop_btn_bmp : start_btn_bmp);
+    display->draw_image(g_data_recorder.is_recording()
+                            ? stop_btn_bmp
+                            : start_btn_bmp);
 }
 
 void RecorderPage::event_up(Navigator *nav) {}
@@ -34,6 +37,13 @@ void RecorderPage::event_left(Navigator *nav)
 void RecorderPage::event_right(Navigator *nav)
 {
     nav->do_haptic();
-    _recording = !_recording;
+    if (g_data_recorder.is_recording())
+    {
+        g_data_recorder.stop();
+    }
+    else
+    {
+        g_data_recorder.start();
+    }
     nav->redraw();
 }

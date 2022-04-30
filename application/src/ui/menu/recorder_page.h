@@ -18,8 +18,6 @@ public:
 
 private:
     oled::DynamicArea _area;
-    // TODO: Use a global recorder
-    bool _recording;
 };
 
 #endif // RECORDER_PAGE_H_
