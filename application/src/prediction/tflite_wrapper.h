@@ -59,7 +59,7 @@ public:
         _model = tflite::GetModel(g_handwash_model_data);
         if (_model->version() != TFLITE_SCHEMA_VERSION)
         {
-            log_error("TFliteWrapper: provided model has schema version %d, "
+            log_error("TFliteWrapper: provided model has schema version %lu, "
                       "but supported version is %d.\n",
                       _model->version(), TFLITE_SCHEMA_VERSION);
             return TFliteError::VERSION_MISMATCH;
