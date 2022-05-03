@@ -12,12 +12,12 @@ public:
     ~RawSensorData() {}
     RawSensorData(const RawSensorData &other)
     {
-        memcpy(ax, other.ax, RAW_SENSOR_DATA_BLOCK_CAP);
-        memcpy(ay, other.ay, RAW_SENSOR_DATA_BLOCK_CAP);
-        memcpy(az, other.az, RAW_SENSOR_DATA_BLOCK_CAP);
-        memcpy(gx, other.gx, RAW_SENSOR_DATA_BLOCK_CAP);
-        memcpy(gy, other.gy, RAW_SENSOR_DATA_BLOCK_CAP);
-        memcpy(gz, other.gz, RAW_SENSOR_DATA_BLOCK_CAP);
+        memcpy(ax, other.ax, sizeof(float) * RAW_SENSOR_DATA_BLOCK_CAP);
+        memcpy(ay, other.ay, sizeof(float) * RAW_SENSOR_DATA_BLOCK_CAP);
+        memcpy(az, other.az, sizeof(float) * RAW_SENSOR_DATA_BLOCK_CAP);
+        memcpy(gx, other.gx, sizeof(float) * RAW_SENSOR_DATA_BLOCK_CAP);
+        memcpy(gy, other.gy, sizeof(float) * RAW_SENSOR_DATA_BLOCK_CAP);
+        memcpy(gz, other.gz, sizeof(float) * RAW_SENSOR_DATA_BLOCK_CAP);
     }
 
     float ax[RAW_SENSOR_DATA_BLOCK_CAP];
