@@ -8,6 +8,7 @@
 #include "menu/recorder_page.h"
 #include "menu/stats_page.h"
 #include "menu/wrist_page.h"
+#include "menu/export_page.h"
 #include "resources/menu_resources.h"
 
 #include "kw40z.h"
@@ -21,11 +22,15 @@ KW40Z kw40z_device(PTE24, PTE25);
 WristPage wrist_page;
 StatsPage stats_page(&menu_nav);
 RecorderPage recorder_page;
+ExportPage export_page;
 MenuItem settings_menu_wrist = {
     .image = wrist_menu_bmp,
     .item = &wrist_page};
-MenuItem settings_menu_list[] = {settings_menu_wrist};
-Menu settings_menu(settings_menu_list, 1);
+MenuItem settings_menu_export = {
+    .image = export_to_sd_menu_bmp,
+    .item = &export_page};
+MenuItem settings_menu_list[] = {settings_menu_wrist, settings_menu_export};
+Menu settings_menu(settings_menu_list, 2);
 MenuItem main_menu_settings = {
     .image = settings_menu_bmp,
     .item = &settings_menu};

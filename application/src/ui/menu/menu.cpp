@@ -35,6 +35,7 @@ void Menu::event_down(Navigator *nav)
 void Menu::event_left(Navigator *nav)
 {
     nav->do_haptic();
+    _current = 0;
     nav->navigate_back();
 }
 

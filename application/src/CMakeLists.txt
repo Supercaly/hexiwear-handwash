@@ -25,4 +25,5 @@ target_sources(${PROJECT_NAME}
         ui/menu/menu.cpp
         ui/menu/stats_page.cpp
         ui/menu/recorder_page.cpp
+        ui/menu/export_page.cpp
 )
