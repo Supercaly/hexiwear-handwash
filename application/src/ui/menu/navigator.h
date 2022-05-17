@@ -56,13 +56,16 @@ public:
     // Respond to an event vibrating the device (haptic feedback)
     void do_haptic();
 
-    // Return true if the given page is currently on top of the navigation stack 
+    // Return true if the given page is currently on top of the navigation stack
     bool is_top(Page *p) { return _nav_stack.top() == p; }
 
 private:
     oled::SSD1351 *_display;
     HapticFeedback _haptic;
     std::stack<Page *> _nav_stack;
+    
+    Thread _btn_dispatcher_thread;
+    EventQueue _btn_event_queue;
 };
 
 #endif // NAVIGATOR_H_

@@ -10,7 +10,9 @@ void Menu::draw(oled::SSD1351 *display, oled::Transition t)
     display->draw_screen(_items[_current].image, t);
 }
 
-void Menu::on_draw(oled::SSD1351 *display) {}
+void Menu::on_draw(oled::SSD1351 *display) {
+    // TODO: Draw menu arrows and remove them from static asset
+}
 
 void Menu::event_up(Navigator *nav)
 {

@@ -3,6 +3,8 @@
 Navigator::Navigator(oled::SSD1351 *oled, Page *root) : _display(oled),
                                                         _haptic(PTB9)
 {
+    _btn_dispatcher_thread.start(callback(&_btn_event_queue, &EventQueue::dispatch_forever));
+
     _display->dim_screen_off();
     _nav_stack.push(root);
     _nav_stack.top()->draw(_display, oled::Transition::NONE);
@@ -13,22 +15,22 @@ Navigator::~Navigator() {}
 
 void Navigator::on_key_up()
 {
-    _nav_stack.top()->event_up(this);
+    _btn_event_queue.call(_nav_stack.top(), &Page::event_up, this);
 }
 
 void Navigator::on_key_down()
 {
-    _nav_stack.top()->event_down(this);
+    _btn_event_queue.call(_nav_stack.top(), &Page::event_down, this);
 }
 
 void Navigator::on_key_left()
 {
-    _nav_stack.top()->event_left(this);
+    _btn_event_queue.call(_nav_stack.top(), &Page::event_left, this);
 }
 
 void Navigator::on_key_right()
 {
-    _nav_stack.top()->event_right(this);
+    _btn_event_queue.call(_nav_stack.top(), &Page::event_right, this);
 }
 
 void Navigator::navigate_to(Page *to)
