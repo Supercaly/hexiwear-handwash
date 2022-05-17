@@ -28,12 +28,23 @@ void DataRecorder::stop()
     }
 }
 
-void DataRecorder::record_data()
+void DataRecorder::record_data(Label label, float *feat_data, size_t feat_sz, RawSensorData *raw_data)
 {
     if (_recording && _out_file != NULL)
     {
-        fprintf(_out_file, "new data\n");
-        printf("write to logs\n");
+        // put header bytes
+        fwrite("--bk--", sizeof(char), 6, _out_file);
+        // put result label
+        fwrite((uint8_t *)&label, sizeof(uint8_t), 1, _out_file);
+        // put features
+        fwrite(feat_data, sizeof(float), feat_sz, _out_file);
+        // put raw data
+        // fwrite(raw_data->ax, sizeof(float), RAW_SENSOR_DATA_BLOCK_CAP, _out_file);
+        // fwrite(raw_data->ay, sizeof(float), RAW_SENSOR_DATA_BLOCK_CAP, _out_file);
+        // fwrite(raw_data->az, sizeof(float), RAW_SENSOR_DATA_BLOCK_CAP, _out_file);
+        // fwrite(raw_data->gx, sizeof(float), RAW_SENSOR_DATA_BLOCK_CAP, _out_file);
+        // fwrite(raw_data->gy, sizeof(float), RAW_SENSOR_DATA_BLOCK_CAP, _out_file);
+        // fwrite(raw_data->gz, sizeof(float), RAW_SENSOR_DATA_BLOCK_CAP, _out_file);
     }
 }
 
@@ -47,10 +58,11 @@ bool DataRecorder::open_log_file()
     }
     else
     {
-        _out_file = fopen("/sd/raw_data.txt", "w+");
+        _out_file = fopen("/fs/raw_data.txt", "wb+");
         if (_out_file == NULL)
         {
-            log_error("Data Recorder: cannot open file log file\n");
+            log_error("Data Recorder: cannot open log file %s(%d)\n", strerror(errno), errno);
+            fs->unmount();
         }
         return _out_file != NULL;
     }

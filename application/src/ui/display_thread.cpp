@@ -5,9 +5,9 @@
 
 #include "menu/menu.h"
 #include "menu/navigator.h"
+#include "menu/recorder_page.h"
 #include "menu/stats_page.h"
 #include "menu/wrist_page.h"
-#include "menu/recorder_page.h"
 #include "resources/menu_resources.h"
 
 #include "kw40z.h"
@@ -31,8 +31,7 @@ MenuItem main_menu_settings = {
     .item = &settings_menu};
 MenuItem main_menu_rec = {
     .image = recorder_menu_bmp,
-    .item = &recorder_page
-};
+    .item = &recorder_page};
 MenuItem main_menu_stats = {
     .image = stats_menu_bmp,
     .item = &stats_page};

@@ -3,8 +3,9 @@
 #include "prediction/predictor_thread.h"
 #include "ui/display_thread.h"
 
-#include "mbed.h"
 #include "FATFileSystem.h"
+#include "LittleFileSystem.h"
+#include "mbed.h"
 
 // Override default console for enabling printfs
 FileHandle *mbed::mbed_override_console(int fd)
@@ -16,7 +17,8 @@ FileHandle *mbed::mbed_override_console(int fd)
 // Define default filesystem to be the sd card
 FileSystem *FileSystem::get_default_instance()
 {
-    static FATFileSystem fs("sd");
+    // static FATFileSystem fs("fs");
+    static LittleFileSystem fs("fs");
     return &fs;
 }
 

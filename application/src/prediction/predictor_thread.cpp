@@ -98,7 +98,7 @@ static float *compute_features(RawSensorData *data, float hand)
     std_gy = sqrt(sum_gy / (RAW_SENSOR_DATA_BLOCK_CAP - 1));
     std_gz = sqrt(sum_gz / (RAW_SENSOR_DATA_BLOCK_CAP - 1));
 
-    static float input_data[25] = {
+    static float input_data[FEATURES_SIZE] = {
         avg_ax,
         avg_ay,
         avg_az,
@@ -125,8 +125,6 @@ static float *compute_features(RawSensorData *data, float hand)
         min_gz,
         hand,
     };
-
-    g_data_recorder.record_data();
 
     return input_data;
 }
@@ -165,6 +163,11 @@ void predictor_thread_loop()
         {
             log_error("TFliteWrapper: %s\n", tflite_error_to_cstr(status));
         }
+
+        // log data raw data, processed features and computed label
+        g_data_recorder.record_data(predicted_label,
+                                    features, FEATURES_SIZE,
+                                    local_samples);
 
         delete local_samples;
 
