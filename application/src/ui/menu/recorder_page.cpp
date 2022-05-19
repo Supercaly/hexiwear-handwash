@@ -30,7 +30,6 @@ void RecorderPage::event_down(Navigator *nav) {}
 
 void RecorderPage::event_left(Navigator *nav)
 {
-    nav->do_haptic();
     nav->navigate_back();
 }
 

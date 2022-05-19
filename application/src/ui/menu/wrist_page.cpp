@@ -29,7 +29,6 @@ void WristPage::event_down(Navigator *nav) {}
 
 void WristPage::event_left(Navigator *nav)
 {
-    nav->do_haptic();
     nav->navigate_back();
 }
 

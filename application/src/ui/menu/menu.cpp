@@ -34,13 +34,11 @@ void Menu::event_down(Navigator *nav)
 
 void Menu::event_left(Navigator *nav)
 {
-    nav->do_haptic();
     _current = 0;
     nav->navigate_back();
 }
 
 void Menu::event_right(Navigator *nav)
 {
-    nav->do_haptic();
     nav->navigate_to(_items[_current].item);
 }
