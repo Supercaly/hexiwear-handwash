@@ -18,6 +18,7 @@ target_sources(${PROJECT_NAME}
         collection/collector_thread.cpp
         common/haptic_feedback.cpp
         common/data_recorder.cpp
+        common/data_exporter.cpp
         prediction/predictor_thread.cpp
         ui/display_thread.cpp 
         ui/menu/navigator.cpp
