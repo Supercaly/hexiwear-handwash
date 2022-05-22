@@ -18,6 +18,7 @@ public:
 
 private:
     oled::DynamicArea _area;
+    const char *_txt;
 };
 
 #endif // EXPORT_PAGE_H_

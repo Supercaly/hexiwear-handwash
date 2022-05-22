@@ -1,13 +1,16 @@
 #include "export_page.h"
+#include "common/global_thread_vars.h"
+#include "common/log.h"
 #include "resources/menu_resources.h"
 
 ExportPage::ExportPage()
 {
-    // _area = {
-    //     .xCrd = 50,
-    //     .yCrd = 81,
-    //     .width = 44,
-    //     .height = 15};
+    _txt = "Dock the\nHEXIWEAR";
+    _area = {
+        .xCrd = 10,
+        .yCrd = 23,
+        .width = 76,
+        .height = 50};
 }
 
 void ExportPage::draw(oled::SSD1351 *display, oled::Transition t)
@@ -17,10 +20,8 @@ void ExportPage::draw(oled::SSD1351 *display, oled::Transition t)
 
 void ExportPage::on_draw(oled::SSD1351 *display)
 {
-    // display->set_dynamic_area(_area);
-    // display->draw_image(g_data_recorder.is_recording()
-    //                         ? stop_btn_bmp
-    //                         : start_btn_bmp);
+    display->set_dynamic_area(_area);
+    display->text_box(_txt);
 }
 
 void ExportPage::event_up(Navigator *nav) {}
@@ -29,11 +30,16 @@ void ExportPage::event_down(Navigator *nav) {}
 
 void ExportPage::event_left(Navigator *nav)
 {
-    nav->do_haptic();
     nav->navigate_back();
 }
 
 void ExportPage::event_right(Navigator *nav)
 {
     nav->do_haptic();
+    _txt = "exporting...";
+    nav->redraw();
+
+    bool res = g_data_exporter.export_data();
+    _txt = res ? "done" : "error";
+    nav->redraw();
 }
