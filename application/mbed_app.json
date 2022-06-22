@@ -3,7 +3,14 @@
         "HEXIWEAR": {
             "platform.stdio-baud-rate": 9600,
             "platform.stdio-buffered-serial": 1,
-            "target.printf_lib": "std"
+            "target.printf_lib": "std",
+            "target.features_add": [
+                "STORAGE"
+            ],
+            "target.components_add": [
+                "SPIF",
+                "SD"
+            ]
         }
     }
 }

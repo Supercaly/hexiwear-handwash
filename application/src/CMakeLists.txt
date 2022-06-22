@@ -17,10 +17,14 @@ target_sources(${PROJECT_NAME}
         main.cpp
         collection/collector_thread.cpp
         common/haptic_feedback.cpp
+        common/data_recorder.cpp
+        common/data_exporter.cpp
         prediction/predictor_thread.cpp
         ui/display_thread.cpp 
         ui/menu/navigator.cpp
         ui/menu/wrist_page.cpp
         ui/menu/menu.cpp
         ui/menu/stats_page.cpp
+        ui/menu/recorder_page.cpp
+        ui/menu/export_page.cpp
 )

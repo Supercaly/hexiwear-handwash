@@ -3,20 +3,31 @@
 #include "prediction/predictor_thread.h"
 #include "ui/display_thread.h"
 
+#include "FATFileSystem.h"
+#include "LittleFileSystem.h"
 #include "mbed.h"
 
 // Override default console for enabling printfs
-BufferedSerial serial_out(USBTX, USBRX, 9600);
-
 FileHandle *mbed::mbed_override_console(int fd)
 {
+    static BufferedSerial serial_out(USBTX, USBRX, 9600);
     return &serial_out;
+}
+
+// Define default filesystem to be the sd card
+FileSystem *FileSystem::get_default_instance()
+{
+    // static FATFileSystem fs("fs");
+    static LittleFileSystem fs("fs");
+    return &fs;
 }
 
 // Define global thread variables declared in global_thread_vars.h
 Mutex g_sensors_lock;
 RawSensorData g_raw_sensor_data;
 Queue<Label, 5> g_labels_queue;
+DataRecorder g_data_recorder;
+DataExporter g_data_exporter;
 
 int main()
 {

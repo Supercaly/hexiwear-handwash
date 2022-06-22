@@ -65,7 +65,6 @@ void StatsPage::event_down(Navigator *nav) {}
 
 void StatsPage::event_left(Navigator *nav)
 {
-    nav->do_haptic();
     nav->navigate_back();
 }
 
