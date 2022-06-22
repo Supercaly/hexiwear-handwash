@@ -5,6 +5,11 @@
 
 #include <stdint.h>
 
+#define TOP_ARROW_X 7
+#define TOP_ARROW_Y 31
+#define BOTTOM_ARROW_X 7
+#define BOTTOM_ARROW_Y 58
+
 // Struct representing a single menu item
 // This struct has an image to display as splash 
 // and a page to open
