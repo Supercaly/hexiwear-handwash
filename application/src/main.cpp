@@ -27,6 +27,7 @@ Mutex g_sensors_lock;
 RawSensorData g_raw_sensor_data;
 Queue<Label, 5> g_labels_queue;
 DataRecorder g_data_recorder;
+DataExporter g_data_exporter;
 
 int main()
 {
