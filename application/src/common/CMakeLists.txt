@@ -1,15 +1,11 @@
 # Copyright (c) 2022 ARM Limited. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-add_subdirectory(collection)
-add_subdirectory(common)
-add_subdirectory(data)
-add_subdirectory(prediction)
-add_subdirectory(ui)
-
 target_include_directories(${PROJECT_NAME} PRIVATE .)
 
 target_sources(${PROJECT_NAME} 
     PRIVATE
-        main.cpp
+        haptic_feedback.cpp
+        data_recorder.cpp
+        data_exporter.cpp
 )
