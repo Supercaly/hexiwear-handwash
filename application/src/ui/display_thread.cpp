@@ -5,10 +5,10 @@
 
 #include "menu/menu.h"
 #include "menu/navigator.h"
-#include "menu/recorder_page.h"
-#include "menu/stats_page.h"
-#include "menu/wrist_page.h"
-#include "menu/export_page.h"
+#include "menu/pages/recorder_page.h"
+#include "menu/pages/stats_page.h"
+#include "menu/pages/wrist_page.h"
+#include "menu/pages/export_page.h"
 #include "resources/menu_resources.h"
 
 #include "kw40z.h"

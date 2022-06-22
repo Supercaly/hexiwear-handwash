@@ -22,9 +22,9 @@ target_sources(${PROJECT_NAME}
         prediction/predictor_thread.cpp
         ui/display_thread.cpp 
         ui/menu/navigator.cpp
-        ui/menu/wrist_page.cpp
         ui/menu/menu.cpp
-        ui/menu/stats_page.cpp
-        ui/menu/recorder_page.cpp
-        ui/menu/export_page.cpp
+        ui/menu/pages/wrist_page.cpp
+        ui/menu/pages/stats_page.cpp
+        ui/menu/pages/recorder_page.cpp
+        ui/menu/pages/export_page.cpp
 )
