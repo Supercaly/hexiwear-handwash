@@ -103,6 +103,8 @@ class Image:
                     col+=3
                 col = 0
                 row+=1
+
+            self.img_width = ceil(row_size/self.byte_count())
             self.bit_count = 16
             self.size = self.img_width * self.img_height * 2
             self.data = result
@@ -132,6 +134,20 @@ class Image:
 
     def byte_count(self):
         return int(self.bit_count/8)
+
+    # print the image in black and white to the console
+    def _print(self):
+        row_size = ceil((self.bit_count*self.img_width/32)*4)
+        row = 0
+        col = 0
+        while row < self.img_height:
+            row_val=""
+            while col < row_size:
+                row_val += " " if int.from_bytes(self.data[row*row_size+col], 'little') == 0 else "#"
+                col += ceil(row_size/self.img_width)
+            row+=1
+            col = 0
+            print(row_val)
 
    
 # format raw data as a string with a c array
