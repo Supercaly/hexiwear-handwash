@@ -1,9 +1,25 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
-// Enables loggin to the serial output.
-#define LOG_ENABLED
+#include "data/wrist.h"
 
-#define RAW_SENSOR_DATA_BLOCK_CAP 1000
+#include "mbed.h"
+
+class Config
+{
+public:
+    Config();
+    ~Config();
+
+    void init();
+
+    Wrist get_wrist() { return _wrist; }
+    void toggle_wrist();
+
+private:
+    FILE *_config_file;
+
+    Wrist _wrist;
+};
 
 #endif // CONFIG_H_

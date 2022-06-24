@@ -132,8 +132,6 @@ static float *compute_features(RawSensorData *data, float hand)
 
 void predictor_thread_loop()
 {
-    // FIXME: Figure out a way to retrieve the current used hand
-    float hand = 0.0;
     RawSensorData *local_samples;
     auto tfwrapper = new TFliteWrapper<FEATURES_SIZE, OUT_SIZE, TENSOR_ARENA_SIZE>();
     TFliteError status;
@@ -155,7 +153,7 @@ void predictor_thread_loop()
         g_sensors_lock.unlock();
         // Exit critical section
 
-        float *features = compute_features(local_samples, hand);
+        float *features = compute_features(local_samples, wrist_to_float(g_config.get_wrist()));
 
         Label predicted_label;
         status = tfwrapper->predict_label(features, &predicted_label);

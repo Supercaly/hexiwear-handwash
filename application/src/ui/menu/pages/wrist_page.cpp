@@ -1,7 +1,8 @@
 #include "wrist_page.h"
+#include "global_thread_vars.h"
 #include "resources/menu_resources.h"
 
-WristPage::WristPage() : _wrist(0)
+WristPage::WristPage()
 {
     _area = {
         .xCrd = 20,
@@ -18,7 +19,7 @@ void WristPage::draw(oled::SSD1351 *display, oled::Transition t)
 void WristPage::on_draw(oled::SSD1351 *display)
 {
     display->set_dynamic_area(_area);
-    display->draw_image(_wrist
+    display->draw_image(g_config.get_wrist() == Wrist::LEFT
                             ? wrist_ct_left_bmp
                             : wrist_ct_right_bmp);
 }
@@ -35,6 +36,6 @@ void WristPage::event_left(Navigator *nav)
 void WristPage::event_right(Navigator *nav)
 {
     nav->do_haptic();
-    _wrist = !_wrist;
+    g_config.toggle_wrist();
     nav->redraw();
 }

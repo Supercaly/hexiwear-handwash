@@ -18,8 +18,6 @@ public:
 
 private:
     oled::DynamicArea _area;
-    // TODO: Move this into global settings
-    int _wrist;
 };
 
 #endif // WRIST_PAGE_H_

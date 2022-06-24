@@ -1,9 +1,9 @@
 #ifndef RAW_SENSOR_DATA_H_
 #define RAW_SENSOR_DATA_H_
 
-#include "common/config.h"
-
 #include <string.h>
+
+#define RAW_SENSOR_DATA_BLOCK_CAP 1000
 
 class RawSensorData
 {
