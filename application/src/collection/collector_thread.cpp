@@ -1,5 +1,5 @@
 #include "collector_thread.h"
-#include "common/config.h"
+#include "data/raw_sensor_data.h"
 #include "common/global_thread_vars.h"
 #include "common/log.h"
 

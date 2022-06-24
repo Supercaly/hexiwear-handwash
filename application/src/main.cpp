@@ -14,10 +14,9 @@ FileHandle *mbed::mbed_override_console(int fd)
     return &serial_out;
 }
 
-// Define default filesystem to be the sd card
+// Define default filesystem
 FileSystem *FileSystem::get_default_instance()
 {
-    // static FATFileSystem fs("fs");
     static LittleFileSystem fs("fs");
     return &fs;
 }

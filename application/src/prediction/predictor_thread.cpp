@@ -3,6 +3,7 @@
 #include "common/log.h"
 #include "data/raw_sensor_data.h"
 #include "tflite_wrapper.h"
+#include "data/wrist.h"
 
 #include "model/handwash_model.h"
 

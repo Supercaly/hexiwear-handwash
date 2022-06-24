@@ -1,7 +1,8 @@
 #ifndef LOG_H_
 #define LOG_H_
 
-#include "config.h"
+// Enables logging to the serial output.
+#define LOG_ENABLED
 
 #ifdef __cplusplus
 extern "C"

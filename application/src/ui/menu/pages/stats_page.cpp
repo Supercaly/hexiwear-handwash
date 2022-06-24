@@ -35,17 +35,6 @@ void StatsPage::on_draw(oled::SSD1351 *display)
     _text_prop.alignParam = TEXT_ALIGN_CENTER | TEXT_ALIGN_VCENTER;
     display->set_text_properties(&_text_prop);
 
-    // Workaround for the overlapping bug of oled (#1)
-    // On every write repaint the bg black to get rid of the old text
-    // TODO: Remove this after that bug has been fixed
-    // oled::DynamicArea bg_area = {
-    //     .xCrd = 57,
-    //     .yCrd = 11,
-    //     .width = 30,
-    //     .height = 14};
-    // display->set_dynamic_area(bg_area);
-    // display->draw_box(oled::Color::BLACK);
-
     display->set_dynamic_area(_none_area);
     sprintf(_str, "%d", _none_count);
     display->text_box(_str);
