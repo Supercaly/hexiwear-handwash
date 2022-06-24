@@ -34,6 +34,8 @@ int main()
     Thread sensor_thread;
     Thread prediction_thread;
     Thread display_thread;
+
+    g_config.init();
     sensor_thread.start(collector_thread_loop);
     prediction_thread.start(predictor_thread_loop);
     display_thread.start(display_thread_loop);
