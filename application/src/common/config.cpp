@@ -21,6 +21,7 @@ void Config::init()
         _config_file = fopen("/fs/config", "rb+");
         if (_config_file == NULL)
         {
+            // Config file not existing... create it
             _config_file = fopen("/fs/config", "wb+");
             if (_config_file == NULL)
             {
@@ -37,6 +38,7 @@ void Config::init()
         }
         else
         {
+            // Read previously stored configs
             fseek(_config_file, 0L, SEEK_SET);
             fread(&_wrist, sizeof(Wrist), 1, _config_file);
             fclose(_config_file);
@@ -51,6 +53,7 @@ void Config::toggle_wrist()
 {
     _wrist = _wrist == Wrist::LEFT ? Wrist::RIGHT : Wrist::LEFT;
 
+    // Open config file and update the wrist
     FileSystem *fs = FileSystem::get_default_instance();
     if (fs->mount(BlockDevice::get_default_instance()) < 0)
     {

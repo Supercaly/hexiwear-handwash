@@ -7,7 +7,6 @@
 
 #include "model/handwash_model.h"
 
-// TODO: Move those constants in config
 #define FEATURES_SIZE 25
 #define OUT_SIZE 3
 #define TENSOR_ARENA_SIZE 3000
