@@ -110,7 +110,7 @@ class Image:
             self.data = result
             self.flip_vertical()
         else:
-            print(f"ERROR: unknown dib header {dib_header}")
+            print(f"ERROR: '{self.path}' unknown dib header {dib_header}")
             sys.exit(1)
 
     # flip the image vertically
