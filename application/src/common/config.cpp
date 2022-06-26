@@ -44,8 +44,8 @@ void Config::init()
             fclose(_config_file);
         }
 
-        printf("Config:\n");
-        printf("  wrist: '%d'\n", _wrist);
+        log_info("Config:\n");
+        log_info("  wrist: '%d'\n", _wrist);
     }
 }
 
