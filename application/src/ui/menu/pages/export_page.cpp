@@ -5,11 +5,11 @@
 
 ExportPage::ExportPage()
 {
-    _txt = "Dock the\nHEXIWEAR";
+    _txt = "Dock the hexi\nand press\nexport";
     _area = {
-        .xCrd = 10,
+        .xCrd = 5,
         .yCrd = 23,
-        .width = 76,
+        .width = 86,
         .height = 50};
 }
 
@@ -21,6 +21,10 @@ void ExportPage::draw(oled::SSD1351 *display, oled::Transition t)
 void ExportPage::on_draw(oled::SSD1351 *display)
 {
     display->set_dynamic_area(_area);
+    oled::TextProperties prop = {0};
+    display->get_text_properties(&prop);
+    prop.alignParam = TEXT_ALIGN_CENTER | TEXT_ALIGN_VCENTER;
+    display->set_text_properties(&prop);
     display->text_box(_txt);
 }
 
@@ -40,6 +44,6 @@ void ExportPage::event_right(Navigator *nav)
     nav->redraw();
 
     bool res = g_data_exporter.export_data();
-    _txt = res ? "done" : "error";
+    _txt = res ? "File exported!" : "Error exporting\nto sd!";
     nav->redraw();
 }
