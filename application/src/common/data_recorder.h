@@ -25,9 +25,10 @@ public:
 
     // Returns true if there is an active recording session;
     // false otherwise
-    bool is_recording() { return _recording; }
+    bool is_recording();
 
 private:
+    Mutex _lock;
     bool _recording;
     FILE *_out_file;
 
