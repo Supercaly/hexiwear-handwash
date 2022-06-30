@@ -9,6 +9,11 @@ set(APP_TARGET application)
 
 include(${MBED_PATH}/tools/cmake/app.cmake)
 
+# Enable log in debug mode
+if ((CMAKE_BUILD_TYPE STREQUAL "develop") OR (CMAKE_BUILD_TYPE STREQUAL "debug"))
+    set(APP_LOG_ENABLED TRUE)
+endif()
+
 project(${APP_TARGET})
 
 add_executable(${PROJECT_NAME})

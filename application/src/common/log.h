@@ -1,9 +1,6 @@
 #ifndef LOG_H_
 #define LOG_H_
 
-// Enables logging to the serial output.
-#define LOG_ENABLED
-
 #ifdef __cplusplus
 extern "C"
 {
