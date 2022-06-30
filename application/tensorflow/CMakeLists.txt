@@ -1,8 +1,10 @@
 # Copyright (c) 2022 ARM Limited. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-target_include_directories(${PROJECT_NAME} 
-    PRIVATE 
+add_library(tensorflow INTERFACE)
+
+target_include_directories(tensorflow 
+    INTERFACE 
         .
         tensorflow/tensorflow
         third_party/ruy
@@ -15,8 +17,8 @@ target_include_directories(${PROJECT_NAME}
         third_party/flatbuffers/include/flatbuffers
 )
 
-target_sources(${PROJECT_NAME}
-    PRIVATE
+target_sources(tensorflow
+    INTERFACE
         tensorflow/lite/micro/kernels/elu.cc
         tensorflow/lite/micro/kernels/concatenation.cc
         tensorflow/lite/micro/kernels/squeeze.cc

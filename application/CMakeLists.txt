@@ -18,11 +18,13 @@ add_subdirectory(hexiwear_FXAS21002)
 add_subdirectory(hexiwear_FXOS8700)
 add_subdirectory(hexiwear_kw40z)
 add_subdirectory(oled_ssd1351)
+add_subdirectory(tensorflow)
 
 target_link_libraries(${PROJECT_NAME} 
     mbed-os
     mbed-events
     mbed-storage
+    tensorflow
     hexiwear_FXAS21002
     hexiwear_FXOS8700
     hexiwear_kw40z
@@ -30,7 +32,6 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 add_subdirectory(generated)
-add_subdirectory(tensorflow)
 add_subdirectory(src)
 
 mbed_set_post_build(${PROJECT_NAME})
