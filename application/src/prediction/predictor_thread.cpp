@@ -98,33 +98,32 @@ static float *compute_features(RawSensorData *data, float hand)
     std_gy = sqrt(sum_gy / (RAW_SENSOR_DATA_BLOCK_CAP - 1));
     std_gz = sqrt(sum_gz / (RAW_SENSOR_DATA_BLOCK_CAP - 1));
 
-    static float input_data[FEATURES_SIZE] = {
-        avg_ax,
-        avg_ay,
-        avg_az,
-        avg_gx,
-        avg_gy,
-        avg_gz,
-        std_ax,
-        std_ay,
-        std_az,
-        std_gx,
-        std_gy,
-        std_gz,
-        max_ax,
-        max_ay,
-        max_az,
-        max_gx,
-        max_gy,
-        max_gz,
-        min_ax,
-        min_ay,
-        min_az,
-        min_gx,
-        min_gy,
-        min_gz,
-        hand,
-    };
+    float *input_data = (float *)calloc(FEATURES_SIZE, sizeof(float));
+    input_data[0] = avg_ax;
+    input_data[1] = avg_ay;
+    input_data[2] = avg_az;
+    input_data[3] = avg_gx;
+    input_data[4] = avg_gy;
+    input_data[5] = avg_gz;
+    input_data[6] = std_ax;
+    input_data[7] = std_ay;
+    input_data[8] = std_az;
+    input_data[9] = std_gx;
+    input_data[10] = std_gy;
+    input_data[11] = std_gz;
+    input_data[12] = max_ax;
+    input_data[13] = max_ay;
+    input_data[13] = max_az;
+    input_data[14] = max_gx;
+    input_data[15] = max_gy;
+    input_data[16] = max_gz;
+    input_data[17] = min_ax;
+    input_data[18] = min_ay;
+    input_data[19] = min_az;
+    input_data[20] = min_gx;
+    input_data[21] = min_gy;
+    input_data[22] = min_gz;
+    input_data[23] = hand;
 
     return input_data;
 }
@@ -168,6 +167,7 @@ void predictor_thread_loop()
                                     local_samples);
 
         delete local_samples;
+        free(features);
 
         g_labels_queue.try_put(&predicted_label);
     }
