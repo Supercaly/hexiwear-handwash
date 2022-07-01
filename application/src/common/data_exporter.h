@@ -26,9 +26,14 @@ private:
         *_internal_f,
         *_sd_f;
 
+    Thread *_export_thread;
+    bool _export_success;
+    
     bool mount_fs(FileSystem *fs, BlockDevice *bd);
     bool open_file(const char *path, const char *mode, FILE **f);
     void format_data(FILE *file, void *data);
+
+    void export_thread();
 };
 
 #endif // DATA_EXPORTER_H_
