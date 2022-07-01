@@ -94,7 +94,7 @@ void DataExporter::export_thread()
             fseek(_internal_f, 0L, SEEK_END);
             data_size = ftell(_internal_f);
             fseek(_internal_f, 0L, SEEK_SET);
-            log_info("total internal file size: %ld bytes\n", data_size);
+            log_info("DataExporter: total file size: %ld bytes\n", data_size);
 
             data_buffer = malloc(data_size);
             if (data_buffer == NULL)
@@ -104,13 +104,7 @@ void DataExporter::export_thread()
             }
 
             fread(data_buffer, 1, data_size, _internal_f);
-            printf("log file: '");
-            for (int i = 0; i < data_size; i++)
-            {
-                printf("%02X ", ((char *)data_buffer)[i]);
-            }
-            printf("'\n");
-
+            
             // Close internal file and unmount internal filesystem
             fclose(_internal_f);
             _internal_f = nullptr;
