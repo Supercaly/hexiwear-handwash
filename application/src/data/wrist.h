@@ -7,7 +7,7 @@ enum Wrist
     RIGHT = 1
 };
 
-static float wrist_to_float(Wrist w)
+static inline float wrist_to_float(Wrist w)
 {
     return w ? 0.0 : 1.0;
 }

@@ -8,7 +8,7 @@ enum class Label
     SAN
 };
 
-static const char *label_to_cstr(Label label)
+static inline const char *label_to_cstr(Label label)
 {
     switch (label)
     {
