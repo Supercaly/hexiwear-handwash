@@ -2,7 +2,9 @@
 #include "common/global_thread_vars.h"
 #include "common/log.h"
 
-DataExporter::DataExporter() : _export_success(false)
+DataExporter::DataExporter() : _export_success(false),
+                               _data_buffer(nullptr),
+                               _total_size(0L)
 {
     _internal_bd = BlockDevice::get_default_instance();
     _internal_fs = FileSystem::get_default_instance();
@@ -46,23 +48,74 @@ bool DataExporter::open_file(const char *path, const char *mode, FILE **f)
 
 void DataExporter::format_data(FILE *file, void *data)
 {
-    fprintf(file, "  {\n");
-    fprintf(file, "    \"label\": %d,\n", *((uint8_t *)data + 6));
-    fprintf(file, "    \"features\": [");
+    int offset = 6 * sizeof(char);
 
-    float *feats = (float *)((uint8_t *)data + 7);
-    for (int i = 0; i < 25; i++)
+    fprintf(file, "  {\n");
+    fprintf(file, "    \"label\": %d,\n", *((uint8_t *)data + offset));
+
+    // Format the features
+    fprintf(file, "    \"features\": ");
+    offset += 1 * sizeof(uint8_t);
+    float *feats = (float *)((uint8_t *)data + offset);
+    // TODO: Replace this number with a macro for features size
+    format_farray(file, feats, 25);
+    fprintf(file, ",\n");
+
+    // Format raw data by column
+    fprintf(file, "    \"raw\": {\n");
+    offset += 25 * sizeof(float);
+    // ax
+    fprintf(file, "      \"ax\": ");
+    float *ax = (float *)((uint8_t *)data + offset);
+    format_farray(file, ax, RAW_SENSOR_DATA_BLOCK_CAP);
+    fprintf(file, ",\n");
+    // ay
+    offset += RAW_SENSOR_DATA_BLOCK_CAP * sizeof(float);
+    fprintf(file, "      \"ay\": ");
+    float *ay = (float *)((uint8_t *)data + offset);
+    format_farray(file, ay, RAW_SENSOR_DATA_BLOCK_CAP);
+    fprintf(file, ",\n");
+    // az
+    offset += RAW_SENSOR_DATA_BLOCK_CAP * sizeof(float);
+    fprintf(file, "      \"az\": ");
+    float *az = (float *)((uint8_t *)data + offset);
+    format_farray(file, az, RAW_SENSOR_DATA_BLOCK_CAP);
+    fprintf(file, ",\n");
+    // gx
+    offset += RAW_SENSOR_DATA_BLOCK_CAP * sizeof(float);
+    fprintf(file, "      \"gx\": ");
+    float *gx = (float *)((uint8_t *)data + offset);
+    format_farray(file, gx, RAW_SENSOR_DATA_BLOCK_CAP);
+    fprintf(file, ",\n");
+    // gy
+    offset += RAW_SENSOR_DATA_BLOCK_CAP * sizeof(float);
+    fprintf(file, "      \"gy\": ");
+    float *gy = (float *)((uint8_t *)data + offset);
+    format_farray(file, gy, RAW_SENSOR_DATA_BLOCK_CAP);
+    fprintf(file, ",\n");
+    // gz
+    offset += RAW_SENSOR_DATA_BLOCK_CAP * sizeof(float);
+    fprintf(file, "      \"gz\": ");
+    float *gz = (float *)((uint8_t *)data + offset);
+    format_farray(file, gz, RAW_SENSOR_DATA_BLOCK_CAP);
+    fprintf(file, "\n");
+    fprintf(file, "    }\n");
+
+    fprintf(file, "  }");
+}
+
+void DataExporter::format_farray(FILE *file, float *a, int size)
+{
+    fprintf(file, "[");
+    for (int i = 0; i < size; i++)
     {
         if (i != 0)
         {
             fprintf(file, ",");
         }
-        fprintf(file, "%f", feats[i]);
+        fprintf(file, "%f", a[i]);
     }
-    fprintf(file, "]\n");
-    // TODO: Format the raw data when they'll be recorded
-
-    fprintf(file, "  }");
+    fprintf(file, "]");
 }
 
 void DataExporter::export_thread()

@@ -28,10 +28,15 @@ private:
 
     Thread *_export_thread;
     bool _export_success;
+
+    void *_data_buffer;
+    long _total_size;
+    // long _chunk_size;
     
     bool mount_fs(FileSystem *fs, BlockDevice *bd);
     bool open_file(const char *path, const char *mode, FILE **f);
     void format_data(FILE *file, void *data);
+    void format_farray(FILE * file, float *a, int size);
 
     void export_thread();
 };
