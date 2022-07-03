@@ -45,12 +45,12 @@ void DataRecorder::record_data(Label label, float *feat_data, size_t feat_sz, Ra
         // put features
         fwrite(feat_data, sizeof(float), feat_sz, _out_file);
         // put raw data
-        // fwrite(raw_data->ax, sizeof(float), RAW_SENSOR_DATA_BLOCK_CAP, _out_file);
-        // fwrite(raw_data->ay, sizeof(float), RAW_SENSOR_DATA_BLOCK_CAP, _out_file);
-        // fwrite(raw_data->az, sizeof(float), RAW_SENSOR_DATA_BLOCK_CAP, _out_file);
-        // fwrite(raw_data->gx, sizeof(float), RAW_SENSOR_DATA_BLOCK_CAP, _out_file);
-        // fwrite(raw_data->gy, sizeof(float), RAW_SENSOR_DATA_BLOCK_CAP, _out_file);
-        // fwrite(raw_data->gz, sizeof(float), RAW_SENSOR_DATA_BLOCK_CAP, _out_file);
+        fwrite(raw_data->ax, sizeof(float), RAW_SENSOR_DATA_BLOCK_CAP, _out_file);
+        fwrite(raw_data->ay, sizeof(float), RAW_SENSOR_DATA_BLOCK_CAP, _out_file);
+        fwrite(raw_data->az, sizeof(float), RAW_SENSOR_DATA_BLOCK_CAP, _out_file);
+        fwrite(raw_data->gx, sizeof(float), RAW_SENSOR_DATA_BLOCK_CAP, _out_file);
+        fwrite(raw_data->gy, sizeof(float), RAW_SENSOR_DATA_BLOCK_CAP, _out_file);
+        fwrite(raw_data->gz, sizeof(float), RAW_SENSOR_DATA_BLOCK_CAP, _out_file);
     }
     _lock.unlock();
 }
