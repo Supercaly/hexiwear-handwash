@@ -35,6 +35,13 @@ int main()
     Thread prediction_thread;
     Thread display_thread;
 
+    // TODO: Postpone this reformatting logic to the first time it's used (config)
+    if (FileSystem::get_default_instance()->mount(BlockDevice::get_default_instance()) < 0)
+    {
+        printf("reformat %d\n", FileSystem::get_default_instance()->reformat(BlockDevice::get_default_instance()));
+        FileSystem::get_default_instance()->unmount();
+    }
+
     g_config.init();
     sensor_thread.start(collector_thread_loop);
     prediction_thread.start(predictor_thread_loop);
