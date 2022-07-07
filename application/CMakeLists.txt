@@ -3,43 +3,40 @@
 
 cmake_minimum_required(VERSION 3.19.0)
 
-set(MBED_PATH ${CMAKE_CURRENT_SOURCE_DIR}/mbed-os CACHE INTERNAL "")
+# Path Variables
+set(ROOT_DIR ${CMAKE_CURRENT_LIST_DIR})
+set(MBED_PATH ${ROOT_DIR}/mbed-os CACHE INTERNAL "")
 set(MBED_CONFIG_PATH ${CMAKE_CURRENT_BINARY_DIR} CACHE INTERNAL "")
-set(APP_TARGET application)
 
 include(${MBED_PATH}/tools/cmake/app.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/add_app_subdirectory.cmake)
 
 # Enable log in debug mode
 if ((CMAKE_BUILD_TYPE STREQUAL "develop") OR (CMAKE_BUILD_TYPE STREQUAL "debug"))
     set(APP_LOG_ENABLED TRUE)
 endif()
 
-project(${APP_TARGET})
+# Project Name
+project(application)
 
-add_executable(${PROJECT_NAME})
-
+# Include mbed-os and disable warnings
 add_subdirectory(${MBED_PATH})
-add_subdirectory(hexiwear_FXAS21002)
-add_subdirectory(hexiwear_FXOS8700)
-add_subdirectory(hexiwear_kw40z)
-add_subdirectory(oled_ssd1351)
-add_subdirectory(tensorflow)
+target_compile_options(mbed-os INTERFACE -w) # Disable all warnings from mbed-os core code
+target_compile_options(mbed-events INTERFACE -w) # Disable all warnings from mbed-os events code
 
-target_link_libraries(${PROJECT_NAME} 
-    mbed-os
-    mbed-events
-    mbed-storage
-    tensorflow
-    hexiwear_FXAS21002
-    hexiwear_FXOS8700
-    hexiwear_kw40z
-    oled_ssd1351
-)
+# Include Libraries
+add_subdirectory(${ROOT_DIR}/tensorflow)
 
-add_subdirectory(generated)
-add_subdirectory(src)
+# Ensure APP was specified
+if ("$ENV{APP}" STREQUAL "")
+    message(FATAL_ERROR "APP was not specified")
+else()
+    message(STATUS "App $ENV{APP} is being built")
+endif()
 
-mbed_set_post_build(${PROJECT_NAME})
+# Include apps
+add_app_subdirectory(app1)
+add_app_subdirectory(app2)
 
 option(VERBOSE_BUILD "Have a verbose build process")
 if(VERBOSE_BUILD)
