@@ -10,6 +10,7 @@ set(MBED_CONFIG_PATH ${CMAKE_CURRENT_BINARY_DIR} CACHE INTERNAL "")
 
 include(${MBED_PATH}/tools/cmake/app.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/add_app_subdirectory.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/get_all_targets.cmake)
 
 # Enable log in debug mode
 if ((CMAKE_BUILD_TYPE STREQUAL "develop") OR (CMAKE_BUILD_TYPE STREQUAL "debug"))
@@ -30,13 +31,19 @@ add_subdirectory(${ROOT_DIR}/tensorflow)
 # Ensure APP was specified
 if ("$ENV{APP}" STREQUAL "")
     message(FATAL_ERROR "APP was not specified")
-else()
-    message(STATUS "App $ENV{APP} is being built")
 endif()
 
 # Include apps
 add_app_subdirectory(app1)
 add_app_subdirectory(app2)
+
+# Ensure that a target exists for the APP
+get_all_targets(ALL_BUILDSYSTEM_TARGETS)
+if ($ENV{APP} IN_LIST ALL_BUILDSYSTEM_TARGETS)
+    message(STATUS "App '$ENV{APP}' is being built")
+else()
+    message(FATAL_ERROR "App '$ENV{APP}' is not an app target found in '${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt'")
+endif()
 
 option(VERBOSE_BUILD "Have a verbose build process")
 if(VERBOSE_BUILD)
