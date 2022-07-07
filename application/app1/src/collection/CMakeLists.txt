@@ -1,9 +1,9 @@
 # Copyright (c) 2022 ARM Limited. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-target_include_directories(${PROJECT_NAME} PRIVATE .)
+target_include_directories(${APP_NAME} PRIVATE .)
 
-target_sources(${PROJECT_NAME} 
+target_sources(${APP_NAME} 
     PRIVATE
         collector_thread.cpp
 )
