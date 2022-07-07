@@ -1,0 +1,8 @@
+# libraries
+oled_ssd1351/
+hexiwear_kw40z/
+hexiwear_FXAS21002/
+hexiwear_FXOS8700/
+
+# generated stuff
+generated/
