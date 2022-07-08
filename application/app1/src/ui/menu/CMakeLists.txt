@@ -3,9 +3,9 @@
 
 add_subdirectory(pages)
 
-target_include_directories(${PROJECT_NAME} PRIVATE .)
+target_include_directories(${APP_NAME} PRIVATE .)
 
-target_sources(${PROJECT_NAME} 
+target_sources(${APP_NAME} 
     PRIVATE
         navigator.cpp
         menu.cpp

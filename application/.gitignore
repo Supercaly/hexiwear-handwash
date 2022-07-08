@@ -1,14 +1,4 @@
-# mbed os' stuff
-BUILD/
-cmake_build/
+# mbed os stuff
 mbed-os/
-FXAS21002/
-FXOS8700/
-Hexi_OLED_SSD1351/
-oled_ssd1351/
-hexiwear_kw40z/
-hexiwear_FXAS21002/
-hexiwear_FXOS8700/
-
-# generated stuff
-generated/
+cmake_build/
+.mbedbuild

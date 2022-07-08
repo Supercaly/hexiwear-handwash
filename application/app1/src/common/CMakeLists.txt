@@ -1,9 +1,9 @@
 # Copyright (c) 2022 ARM Limited. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-target_include_directories(${PROJECT_NAME} PRIVATE .)
+target_include_directories(${APP_NAME} PRIVATE .)
 
-target_sources(${PROJECT_NAME} 
+target_sources(${APP_NAME} 
     PRIVATE
         config.cpp
         haptic_feedback.cpp
@@ -12,5 +12,5 @@ target_sources(${PROJECT_NAME}
 )
 
 if (APP_LOG_ENABLED)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE LOG_ENABLED)
+    target_compile_definitions(${APP_NAME} PRIVATE LOG_ENABLED)
 endif()

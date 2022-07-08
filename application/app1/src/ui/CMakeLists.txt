@@ -3,9 +3,9 @@
 
 add_subdirectory(menu)
 
-target_include_directories(${PROJECT_NAME} PRIVATE .)
+target_include_directories(${APP_NAME} PRIVATE .)
 
-target_sources(${PROJECT_NAME} 
+target_sources(${APP_NAME} 
     PRIVATE
         display_thread.cpp 
 )
