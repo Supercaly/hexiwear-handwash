@@ -3,7 +3,7 @@
 
 set(APP_NAME app1)
 
-add_executable(${APP_NAME})
+add_library(${APP_NAME})
 
 # Include Libraries
 add_subdirectory(hexiwear_FXAS21002)
@@ -25,5 +25,3 @@ target_link_libraries(${APP_NAME}
     hexiwear_kw40z
     oled_ssd1351
 )
-
-mbed_set_post_build(${APP_NAME})

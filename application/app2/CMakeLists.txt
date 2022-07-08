@@ -3,12 +3,11 @@
 
 set(APP_NAME app2)
 
-add_executable(${APP_NAME})
+add_library(${APP_NAME})
 
-target_sources(${APP_NAME} PRIVATE main.cpp)
-target_include_directories(${APP_NAME} PRIVATE .)
+add_subdirectory(src)
+
 target_link_libraries(${APP_NAME}
     mbed-os
+    mbed-storage
 )
-
-mbed_set_post_build(${APP_NAME})

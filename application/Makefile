@@ -42,14 +42,6 @@ ifneq (,$(STERM))
 	MBED_TOOLS_FLAGS += --sterm
 endif
 
-build:
-	@echo "Building $(APP) for $(TARGET) board with $(PROFILE) profile".
-	@export APP=$(APP); mbed-tools compile -t GCC_ARM -m $(TARGET) $(MBED_TOOLS_FLAGS)
-
-clean:
-	@echo "Deleteing all build files"
-	rm -rf cmake_build
-
 help:
 	@echo 'usage: make [target] [flags]'
 	@echo
@@ -64,3 +56,11 @@ help:
 	@echo '  clean		perform a clean build'
 	@echo '  flash		flash the binary to a board'
 	@echo '  sterm		open a serial connection after flashing'
+
+build:
+	@echo "Building $(APP) for $(TARGET) board with $(PROFILE) profile".
+	@export APP=$(APP); mbed-tools compile -t GCC_ARM -m $(TARGET) $(MBED_TOOLS_FLAGS)
+
+clean:
+	@echo "Deleteing all build files"
+	rm -rf cmake_build

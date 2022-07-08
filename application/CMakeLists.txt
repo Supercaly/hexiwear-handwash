@@ -19,6 +19,7 @@ endif()
 
 # Project Name
 project(application)
+add_executable(${PROJECT_NAME})
 
 # Include mbed-os and disable warnings
 add_subdirectory(${MBED_PATH})
@@ -44,6 +45,9 @@ if ($ENV{APP} IN_LIST ALL_BUILDSYSTEM_TARGETS)
 else()
     message(FATAL_ERROR "App '$ENV{APP}' is not an app target found in '${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt'")
 endif()
+
+# Execute mbed post build
+mbed_set_post_build(${PROJECT_NAME})
 
 option(VERBOSE_BUILD "Have a verbose build process")
 if(VERBOSE_BUILD)
