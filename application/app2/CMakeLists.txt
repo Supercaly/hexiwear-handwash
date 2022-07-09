@@ -10,4 +10,5 @@ add_subdirectory(src)
 target_link_libraries(${APP_NAME}
     mbed-os
     mbed-storage
+    csv
 )

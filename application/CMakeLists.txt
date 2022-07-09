@@ -7,6 +7,7 @@ cmake_minimum_required(VERSION 3.19.0)
 set(ROOT_DIR ${CMAKE_CURRENT_LIST_DIR})
 set(MBED_PATH ${ROOT_DIR}/mbed-os CACHE INTERNAL "")
 set(MBED_CONFIG_PATH ${CMAKE_CURRENT_BINARY_DIR} CACHE INTERNAL "")
+set(LIBS_DIR ${ROOT_DIR}/libs)
 
 include(${MBED_PATH}/tools/cmake/app.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/add_app_subdirectory.cmake)
@@ -27,7 +28,8 @@ target_compile_options(mbed-os INTERFACE -w) # Disable all warnings from mbed-os
 target_compile_options(mbed-events INTERFACE -w) # Disable all warnings from mbed-os events code
 
 # Include Libraries
-add_subdirectory(${ROOT_DIR}/tensorflow)
+add_subdirectory(${LIBS_DIR}/csv)
+add_subdirectory(${LIBS_DIR}/tensorflow)
 
 # Ensure APP was specified
 if ("$ENV{APP}" STREQUAL "")
