@@ -1,9 +1,8 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
-#include "data/wrist.h"
-
 #include "mbed.h"
+#include "wrist.h"
 
 class Config
 {

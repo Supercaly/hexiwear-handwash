@@ -1,17 +1,16 @@
 #include "display_thread.h"
 #include "common/global_thread_vars.h"
-#include "common/log.h"
-#include "data/label.h"
-
 #include "menu/menu.h"
 #include "menu/navigator.h"
+#include "menu/pages/export_page.h"
 #include "menu/pages/recorder_page.h"
 #include "menu/pages/stats_page.h"
 #include "menu/pages/wrist_page.h"
-#include "menu/pages/export_page.h"
 #include "resources/menu_resources.h"
 
 #include "kw40z.h"
+#include "label.h"
+#include "log.h"
 #include "mbed.h"
 #include "oled_ssd1351.h"
 #include <stdint.h>

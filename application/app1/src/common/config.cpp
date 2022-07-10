@@ -1,5 +1,6 @@
 #include "config.h"
-#include "common/log.h"
+
+#include "log.h"
 
 Config::Config() {}
 

@@ -1,11 +1,11 @@
 #include "predictor_thread.h"
 #include "common/global_thread_vars.h"
-#include "common/log.h"
-#include "data/raw_sensor_data.h"
-#include "tflite_wrapper.h"
-#include "data/wrist.h"
-
 #include "model/handwash_model.h"
+#include "tflite_wrapper.h"
+
+#include "log.h"
+#include "raw_sensor_data.h"
+#include "wrist.h"
 
 #define FEATURES_SIZE 25
 #define OUT_SIZE 3

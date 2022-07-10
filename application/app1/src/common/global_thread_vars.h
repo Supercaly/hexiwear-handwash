@@ -1,13 +1,13 @@
 #ifndef GLOBAL_THREAD_VARS_H_
 #define GLOBAL_THREAD_VARS_H_
 
-#include "data/label.h"
-#include "data/raw_sensor_data.h"
-#include "common/data_recorder.h"
-#include "common/data_exporter.h"
 #include "common/config.h"
+#include "common/data_exporter.h"
+#include "common/data_recorder.h"
 
+#include "label.h"
 #include "mbed.h"
+#include "raw_sensor_data.h"
 
 extern Mutex g_sensors_lock;
 

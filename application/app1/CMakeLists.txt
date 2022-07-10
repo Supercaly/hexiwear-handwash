@@ -24,4 +24,6 @@ target_link_libraries(${APP_NAME}
     hexiwear_FXOS8700
     hexiwear_kw40z
     oled_ssd1351
+    data
+    utils
 )

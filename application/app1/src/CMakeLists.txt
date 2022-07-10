@@ -3,7 +3,6 @@
 
 add_subdirectory(collection)
 add_subdirectory(common)
-add_subdirectory(data)
 add_subdirectory(prediction)
 add_subdirectory(ui)
 

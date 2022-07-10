@@ -1,6 +1,7 @@
 #include "data_exporter.h"
 #include "common/global_thread_vars.h"
-#include "common/log.h"
+
+#include "log.h"
 
 DataExporter::DataExporter() : _export_success(false),
                                _data_buffer(nullptr),

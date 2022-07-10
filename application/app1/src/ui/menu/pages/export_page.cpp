@@ -1,7 +1,8 @@
 #include "export_page.h"
 #include "common/global_thread_vars.h"
-#include "common/log.h"
 #include "resources/menu_resources.h"
+
+#include "log.h"
 
 ExportPage::ExportPage()
 {

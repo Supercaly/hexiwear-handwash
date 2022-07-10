@@ -1,10 +1,10 @@
 #ifndef TFLITE_WRAPPER_H_
 #define TFLITE_WRAPPER_H_
 
-#include "data/label.h"
-#include "common/log.h"
-
 #include "model/handwash_model.h"
+
+#include "label.h"
+#include "log.h"
 #include "tensorflow/lite/micro/all_ops_resolver.h"
 #include "tensorflow/lite/micro/micro_error_reporter.h"
 #include "tensorflow/lite/micro/micro_interpreter.h"

@@ -1,10 +1,9 @@
 #ifndef DATA_RECORDER_H_
 #define DATA_RECORDER_H_
 
-#include "data/raw_sensor_data.h"
-#include "data/label.h"
-
+#include "label.h"
 #include "mbed.h"
+#include "raw_sensor_data.h"
 
 class DataRecorder
 {

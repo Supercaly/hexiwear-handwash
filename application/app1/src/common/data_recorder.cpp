@@ -1,7 +1,7 @@
 #include "data_recorder.h"
-#include "common/log.h"
 
 #include "FileSystem.h"
+#include "log.h"
 
 DataRecorder::DataRecorder() : _recording(false) {}
 

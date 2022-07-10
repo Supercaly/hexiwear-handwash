@@ -1,10 +1,10 @@
 #include "collector_thread.h"
-#include "data/raw_sensor_data.h"
 #include "common/global_thread_vars.h"
-#include "common/log.h"
 
 #include "FXAS21002.h"
 #include "FXOS8700.h"
+#include "log.h"
+#include "raw_sensor_data.h"
 
 static void collect_sensor_data(FXOS8700 *acc, FXAS21002 *gyr)
 {

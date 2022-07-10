@@ -1,4 +1,6 @@
 # Copyright (c) 2022 ARM Limited. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-target_include_directories(${APP_NAME} PRIVATE .)
+add_library(utils INTERFACE)
+
+target_include_directories(utils INTERFACE .)
