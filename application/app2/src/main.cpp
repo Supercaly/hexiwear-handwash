@@ -1,5 +1,9 @@
+#include "data_importer.h"
+
 #include "FATFileSystem.h"
+#include "label.h"
 #include "mbed.h"
+#include "raw_sensor_data.h"
 
 // Override default console for enabling printf
 FileHandle *mbed::mbed_override_console(int fd)
@@ -17,6 +21,12 @@ FileSystem *FileSystem::get_default_instance()
 
 int main()
 {
+    RawSensorData *d = (RawSensorData *)calloc(1, sizeof(RawSensorData));
+    Label l;
+    DataImporter i;
+    printf("init %d\n", i.init());
+    i.next_chunk(d, &l);
+
     DigitalOut status_led(LED_RED);
     while (true)
     {
