@@ -4,3 +4,7 @@
 add_library(utils INTERFACE)
 
 target_include_directories(utils INTERFACE .)
+
+if (APP_LOG_ENABLED)
+    target_compile_definitions(utils INTERFACE LOG_ENABLED)
+endif()

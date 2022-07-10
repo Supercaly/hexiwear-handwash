@@ -10,7 +10,3 @@ target_sources(${APP_NAME}
         data_recorder.cpp
         data_exporter.cpp
 )
-
-if (APP_LOG_ENABLED)
-    target_compile_definitions(${APP_NAME} PRIVATE LOG_ENABLED)
-endif()
