@@ -2,7 +2,7 @@
 
 #include "log.h"
 
-DataImporter::DataImporter() : _csv("/sd/db.csv") {}
+DataImporter::DataImporter() : _csv(DB_PATH) {}
 
 DataImporter::~DataImporter() {}
 
@@ -23,17 +23,18 @@ bool DataImporter::next_chunk(RawSensorData *data, Label *label)
 {
     char *row,
         *col;
+    int label_acc = 0;
 
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < RAW_SENSOR_DATA_BLOCK_CAP; i++)
     {
+
         row = _csv.read_next_row();
         if (row == NULL)
         {
-            log_error("DataImporter: error reading row of a block\n");
+            log_info("DataImporter: chunk has less than %d rows\n",
+                      RAW_SENSOR_DATA_BLOCK_CAP);
             return false;
         }
-
-        printf("%s\n", row);
 
         float values[8];
         for (int j = 0; j < 8; j++)
@@ -52,10 +53,13 @@ bool DataImporter::next_chunk(RawSensorData *data, Label *label)
         data->gx[i] = values[3];
         data->gy[i] = values[4];
         data->gz[i] = values[5];
-
-        *label = Label(values[6]);
+        label_acc += (int)values[6];
 
         free(row);
     }
+
+    label_acc /= RAW_SENSOR_DATA_BLOCK_CAP;
+    *label = Label(label_acc);
+
     return true;
 }

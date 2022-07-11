@@ -7,6 +7,8 @@
 #include "mbed.h"
 #include "raw_sensor_data.h"
 
+#define DB_PATH "/sd/db.csv"
+
 class DataImporter
 {
 public:
