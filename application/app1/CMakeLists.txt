@@ -19,11 +19,10 @@ target_link_libraries(${APP_NAME}
     mbed-os
     mbed-events
     mbed-storage
-    tensorflow
     hexiwear_FXAS21002
     hexiwear_FXOS8700
     hexiwear_kw40z
     oled_ssd1351
-    data
+    prediction
     utils
 )
