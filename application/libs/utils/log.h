@@ -1,11 +1,6 @@
 #ifndef LOG_H_
 #define LOG_H_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif // __cplusplus
-
 #ifdef LOG_ENABLED
 
 #include "mbed.h"
@@ -24,9 +19,5 @@ extern "C"
     } while (0)
 
 #endif // LOG_ENABLED
-
-#ifdef __cplusplus
-}
-#endif // __cplusplus
 
 #endif // LOG_H_
