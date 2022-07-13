@@ -7,4 +7,5 @@ target_sources(${APP_NAME}
     PRIVATE
         main.cpp
         data_importer.cpp
+        prediction_thread.cpp
 )

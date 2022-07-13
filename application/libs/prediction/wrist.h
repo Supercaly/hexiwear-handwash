@@ -9,10 +9,10 @@ enum Wrist
 
 static inline float wrist_to_float(Wrist w)
 {
-    return w ? 0.0 : 1.0;
+    return w == Wrist::LEFT ? 0.0 : 1.0;
 }
 
-static inline char *wrist_to_string(Wrist w)
+static inline const char *wrist_to_cstr(Wrist w)
 {
     switch (w)
     {

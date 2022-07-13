@@ -3,7 +3,10 @@
 
 #include "log.h"
 
-Predictor::Predictor() {}
+Predictor::Predictor() 
+{
+    _tfwrapper = new TFliteWrapper<FEATURES_SIZE, OUT_SIZE, TENSOR_ARENA_SIZE>();
+}
 
 Predictor::~Predictor() {}
 
@@ -15,7 +18,7 @@ TFliteError Predictor::init()
 TFliteError Predictor::predict(RawSensorData *raw, Wrist wrist, Label *label)
 {
     compute_features(raw, wrist_to_float(wrist));
-    return _tfwrapper->predict_label(raw, label);
+    return _tfwrapper->predict_label(_features, label);
 }
 
 void Predictor::compute_features(RawSensorData *data, float wrist)
