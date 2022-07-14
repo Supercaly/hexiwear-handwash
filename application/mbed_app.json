@@ -8,8 +8,8 @@
                 "STORAGE"
             ],
             "target.components_add": [
-                "SPIF",
-                "SD"
+                "SD",
+                "SPIF"
             ]
         }
     }

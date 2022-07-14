@@ -1,6 +1,8 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
+#include "LittleFileSystem.h"
+#include "SPIFBlockDevice.h"
 #include "mbed.h"
 #include "wrist.h"
 
@@ -16,6 +18,8 @@ public:
     void toggle_wrist();
 
 private:
+    SPIFBlockDevice *_spif_bd;
+    LittleFileSystem *_fs;
     FILE *_config_file;
 
     Wrist _wrist;
