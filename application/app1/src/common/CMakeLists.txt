@@ -7,6 +7,4 @@ target_sources(${APP_NAME}
     PRIVATE
         config.cpp
         haptic_feedback.cpp
-        data_recorder.cpp
-        data_exporter.cpp
 )

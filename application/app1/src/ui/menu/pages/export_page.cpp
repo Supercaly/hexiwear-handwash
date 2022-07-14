@@ -2,8 +2,6 @@
 #include "common/global_thread_vars.h"
 #include "resources/menu_resources.h"
 
-#include "log.h"
-
 ExportPage::ExportPage()
 {
     _txt = "Dock the hexi\nand press\nexport";
@@ -44,7 +42,6 @@ void ExportPage::event_right(Navigator *nav)
     _txt = "exporting...";
     nav->redraw();
 
-    bool res = g_data_exporter.export_data();
-    _txt = res ? "File exported!" : "Error exporting\nto sd!";
+    _txt = "This feature is disables!";
     nav->redraw();
 }

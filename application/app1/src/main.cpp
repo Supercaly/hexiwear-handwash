@@ -25,8 +25,6 @@ FileSystem *FileSystem::get_default_instance()
 Mutex g_sensors_lock;
 RawSensorData g_raw_sensor_data;
 Queue<Label, 5> g_labels_queue;
-DataRecorder g_data_recorder;
-DataExporter g_data_exporter;
 Config g_config;
 
 int main()
@@ -34,13 +32,6 @@ int main()
     Thread sensor_thread;
     Thread prediction_thread;
     Thread display_thread;
-
-    // TODO: Postpone this reformatting logic to the first time it's used (config)
-    if (FileSystem::get_default_instance()->mount(BlockDevice::get_default_instance()) < 0)
-    {
-        printf("reformat %d\n", FileSystem::get_default_instance()->reformat(BlockDevice::get_default_instance()));
-        FileSystem::get_default_instance()->unmount();
-    }
 
     g_config.init();
     sensor_thread.start(collector_thread_loop);
