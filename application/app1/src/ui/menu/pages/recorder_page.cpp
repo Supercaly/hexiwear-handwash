@@ -19,9 +19,7 @@ void RecorderPage::draw(oled::SSD1351 *display, oled::Transition t)
 void RecorderPage::on_draw(oled::SSD1351 *display)
 {
     display->set_dynamic_area(_area);
-    display->draw_image(g_data_recorder.is_recording()
-                            ? stop_btn_bmp
-                            : start_btn_bmp);
+    display->draw_image(start_btn_bmp);
 }
 
 void RecorderPage::event_up(Navigator *nav) {}
@@ -33,16 +31,4 @@ void RecorderPage::event_left(Navigator *nav)
     nav->navigate_back();
 }
 
-void RecorderPage::event_right(Navigator *nav)
-{
-    nav->do_haptic();
-    if (g_data_recorder.is_recording())
-    {
-        g_data_recorder.stop();
-    }
-    else
-    {
-        g_data_recorder.start();
-    }
-    nav->redraw();
-}
+void RecorderPage::event_right(Navigator *nav) {}

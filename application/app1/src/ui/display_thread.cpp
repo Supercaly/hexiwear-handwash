@@ -18,29 +18,38 @@
 oled::SSD1351 g_oled(PTB22, PTB21, PTC13, PTB20, PTE6, PTD15);
 KW40Z kw40z_device(PTE24, PTE25);
 
+// -------
+//  MENUS
+// -------
 WristPage wrist_page;
 StatsPage stats_page(&menu_nav);
 RecorderPage recorder_page;
 ExportPage export_page;
+
 MenuItem settings_menu_wrist = {
     .image = wrist_menu_bmp,
     .item = &wrist_page};
+// TODO: Remove unused record menu
+MenuItem settings_menu_rec = {
+    .image = recorder_menu_bmp,
+    .item = &recorder_page};
+// TODO: Remove unused export menu
 MenuItem settings_menu_export = {
     .image = export_to_sd_menu_bmp,
     .item = &export_page};
-MenuItem settings_menu_list[] = {settings_menu_wrist, settings_menu_export};
-Menu settings_menu(settings_menu_list, 2);
+
+MenuItem settings_menu_list[] = {settings_menu_wrist, settings_menu_rec, settings_menu_export};
+Menu settings_menu(settings_menu_list, 3);
+
 MenuItem main_menu_settings = {
     .image = settings_menu_bmp,
     .item = &settings_menu};
-MenuItem main_menu_rec = {
-    .image = recorder_menu_bmp,
-    .item = &recorder_page};
 MenuItem main_menu_stats = {
     .image = stats_menu_bmp,
     .item = &stats_page};
-MenuItem main_menu_list[] = {main_menu_settings, main_menu_rec, main_menu_stats};
-Menu main_menu(main_menu_list, 3);
+
+MenuItem main_menu_list[] = {main_menu_stats, main_menu_settings};
+Menu main_menu(main_menu_list, 2);
 
 Navigator menu_nav(&g_oled, &main_menu);
 

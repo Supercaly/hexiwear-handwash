@@ -2,77 +2,75 @@
 
 #include "log.h"
 
-Config::Config() {}
+Config::Config()
+{
+    _spif_bd = new SPIFBlockDevice(PTD6, PTD7, PTD5, PTD4);
+    _fs = new LittleFileSystem("fs");
+}
 
 Config::~Config()
 {
     fclose(_config_file);
-    FileSystem::get_default_instance()->unmount();
+    _fs->unmount();
+
+    delete _fs;
+    delete _spif_bd;
 }
 
 void Config::init()
 {
-    FileSystem *fs = FileSystem::get_default_instance();
-    if (fs->mount(BlockDevice::get_default_instance()) < 0)
+    if (_fs->mount(_spif_bd) < 0)
     {
-        log_error("Config: cannot mount filesystem for reading config!\n");
+        if (_fs->reformat(_spif_bd) < 0)
+        {
+            log_error("Config: cannot mount filesystem for reading config!\n");
+            return;
+        }
     }
-    else
+
+    _config_file = fopen("/fs/config", "rb+");
+    if (_config_file == NULL)
     {
-        _config_file = fopen("/fs/config", "rb+");
+        // Config file not existing... create it
+        _config_file = fopen("/fs/config", "wb+");
         if (_config_file == NULL)
         {
-            // Config file not existing... create it
-            _config_file = fopen("/fs/config", "wb+");
-            if (_config_file == NULL)
-            {
-                log_error("Config: Cannot open log file %s(%d)\n", strerror(errno), errno);
-                fs->unmount();
-            }
-            else
-            {
-                log_info("Config: config file created!\n");
-                fseek(_config_file, 0L, SEEK_SET);
-                fwrite(&_wrist, sizeof(Wrist), 1, _config_file);
-                fclose(_config_file);
-            }
+            log_error("Config: Cannot open log file %s(%d)\n", strerror(errno), errno);
+            _fs->unmount();
         }
         else
         {
-            // Read previously stored configs
+            log_info("Config: config file created!\n");
             fseek(_config_file, 0L, SEEK_SET);
-            fread(&_wrist, sizeof(Wrist), 1, _config_file);
+            fwrite(&_wrist, sizeof(Wrist), 1, _config_file);
             fclose(_config_file);
         }
-
-        log_info("Config:\n");
-        log_info("  wrist: '%d'\n", _wrist);
     }
+    else
+    {
+        // Read previously stored configs
+        fseek(_config_file, 0L, SEEK_SET);
+        fread(&_wrist, sizeof(Wrist), 1, _config_file);
+        fclose(_config_file);
+    }
+
+    log_info("Config:\n");
+    log_info("  wrist: '%d'\n", _wrist);
 }
 
 void Config::toggle_wrist()
 {
     _wrist = _wrist == Wrist::LEFT ? Wrist::RIGHT : Wrist::LEFT;
 
-    // Open config file and update the wrist
-    FileSystem *fs = FileSystem::get_default_instance();
-    if (fs->mount(BlockDevice::get_default_instance()) < 0)
+    _config_file = fopen("/fs/config", "wb+");
+    if (_config_file == NULL)
     {
-        log_error("Config: cannot mount filesystem for reading config!\n");
+        log_error("Config: Cannot open log file %s(%d)\n", strerror(errno), errno);
     }
     else
     {
-        _config_file = fopen("/fs/config", "wb+");
-        if (_config_file == NULL)
-        {
-            log_error("Config: Cannot open log file %s(%d)\n", strerror(errno), errno);
-            fs->unmount();
-        }
-        else
-        {
-            fseek(_config_file, 0L, SEEK_SET);
-            fwrite(&_wrist, sizeof(Wrist), 1, _config_file);
-            fclose(_config_file);
-        }
+        fseek(_config_file, 0L, SEEK_SET);
+        fwrite(&_wrist, sizeof(Wrist), 1, _config_file);
+        fclose(_config_file);
     }
 }
