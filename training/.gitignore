@@ -1,9 +1,1 @@
-# TODO: Remove this ignores since they don't exist anymore
-constants/
-models/
-
-mlp_handwash_model/
-mlp_handwash_model.tflite
-
-comp_feats.txt
-main.py
+data/
