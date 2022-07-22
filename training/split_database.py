@@ -49,7 +49,7 @@ def main(src, window_size, freq, dst, percent):
             file_path = os.path.join(test_dir, f"{test_cnt}.csv")
             test_cnt += 1
 
-        with open(file_path, "wb+") as f:
+        with open(file_path, "w+") as f:
             w = csv.DictWriter(f, chunk[0].keys())
             w.writeheader()
             w.writerows(chunk)
