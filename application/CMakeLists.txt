@@ -13,6 +13,13 @@ include(${MBED_PATH}/tools/cmake/app.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/add_app_subdirectory.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/get_all_targets.cmake)
 
+# Extract ML_MODE
+if ("$ENV{MODE}" STREQUAL "")
+    message(FATAL_ERROR "MODE was not specified")
+else()
+    set(ML_MODE $ENV{MODE})
+endif()
+
 # Enable log in debug mode
 if ((CMAKE_BUILD_TYPE STREQUAL "develop") OR (CMAKE_BUILD_TYPE STREQUAL "debug"))
     set(APP_LOG_ENABLED TRUE)
@@ -32,9 +39,16 @@ add_subdirectory(${LIBS_DIR}/csv)
 add_subdirectory(${LIBS_DIR}/tensorflow)
 add_subdirectory(${LIBS_DIR}/utils)
 add_subdirectory(${LIBS_DIR}/prediction)
-# TODO: add one of this directory based on mode (SVM, CNN, ...)
-# add_subdirectory(${LIBS_DIR}/ml)
-add_subdirectory(${LIBS_DIR}/svm)
+# Include ML libraries
+if(${ML_MODE} STREQUAL "svm")
+    add_subdirectory(${LIBS_DIR}/svm)
+elseif(${ML_MODE} STREQUAL "knn")
+elseif(${ML_MODE} STREQUAL "cnn")
+    add_subdirectory(${LIBS_DIR}/ml)
+elseif(${ML_MODE} STREQUAL "lstm")
+else()
+    message(FATAL_ERROR "unsupported ml mode ${ML_MODE}!")
+endif()
 
 # Ensure APP was specified
 if ("$ENV{APP}" STREQUAL "")

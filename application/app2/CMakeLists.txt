@@ -13,5 +13,10 @@ target_link_libraries(${APP_NAME}
     csv
     prediction
     utils
-    svm
 )
+
+if(${ML_MODE} STREQUAL "svm")
+    target_link_libraries(${APP_NAME} svm)
+elseif(${ML_MODE} STREQUAL "cnn")
+    target_link_libraries(${APP_NAME} ml)
+endif()

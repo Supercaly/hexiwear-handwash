@@ -18,3 +18,4 @@ target_sources(svm INTERFACE
     libsvm/svm.cpp
 )
 
+target_compile_definitions(svm INTERFACE HAS_SVM)

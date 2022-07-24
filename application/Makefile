@@ -15,6 +15,9 @@ STERM ?=
 ifneq (,$(app))
 	APP = $(app)
 endif
+ifneq (,$(mode))
+	MODE = $(mode)
+endif
 ifneq (,$(profile))
 	PROFILE = $(profile)
 endif
@@ -52,14 +55,15 @@ help:
 	@echo
 	@echo 'flags:'
 	@echo '  app		name of the app to build'
+	@echo '  mode		one of: svm, knn, cnn, lstm'
 	@echo '  profile	build profile to use'
 	@echo '  clean		perform a clean build'
 	@echo '  flash		flash the binary to a board'
 	@echo '  sterm		open a serial connection after flashing'
 
 build:
-	@echo "Building $(APP) for $(TARGET) board with $(PROFILE) profile".
-	@export APP=$(APP); mbed-tools compile -t GCC_ARM -m $(TARGET) $(MBED_TOOLS_FLAGS)
+	@echo "Building $(APP) for $(TARGET) board with $(PROFILE) profile and mode $(MODE)".
+	@export APP=$(APP); export MODE=$(MODE); mbed-tools compile -t GCC_ARM -m $(TARGET) $(MBED_TOOLS_FLAGS)
 
 clean:
 	@echo "Deleteing all build files"

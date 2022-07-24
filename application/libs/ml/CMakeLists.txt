@@ -17,3 +17,4 @@ target_sources(ml INTERFACE
     predictor.cpp
 )
 
+target_compile_definitions(ml INTERFACE HAS_ML)
