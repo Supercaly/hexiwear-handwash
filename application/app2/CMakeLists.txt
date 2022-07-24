@@ -13,4 +13,5 @@ target_link_libraries(${APP_NAME}
     csv
     prediction
     utils
+    svm
 )

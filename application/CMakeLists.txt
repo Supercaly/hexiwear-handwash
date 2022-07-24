@@ -34,6 +34,7 @@ add_subdirectory(${LIBS_DIR}/utils)
 add_subdirectory(${LIBS_DIR}/prediction)
 # TODO: add one of this directory based on mode (SVM, CNN, ...)
 # add_subdirectory(${LIBS_DIR}/ml)
+add_subdirectory(${LIBS_DIR}/svm)
 
 # Ensure APP was specified
 if ("$ENV{APP}" STREQUAL "")

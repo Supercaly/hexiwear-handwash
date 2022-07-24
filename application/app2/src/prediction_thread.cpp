@@ -1,43 +1,39 @@
 #include "prediction_thread.h"
 #include "data_importer.h"
 
+#include "features.h"
 #include "label.h"
-#include "predictor.h"
+#include "log.h"
 #include "raw_sensor_data.h"
+#include "svm.h"
 
 void prediction_thread_loop()
 {
-    Predictor predictor;
     DataImporter importer;
     Label actual_label,
         pred_label;
     static RawSensorData raw_chunk;
-    TFliteError status;
+    SVM svm;
 
-    // Init importer and predictor
+    // Init importer
     if (!importer.init())
     {
         log_error("error initializing DataImporter\n");
         return;
     }
-    status = predictor.init();
-    if (status != TFliteError::OK)
+
+    // Init SVM
+    if (!svm.init("/sd/model_10.model"))
     {
-        log_error("error initializing Predictor: %s\n",
-                  tflite_error_to_cstr(status));
+        log_error("error loading SVM model from file\n");
         return;
     }
 
     while (importer.next_chunk(&raw_chunk, &actual_label))
     {
         log_info("chunk of data read\n");
-        status = predictor.predict(&raw_chunk, Wrist::LEFT, &pred_label);
-        if (status != TFliteError::OK)
-        {
-            log_error("fatal error predicting label: %s\n",
-                      tflite_error_to_cstr(status));
-            return;
-        }
+
+        svm.predict(&raw_chunk, &pred_label);
 
         log_info("predicted label: %s actual label: %s\n",
                  label_to_cstr(pred_label),
