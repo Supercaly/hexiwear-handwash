@@ -30,7 +30,7 @@ project(application)
 add_executable(${PROJECT_NAME})
 
 # Extract WINDOW_SIZE
-if ($ENV{WS} STREQUAL "")
+if ("$ENV{WS}" STREQUAL "")
     message(FATAL_ERROR "WS was not specified")
 else()
     if(NOT $ENV{WS} MATCHES "^[0-9]+$")
@@ -73,7 +73,7 @@ add_app_subdirectory(app2)
 # Ensure that a target exists for the APP
 get_all_targets(ALL_BUILDSYSTEM_TARGETS)
 if ($ENV{APP} IN_LIST ALL_BUILDSYSTEM_TARGETS)
-    message(STATUS "App '$ENV{APP}' is being built")
+    message(STATUS "App '$ENV{APP}' is being built with mode '$ENV{MODE}' and window size '$ENV{WS}'")
 else()
     message(FATAL_ERROR "App '$ENV{APP}' is not an app target found in '${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt'")
 endif()
