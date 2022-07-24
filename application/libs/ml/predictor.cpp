@@ -1,5 +1,5 @@
 #include "predictor.h"
-#include "handwash_model.h"
+#include "model.h"
 
 #include "log.h"
 
@@ -12,7 +12,7 @@ Predictor::~Predictor() {}
 
 TFliteError Predictor::init()
 {
-    return _tfwrapper->init(g_handwash_model_data);
+    return _tfwrapper->init(model_tflite);
 }
 
 TFliteError Predictor::predict(RawSensorData *raw, Wrist wrist, Label *label)

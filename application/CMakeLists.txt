@@ -30,8 +30,10 @@ target_compile_options(mbed-events INTERFACE -w) # Disable all warnings from mbe
 # Include Libraries
 add_subdirectory(${LIBS_DIR}/csv)
 add_subdirectory(${LIBS_DIR}/tensorflow)
-add_subdirectory(${LIBS_DIR}/prediction)
 add_subdirectory(${LIBS_DIR}/utils)
+add_subdirectory(${LIBS_DIR}/prediction)
+# TODO: add one of this directory based on mode (SVM, CNN, ...)
+# add_subdirectory(${LIBS_DIR}/ml)
 
 # Ensure APP was specified
 if ("$ENV{APP}" STREQUAL "")

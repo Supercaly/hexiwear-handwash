@@ -1,8 +1,6 @@
 #ifndef TFLITE_WRAPPER_H_
 #define TFLITE_WRAPPER_H_
 
-#include "model/handwash_model.h"
-
 #include "label.h"
 #include "log.h"
 #include "tensorflow/lite/micro/all_ops_resolver.h"
@@ -56,7 +54,7 @@ public:
         static tflite::MicroErrorReporter static_error_reporter;
         _error_reporter = &static_error_reporter;
 
-        _model = tflite::GetModel(g_handwash_model_data);
+        _model = tflite::GetModel(model_data);
         if (_model->version() != TFLITE_SCHEMA_VERSION)
         {
             log_error("TFliteWrapper: provided model has schema version %lu, "
