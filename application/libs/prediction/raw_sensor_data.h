@@ -3,7 +3,7 @@
 
 #include <string.h>
 
-#define RAW_SENSOR_DATA_BLOCK_CAP 1000
+#define RAW_SENSOR_DATA_BLOCK_CAP FULL_WINDOW_SIZE
 
 class RawSensorData
 {

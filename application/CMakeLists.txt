@@ -29,6 +29,17 @@ endif()
 project(application)
 add_executable(${PROJECT_NAME})
 
+# Extract WINDOW_SIZE
+if ($ENV{WS} STREQUAL "")
+    message(FATAL_ERROR "WS was not specified")
+else()
+    if(NOT $ENV{WS} MATCHES "^[0-9]+$")
+        message(FATAL_ERROR "WS must be a number ($ENV{WS})")
+    endif()
+    add_compile_definitions(WINDOW_SIZE=$ENV{WS})
+    add_compile_definitions(FULL_WINDOW_SIZE=$ENV{WS}00)
+endif()
+
 # Include mbed-os and disable warnings
 add_subdirectory(${MBED_PATH})
 target_compile_options(mbed-os INTERFACE -w) # Disable all warnings from mbed-os core code

@@ -18,6 +18,9 @@ endif
 ifneq (,$(mode))
 	MODE = $(mode)
 endif
+ifneq (,$(ws))
+	WS = $(ws)
+endif
 ifneq (,$(profile))
 	PROFILE = $(profile)
 endif
@@ -56,6 +59,7 @@ help:
 	@echo 'flags:'
 	@echo '  app		name of the app to build'
 	@echo '  mode		one of: svm, knn, cnn, lstm'
+	@echo '  ws			size of the window to use'
 	@echo '  profile	build profile to use'
 	@echo '  clean		perform a clean build'
 	@echo '  flash		flash the binary to a board'
@@ -63,7 +67,7 @@ help:
 
 build:
 	@echo "Building $(APP) for $(TARGET) board with $(PROFILE) profile and mode $(MODE)".
-	@export APP=$(APP); export MODE=$(MODE); mbed-tools compile -t GCC_ARM -m $(TARGET) $(MBED_TOOLS_FLAGS)
+	@export APP=$(APP); export MODE=$(MODE); export WS=$(WS); mbed-tools compile -t GCC_ARM -m $(TARGET) $(MBED_TOOLS_FLAGS)
 
 clean:
 	@echo "Deleteing all build files"

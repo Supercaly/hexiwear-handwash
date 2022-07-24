@@ -15,7 +15,7 @@ static void collect_sensor_data(FXOS8700 *acc, FXAS21002 *gyr)
     log_info("Begin raw sensor data acquisition\n");
 
     // Collect raw sensor data until the data block is full
-    while (size < RAW_SENSOR_DATA_BLOCK_CAP)
+    while (size < FULL_WINDOW_SIZE)
     {
         acc->acquire_accel_data_g(tmp_acc);
         gyr->acquire_gyro_data_dps(tmp_gyr);
@@ -63,7 +63,7 @@ void collector_thread_loop()
         // Exit critical section
 
         log_info("Got %d samples in %lldms!\n",
-                 RAW_SENSOR_DATA_BLOCK_CAP,
+                 FULL_WINDOW_SIZE,
                  chrono::duration_cast<chrono::milliseconds>(timer.elapsed_time()).count());
     }
 }

@@ -25,14 +25,14 @@ bool DataImporter::next_chunk(RawSensorData *data, Label *label)
         *col;
     int label_acc = 0;
 
-    for (int i = 0; i < RAW_SENSOR_DATA_BLOCK_CAP; i++)
+    for (int i = 0; i < FULL_WINDOW_SIZE; i++)
     {
 
         row = _csv.read_next_row();
         if (row == NULL)
         {
             log_info("DataImporter: chunk has less than %d rows\n",
-                      RAW_SENSOR_DATA_BLOCK_CAP);
+                      FULL_WINDOW_SIZE);
             return false;
         }
 
@@ -58,7 +58,7 @@ bool DataImporter::next_chunk(RawSensorData *data, Label *label)
         free(row);
     }
 
-    label_acc /= RAW_SENSOR_DATA_BLOCK_CAP;
+    label_acc /= FULL_WINDOW_SIZE;
     *label = Label(label_acc);
 
     return true;

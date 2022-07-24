@@ -19,7 +19,7 @@ void compute_features(RawSensorData *data, float *output)
 
     // FIXME: This works only because the overlap is 0.5 so the prev data
     // and the new have the same size. For different overlap you need two for loops.
-    for (int i = 0; i < RAW_SENSOR_DATA_BLOCK_CAP; ++i)
+    for (int i = 0; i < FULL_WINDOW_SIZE; ++i)
     {
         // Compute the sum of every component for the avg
         sum_ax += data->ax[i];
@@ -58,12 +58,12 @@ void compute_features(RawSensorData *data, float *output)
             max_gz = data->gz[i];
     }
 
-    float avg_ax = sum_ax / RAW_SENSOR_DATA_BLOCK_CAP,
-          avg_ay = sum_ay / RAW_SENSOR_DATA_BLOCK_CAP,
-          avg_az = sum_az / RAW_SENSOR_DATA_BLOCK_CAP,
-          avg_gx = sum_gx / RAW_SENSOR_DATA_BLOCK_CAP,
-          avg_gy = sum_gy / RAW_SENSOR_DATA_BLOCK_CAP,
-          avg_gz = sum_gz / RAW_SENSOR_DATA_BLOCK_CAP;
+    float avg_ax = sum_ax / FULL_WINDOW_SIZE,
+          avg_ay = sum_ay / FULL_WINDOW_SIZE,
+          avg_az = sum_az / FULL_WINDOW_SIZE,
+          avg_gx = sum_gx / FULL_WINDOW_SIZE,
+          avg_gy = sum_gy / FULL_WINDOW_SIZE,
+          avg_gz = sum_gz / FULL_WINDOW_SIZE;
 
     sum_ax = 0.0;
     sum_ay = 0.0;
@@ -71,7 +71,7 @@ void compute_features(RawSensorData *data, float *output)
     sum_gx = 0.0;
     sum_gy = 0.0;
     sum_gz = 0.0;
-    for (int i = 0; i < RAW_SENSOR_DATA_BLOCK_CAP; ++i)
+    for (int i = 0; i < FULL_WINDOW_SIZE; ++i)
     {
         // Compute the standard deviation sum for each component
         sum_ax += (data->ax[i] - avg_ax) * (data->ax[i] - avg_ax);
@@ -82,12 +82,12 @@ void compute_features(RawSensorData *data, float *output)
         sum_gz += (data->gz[i] - avg_gz) * (data->gz[i] - avg_gz);
     }
 
-    std_ax = sqrt(sum_ax / (RAW_SENSOR_DATA_BLOCK_CAP - 1));
-    std_ay = sqrt(sum_ay / (RAW_SENSOR_DATA_BLOCK_CAP - 1));
-    std_az = sqrt(sum_az / (RAW_SENSOR_DATA_BLOCK_CAP - 1));
-    std_gx = sqrt(sum_gx / (RAW_SENSOR_DATA_BLOCK_CAP - 1));
-    std_gy = sqrt(sum_gy / (RAW_SENSOR_DATA_BLOCK_CAP - 1));
-    std_gz = sqrt(sum_gz / (RAW_SENSOR_DATA_BLOCK_CAP - 1));
+    std_ax = sqrt(sum_ax / (FULL_WINDOW_SIZE - 1));
+    std_ay = sqrt(sum_ay / (FULL_WINDOW_SIZE - 1));
+    std_az = sqrt(sum_az / (FULL_WINDOW_SIZE - 1));
+    std_gx = sqrt(sum_gx / (FULL_WINDOW_SIZE - 1));
+    std_gy = sqrt(sum_gy / (FULL_WINDOW_SIZE - 1));
+    std_gz = sqrt(sum_gz / (FULL_WINDOW_SIZE - 1));
 
     output[0] = avg_ax;
     output[1] = avg_ay;
