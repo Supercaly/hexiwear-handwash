@@ -5,12 +5,13 @@ from lstm import generate_lstm
 
 
 @click.command()
-@click.option("-s", "--src", type=click.Path(file_okay=False, exists=True), default="data", help="Path to a folder containing .csv training and testing sets. This path will be joined with the window_size.")
+@click.option("-s", "--src", type=click.Path(file_okay=False, exists=True), default="data", show_default=True, help="Path to a folder containing .csv training and testing sets. This path will be joined with the window_size.")
 @click.option("-w", "--window_size", type=int, default=10, show_default=True, help="Size of the window to apply.")
 @click.option("-f", "--freq", type=int, default=100, show_default=True, help="Sampling frequency in Hz.")
 @click.option("--mode", type=click.Choice(["svm", "knn", "cnn", "lstm"], case_sensitive=False), required=True, help="Select the Machine Learning model type to train.")
-@click.option("-d", "--split", type=click.IntRange(min=1), default=1, help="Divide the number of batches per epoch by this number.")
-def main(src, window_size, freq, mode, split):
+@click.option("-d", "--split", type=click.IntRange(min=1), default=1, show_default=True, help="Divide the number of batches per epoch by this number.")
+@click.option("-f", "--force", type=bool, default=False, is_flag=True, help="Force the model training even if the same already trained mode exists.")
+def main(src, window_size, freq, mode, split, force):
     """
     Trains a Machine Learning model from input data.
     """
@@ -26,9 +27,9 @@ def main(src, window_size, freq, mode, split):
             print(f"ERS-KNN target model is not supported!")
             exit(0)
         case "cnn":
-            generate_cnn(train_dir, test_dir, window_size*freq, split)
+            generate_cnn(train_dir, test_dir, window_size, freq, split)
         case "lstm":
-            generate_lstm(train_dir, test_dir, window_size, freq, split)
+            generate_lstm(train_dir, test_dir, window_size, freq, split, force)
         case _:
             print(f"unknown target model '{mode}'!")
             exit(1)
