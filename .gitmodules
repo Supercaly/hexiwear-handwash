@@ -1,3 +1,6 @@
 [submodule "application/libs/svm/libsvm"]
 	path = application/libs/svm/libsvm
 	url = https://github.com/cjlin1/libsvm.git
+[submodule "application/libs/ml/tflite"]
+	path = application/libs/ml/tflite
+	url = https://github.com/tensorflow/tflite-micro.git
