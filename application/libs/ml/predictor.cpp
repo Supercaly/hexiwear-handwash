@@ -1,135 +1,139 @@
 #include "predictor.h"
-#include "model.h"
+#include "model/model.h"
 
 #include "log.h"
 
-Predictor::Predictor() 
+Predictor::Predictor() : _init(false)
 {
-    _tfwrapper = new TFliteWrapper<FEATURES_SIZE, OUT_SIZE, TENSOR_ARENA_SIZE>();
+    _tensor_arena = (uint8_t *)malloc(sizeof(uint8_t) * TENSOR_ARENA_SIZE);
 }
 
-Predictor::~Predictor() {}
-
-TFliteError Predictor::init()
+Predictor::~Predictor()
 {
-    return _tfwrapper->init(model_tflite);
+    free(_tensor_arena);
 }
 
-TFliteError Predictor::predict(RawSensorData *raw, Wrist wrist, Label *label)
+PredictorError Predictor::init()
 {
-    compute_features(raw, wrist_to_float(wrist));
-    return _tfwrapper->predict_label(_features, label);
-}
-
-void Predictor::compute_features(RawSensorData *data, float wrist)
-{
-    // FIXME: Review all this code
-    log_info("data:    %f %f %f %f %f %f %f\n", data->ax[0], data->ay[0], data->az[0], data->gx[0], data->gy[0], data->gz[0], wrist);
-    log_info("data:    %f %f %f %f %f %f %f\n", data->ax[1], data->ay[1], data->az[1], data->gx[1], data->gy[1], data->gz[1], wrist);
-    log_info("data:    %f %f %f %f %f %f %f\n", data->ax[2], data->ay[2], data->az[2], data->gx[2], data->gy[2], data->gz[2], wrist);
-    log_info("data:    %f %f %f %f %f %f %f\n", data->ax[3], data->ay[3], data->az[3], data->gx[3], data->gy[3], data->gz[3], wrist);
-    log_info("data:    %f %f %f %f %f %f %f\n", data->ax[4], data->ay[4], data->az[4], data->gx[4], data->gy[4], data->gz[4], wrist);
-
-    float sum_ax = 0.0, sum_ay = 0.0, sum_az = 0.0, sum_gx = 0.0, sum_gy = 0.0, sum_gz = 0.0;
-    float std_ax = 0.0, std_ay = 0.0, std_az = 0.0, std_gx = 0.0, std_gy = 0.0, std_gz = 0.0;
-    float max_ax = 0.0, max_ay = 0.0, max_az = 0.0, max_gx = 0.0, max_gy = 0.0, max_gz = 0.0;
-    float min_ax = 0.0, min_ay = 0.0, min_az = 0.0, min_gx = 0.0, min_gy = 0.0, min_gz = 0.0;
-
-    // FIXME: This works only because the overlap is 0.5 so the prev data
-    // and the new have the same size. For different overlap you need two for loops.
-    for (int i = 0; i < FULL_WINDOW_SIZE; ++i)
+    if (_init)
     {
-        // Compute the sum of every component for the avg
-        sum_ax += data->ax[i];
-        sum_ay += data->ay[i];
-        sum_az += data->az[i];
-        sum_gx += data->gx[i];
-        sum_gy += data->gy[i];
-        sum_gz += data->gz[i];
-
-        // compute the max
-        if (data->ax[i] > max_ax)
-            max_ax = data->ax[i];
-        if (data->ay[i] > max_ay)
-            max_ay = data->ay[i];
-        if (data->az[i] > max_az)
-            max_az = data->az[i];
-        if (data->gx[i] > max_gx)
-            max_gx = data->gx[i];
-        if (data->gy[i] > max_gy)
-            max_gy = data->gy[i];
-        if (data->gz[i] > max_gz)
-            max_gz = data->gz[i];
-
-        // compute the min
-        if (data->ax[i] < max_ax)
-            max_ax = data->ax[i];
-        if (data->ay[i] < max_ay)
-            max_ay = data->ay[i];
-        if (data->az[i] < max_az)
-            max_az = data->az[i];
-        if (data->gx[i] < max_gx)
-            max_gx = data->gx[i];
-        if (data->gy[i] < max_gy)
-            max_gy = data->gy[i];
-        if (data->gz[i] < max_gz)
-            max_gz = data->gz[i];
+        log_error("Predictor: model already initialized.\n");
+        return PredictorError::ALREADY_INIT;
     }
 
-    float avg_ax = sum_ax / FULL_WINDOW_SIZE,
-          avg_ay = sum_ay / FULL_WINDOW_SIZE,
-          avg_az = sum_az / FULL_WINDOW_SIZE,
-          avg_gx = sum_gx / FULL_WINDOW_SIZE,
-          avg_gy = sum_gy / FULL_WINDOW_SIZE,
-          avg_gz = sum_gz / FULL_WINDOW_SIZE;
+    tflite::InitializeTarget();
+    static tflite::MicroErrorReporter static_error_reporter;
+    _error_reporter = &static_error_reporter;
 
-    sum_ax = 0.0;
-    sum_ay = 0.0;
-    sum_az = 0.0;
-    sum_gx = 0.0;
-    sum_gy = 0.0;
-    sum_gz = 0.0;
-    for (int i = 0; i < FULL_WINDOW_SIZE; ++i)
+    _model = tflite::GetModel(model_tflite);
+    if (_model->version() != TFLITE_SCHEMA_VERSION)
     {
-        // Compute the standard deviation sum for each component
-        sum_ax += (data->ax[i] - avg_ax) * (data->ax[i] - avg_ax);
-        sum_ay += (data->ay[i] - avg_ay) * (data->ay[i] - avg_ay);
-        sum_az += (data->az[i] - avg_az) * (data->az[i] - avg_az);
-        sum_gx += (data->gx[i] - avg_gx) * (data->gx[i] - avg_gx);
-        sum_gy += (data->gy[i] - avg_gy) * (data->gy[i] - avg_gy);
-        sum_gz += (data->gz[i] - avg_gz) * (data->gz[i] - avg_gz);
+        log_error("Predictor: provided model has schema version %lu, "
+                  "but supported version is %d.\n",
+                  _model->version(), TFLITE_SCHEMA_VERSION);
+        return PredictorError::VERSION_MISMATCH;
     }
 
-    std_ax = sqrt(sum_ax / (FULL_WINDOW_SIZE - 1));
-    std_ay = sqrt(sum_ay / (FULL_WINDOW_SIZE - 1));
-    std_az = sqrt(sum_az / (FULL_WINDOW_SIZE - 1));
-    std_gx = sqrt(sum_gx / (FULL_WINDOW_SIZE - 1));
-    std_gy = sqrt(sum_gy / (FULL_WINDOW_SIZE - 1));
-    std_gz = sqrt(sum_gz / (FULL_WINDOW_SIZE - 1));
+    static tflite::MicroMutableOpResolver<13> static_ops_resolver;
+    static_ops_resolver.AddShape();
+    static_ops_resolver.AddStridedSlice();
+    static_ops_resolver.AddTranspose();
+    static_ops_resolver.AddUnpack();
+    static_ops_resolver.AddPack();
+    static_ops_resolver.AddFill();
+    static_ops_resolver.AddFullyConnected();
+    static_ops_resolver.AddAdd();
+    static_ops_resolver.AddSplit();
+    static_ops_resolver.AddLogistic();
+    static_ops_resolver.AddMul();
+    static_ops_resolver.AddTanh();
+    static_ops_resolver.AddSoftmax();
 
-    _features[0] = avg_ax;
-    _features[1] = avg_ay;
-    _features[2] = avg_az;
-    _features[3] = avg_gx;
-    _features[4] = avg_gy;
-    _features[5] = avg_gz;
-    _features[6] = std_ax;
-    _features[7] = std_ay;
-    _features[8] = std_az;
-    _features[9] = std_gx;
-    _features[10] = std_gy;
-    _features[11] = std_gz;
-    _features[12] = max_ax;
-    _features[13] = max_ay;
-    _features[13] = max_az;
-    _features[14] = max_gx;
-    _features[15] = max_gy;
-    _features[16] = max_gz;
-    _features[17] = min_ax;
-    _features[18] = min_ay;
-    _features[19] = min_az;
-    _features[20] = min_gx;
-    _features[21] = min_gy;
-    _features[22] = min_gz;
-    _features[23] = wrist;
+    static tflite::MicroInterpreter static_interpreter(
+        _model, static_ops_resolver, _tensor_arena, TENSOR_ARENA_SIZE, _error_reporter);
+    _interpreter = &static_interpreter;
+
+    TfLiteStatus allocate_status = _interpreter->AllocateTensors();
+    if (allocate_status != kTfLiteOk)
+    {
+        log_error("Predictor: tensor allocation failed.\n");
+        return PredictorError::CANT_ALLOCATE_TENSOR;
+    }
+
+    _input = _interpreter->input_tensor(0);
+    _output = _interpreter->output_tensor(0);
+
+    _init = true;
+
+    log_info("Predictor: initialized\n");
+    return PredictorError::OK;
+}
+
+PredictorError Predictor::predict_label(RawSensorData *raw, Wrist wrist, Label *label)
+{
+    PredictorError status = PredictorError::OK;
+    TfLiteStatus s;
+    int8_t *input_tens_buff;
+    int8_t *output_tens_buff;
+    int8_t *output;
+
+    if (!_init)
+    {
+        return PredictorError::NOT_INITIALIZED;
+    }
+
+    output = (int8_t *)malloc(sizeof(int8_t) * TENSOR_OUT_SIZE);
+    if (output == NULL)
+    {
+        status = PredictorError::CANT_ALLOCATE_TENSOR;
+        goto exit;
+    }
+
+    // Copy input data to input tensor
+    input_tens_buff = tflite::GetTensorData<int8_t>(_input);
+    for (int i = 0; i < FULL_WINDOW_SIZE; i++)
+    {
+        input_tens_buff[i + (0 * FULL_WINDOW_SIZE)] = (int8_t)raw->ax[i];
+        input_tens_buff[i + (1 * FULL_WINDOW_SIZE)] = (int8_t)raw->ay[i];
+        input_tens_buff[i + (2 * FULL_WINDOW_SIZE)] = (int8_t)raw->az[i];
+        input_tens_buff[i + (3 * FULL_WINDOW_SIZE)] = (int8_t)raw->gx[i];
+        input_tens_buff[i + (4 * FULL_WINDOW_SIZE)] = (int8_t)raw->gy[i];
+        input_tens_buff[i + (5 * FULL_WINDOW_SIZE)] = (int8_t)raw->gz[i];
+    }
+
+    s = _interpreter->Invoke();
+    if (s != TfLiteStatus::kTfLiteOk)
+    {
+        status = tflite_status_to_predictor_error(s);
+        goto exit;
+    }
+
+    output_tens_buff = tflite::GetTensorData<int8_t>(_output);
+    for (int i = 0; i < TENSOR_OUT_SIZE; i++)
+    {
+        output[i] = output_tens_buff[i];
+    }
+
+    *label = probability_to_label(output);
+
+exit:
+    free(output);
+    return status;
+}
+
+Label Predictor::probability_to_label(int8_t *proba)
+{
+    int8_t max_value = proba[0];
+    uint8_t max_idx = 0;
+
+    for (uint8_t i = 1; i < TENSOR_OUT_SIZE; ++i)
+    {
+        if (proba[i] > max_value)
+        {
+            max_value = proba[i];
+            max_idx = i;
+        }
+    }
+
+    return Label(max_idx);
 }

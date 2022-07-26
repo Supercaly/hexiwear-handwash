@@ -1,7 +1,7 @@
 #ifndef MODEL_H_
 #define MODEL_H_
 
-unsigned char model_tflite[] = {};
-unsigned int model_tflite_len = 0;
+extern unsigned char model_tflite[];
+extern unsigned int model_tflite_len;
 
 #endif // MODEL_H_
