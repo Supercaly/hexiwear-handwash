@@ -47,16 +47,14 @@ target_compile_options(mbed-events INTERFACE -w) # Disable all warnings from mbe
 
 # Include Libraries
 add_subdirectory(${LIBS_DIR}/csv)
-add_subdirectory(${LIBS_DIR}/tensorflow)
 add_subdirectory(${LIBS_DIR}/utils)
 add_subdirectory(${LIBS_DIR}/prediction)
 # Include ML libraries
 if(${ML_MODE} STREQUAL "svm")
     add_subdirectory(${LIBS_DIR}/svm)
 elseif(${ML_MODE} STREQUAL "knn")
-elseif(${ML_MODE} STREQUAL "cnn")
+elseif(${ML_MODE} STREQUAL "cnn" OR ${ML_MODE} STREQUAL "lstm")
     add_subdirectory(${LIBS_DIR}/ml)
-elseif(${ML_MODE} STREQUAL "lstm")
 else()
     message(FATAL_ERROR "unsupported ml mode ${ML_MODE}!")
 endif()

@@ -3,9 +3,10 @@
 
 add_library(ml INTERFACE)
 
+target_compile_definitions(ml INTERFACE HAS_ML)
+
 target_link_libraries(ml INTERFACE
     prediction
-    tensorflow
 )
 
 target_include_directories(ml INTERFACE
@@ -15,6 +16,7 @@ target_include_directories(ml INTERFACE
 
 target_sources(ml INTERFACE
     predictor.cpp
+    model/model.cc
 )
 
-target_compile_definitions(ml INTERFACE HAS_ML)
+add_subdirectory(libtf)
