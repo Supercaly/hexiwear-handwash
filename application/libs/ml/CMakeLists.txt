@@ -12,11 +12,12 @@ target_link_libraries(ml INTERFACE
 target_include_directories(ml INTERFACE
     .
     model
+    ${ROOT_DIR}/../training/models/${ML_MODE}_${ML_WINDOW_SIZE}/model.cc
 )
 
 target_sources(ml INTERFACE
     predictor.cpp
-    model/model.cc
+    ${ROOT_DIR}/../training/models/${ML_MODE}_${ML_WINDOW_SIZE}/model.cc
 )
 
 add_subdirectory(libtf)
