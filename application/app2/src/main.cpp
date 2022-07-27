@@ -1,4 +1,12 @@
+// #define MEASURE_COLLECTION
+#define MEASURE_INFERENCE
+
+#ifdef MEASURE_COLLECTION
+#include "collector_thread.h"
+#endif // MEASURE_COLLECTION
+#ifdef MEASURE_INFERENCE
 #include "prediction_thread.h"
+#endif // MEASURE_INFERENCE
 
 #include "FATFileSystem.h"
 #include "mbed.h"
@@ -19,8 +27,15 @@ FileSystem *FileSystem::get_default_instance()
 
 int main()
 {
+#ifdef MEASURE_COLLECTION
+    Thread collection_thread;
+    collection_thread.start(collector_thread_loop);
+#endif // MEASURE_COLLECTION
+
+#ifdef MEASURE_INFERENCE
     Thread prediction_thread;
     prediction_thread.start(prediction_thread_loop);
+#endif // MEASURE_INFERENCE
 
     DigitalOut status_led(LED_RED);
     while (true)
