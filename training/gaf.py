@@ -9,15 +9,9 @@ from math import ceil
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_array
 from sklearn.preprocessing import MinMaxScaler as SklearnMinMaxScaler
-from numpy.lib.stride_tricks import as_strided
-from pyts.datasets import load_gunpoint
 from pyts.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import ImageGrid
-
-from data_loader import load_features
-from data_loader import load_raw_data
-# @njit(parallel=True)
 
 
 def _paa(X, n_samples, n_timestamps, start, end, n_timestamps_new):
@@ -436,21 +430,21 @@ if __name__ == "__main__":
     # X = [[-1, 2], [-0.5, 6], [0, 10], [1, 18]]
     # X, _, _, _ = load_gunpoint(return_X_y=True)
     # print(X.shape)
-    data = list(itertools.islice(load_raw_data("all_db.csv"), 400))
-    ax = [float(f["ax"]) for f in data]
-    ax = np.array([ax])
-    ay = [float(f["ay"]) for f in data]
-    ay = np.array([ay])
-    az = [float(f["az"]) for f in data]
-    az = np.array([az])
-    gx = [float(f["gx"]) for f in data]
-    gx = np.array([gx])
-    gy = [float(f["gy"]) for f in data]
-    gy = np.array([gy])
-    gz = [float(f["gz"]) for f in data]
-    gz = np.array([gz])
+    # data = list(itertools.islice(load_raw_data("all_db.csv"), 400))
+    # ax = [float(f["ax"]) for f in data]
+    # ax = np.array([ax])
+    # ay = [float(f["ay"]) for f in data]
+    # ay = np.array([ay])
+    # az = [float(f["az"]) for f in data]
+    # az = np.array([az])
+    # gx = [float(f["gx"]) for f in data]
+    # gx = np.array([gx])
+    # gy = [float(f["gy"]) for f in data]
+    # gy = np.array([gy])
+    # gz = [float(f["gz"]) for f in data]
+    # gz = np.array([gz])
     
-    print(ax.shape)
+    # print(ax.shape)
 
     time_points = np.linspace(0, 4 * np.pi, 500)
     x = np.sin(time_points)
@@ -460,16 +454,6 @@ if __name__ == "__main__":
     gadf = GramianAngularField(method='difference')
     ax_gasf = gasf.fit_transform(X)
     ax_gadf = gadf.fit_transform(X)
-    ay_gasf = gasf.fit_transform(ay)
-    ay_gadf = gadf.fit_transform(ay)
-    az_gasf = gasf.fit_transform(az)
-    az_gadf = gadf.fit_transform(az)
-    gx_gasf = gasf.fit_transform(gx)
-    gx_gadf = gadf.fit_transform(gx)
-    gy_gasf = gasf.fit_transform(gy)
-    gy_gadf = gadf.fit_transform(gy)
-    gz_gasf = gasf.fit_transform(gz)
-    gz_gadf = gadf.fit_transform(gz)
     
     print("aa ", ax_gasf.shape)
 

@@ -1,5 +1,6 @@
 from collections import Counter
 import os
+import sys
 import tempfile
 from time import time
 import tensorflow as tf
@@ -35,6 +36,7 @@ class LSTMGenerator(tf.keras.utils.Sequence):
         X = np.empty((self.batch_size, 6, self.dim))
         Y = np.empty((self.batch_size), dtype=float)
 
+        csv.field_size_limit(sys.maxsize)
         for i, file in enumerate(file_paths_tmp):
             with open(file, "r") as f:
                 rows = list(csv.DictReader(f))
@@ -74,12 +76,8 @@ def train_lstm(train_dir, test_dir, size, split):
     # create the LSTM model to train
     model = tf.keras.Sequential()
     model.add(tf.keras.layers.Input(shape=(6, size)))
-    # model.add(tf.keras.layers.LSTM(256, return_sequences=True))
-    # model.add(tf.keras.layers.LSTM(128, return_sequences=True))
-    model.add(tf.keras.layers.LSTM(32, unroll=True))
-    # model.add(tf.keras.layers.Flatten())
-    # model.add(tf.keras.layers.Dense(256))
-    model.add(tf.keras.layers.Dense(64))
+    model.add(tf.keras.layers.LSTM(6, unroll=True))
+    model.add(tf.keras.layers.Dense(32))
     model.add(tf.keras.layers.Dense(3))
     model.add(tf.keras.layers.Softmax())
 
@@ -93,7 +91,7 @@ def train_lstm(train_dir, test_dir, size, split):
     # train the CNN model
     model.fit(x=train_gen,
               validation_data=test_gen,
-              epochs=1,
+              epochs=100,
               use_multiprocessing=True,
               workers=2)
 
