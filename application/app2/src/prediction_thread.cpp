@@ -20,7 +20,8 @@ void prediction_thread_loop()
     Label actual_label,
         pred_label;
     static RawSensorData raw_chunk;
-    Timer inference_timer;
+    Timer features_timer,
+        inference_timer;
 
 #ifdef HAS_SVM
     SVM svm;
@@ -39,7 +40,7 @@ void prediction_thread_loop()
 
 #ifdef HAS_SVM
     // Init SVM
-    if (!svm.init("/sd/model_10.model"))
+    if (!svm.init("/sd/model.model"))
     {
         log_error("error loading SVM model from file\n");
         return;
@@ -63,7 +64,16 @@ void prediction_thread_loop()
         log_info("computing inference on new chunk of data...\n");
 
 #ifdef HAS_SVM
-        svm.predict(&raw_chunk, &pred_label);
+        features_timer.reset();
+        features_timer.start();
+        float features[24];
+        compute_features(&raw_chunk, features);
+        features_timer.stop();
+
+        inference_timer.reset();
+        inference_timer.start();
+        svm.predict(features, &pred_label);
+        inference_timer.stop();
 #elif defined(HAS_ML)
         inference_timer.reset();
         inference_timer.start();
@@ -78,10 +88,12 @@ void prediction_thread_loop()
         inference_timer.stop();
 #endif // HAS_SVM
 
-        log_info("predicted label: %s actual label: %s "
-                 "in: %lldms\n",
+        log_info("predicted label: '%s', actual label: '%s'\n"
+                 "\tfeature time: %lldms\n"
+                 "\tinference time: %lldms\n\n",
                  label_to_cstr(pred_label),
                  label_to_cstr(actual_label),
+                 chrono::duration_cast<chrono::milliseconds>(features_timer.elapsed_time()).count(),
                  chrono::duration_cast<chrono::milliseconds>(inference_timer.elapsed_time()).count());
         counter++;
     }
