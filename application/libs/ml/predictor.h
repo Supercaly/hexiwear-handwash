@@ -10,6 +10,8 @@
 #include "tensorflow/lite/micro/micro_interpreter.h"
 #include "tensorflow/lite/micro/system_setup.h"
 #include "tensorflow/lite/schema/schema_generated.h"
+#include "tensorflow/lite/micro/memory_planner/greedy_memory_planner.h"
+#include "tensorflow/lite/micro/arena_allocator/recording_single_arena_buffer_allocator.h"
 
 // Constants
 #define TENSOR_IN_SIZE 6 * FULL_WINDOW_SIZE
@@ -71,6 +73,11 @@ private:
     tflite::MicroInterpreter *_interpreter;
     TfLiteTensor *_input;
     TfLiteTensor *_output;
+
+    // memory management
+    tflite::RecordingSingleArenaBufferAllocator *_arena_buffer_alloc;
+    tflite::MicroMemoryPlanner *_memory_planner;
+
     bool _init;
     uint8_t *_tensor_arena;
 

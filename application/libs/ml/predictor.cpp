@@ -6,10 +6,12 @@
 Predictor::Predictor() : _init(false)
 {
     _tensor_arena = (uint8_t *)malloc(sizeof(uint8_t) * TENSOR_ARENA_SIZE);
+    printf("tensor arena location: %d\n", _tensor_arena);
 }
 
 Predictor::~Predictor()
 {
+    delete _memory_planner;
     free(_tensor_arena);
 }
 
@@ -49,10 +51,14 @@ PredictorError Predictor::init()
     static_ops_resolver.AddTanh();
     static_ops_resolver.AddSoftmax();
 
-    static tflite::MicroInterpreter static_interpreter(
-        _model, static_ops_resolver, _tensor_arena, TENSOR_ARENA_SIZE, _error_reporter);
-    _interpreter = &static_interpreter;
+    _arena_buffer_alloc = tflite::RecordingSingleArenaBufferAllocator::Create(_error_reporter, _tensor_arena, TENSOR_ARENA_SIZE);
+    _memory_planner = new tflite::GreedyMemoryPlanner();
+    static tflite::MicroAllocator *micro_allocator =
+        tflite::MicroAllocator::Create(_arena_buffer_alloc, _memory_planner, _error_reporter);
 
+    static tflite::MicroInterpreter static_interpreter(
+        _model, static_ops_resolver, micro_allocator, _error_reporter);
+    _interpreter = &static_interpreter;
     TfLiteStatus allocate_status = _interpreter->AllocateTensors();
     if (allocate_status != kTfLiteOk)
     {
@@ -113,6 +119,8 @@ PredictorError Predictor::predict_label(RawSensorData *raw, Wrist wrist, Label *
     {
         output[i] = output_tens_buff[i];
     }
+
+    log_error("Memory used for inference: %d\n", _arena_buffer_alloc->GetUsedBytes());
 
     *label = probability_to_label(output);
 
