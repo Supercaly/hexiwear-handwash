@@ -14,7 +14,7 @@ public:
 
     bool init(const char *model_path);
 
-    void predict(RawSensorData *raw, Label *label);
+    void predict(float *features, Label *label);
 
 private:
     svm_model *_model;

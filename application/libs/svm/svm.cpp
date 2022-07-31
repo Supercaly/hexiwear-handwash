@@ -16,11 +16,8 @@ bool SVM::init(const char *model_path)
     return true;
 }
 
-void SVM::predict(RawSensorData *raw, Label *label)
+void SVM::predict(float *features, Label *label)
 {
-     float features[24];
-    compute_features(raw, features);
-
     for (int i = 0; i < 24; i++)
     {
         _nodes[i].index = i + 1;
