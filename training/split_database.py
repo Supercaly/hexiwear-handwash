@@ -6,11 +6,13 @@ from statistics import mean, stdev
 import click
 import numpy as np
 
+
 def load_raw_data(path):
     with open(path, "r") as f:
         rows = csv.DictReader(f)
         for r in rows:
             yield r
+
 
 def compute_features(chunk):
     return {
@@ -99,22 +101,44 @@ def main(src, mode, window_size, freq, dst, percent):
         # training set adn 20% probability in test set.
         train_cnt = 0
         test_cnt = 0
-        while chunk:
-            if np.random.uniform() < percent:
-                # write to training set
-                file_path = os.path.join(train_dir, f"{train_cnt}.csv")
-                train_cnt += 1
-            else:
-                # write to test set
-                file_path = os.path.join(test_dir, f"{test_cnt}.csv")
-                test_cnt += 1
+        l = {"0": 0, "1": 0, "2": 0}
+        l2 = {"0": 0, "1": 0, "2": 0}
+        l_map = {"0": [], "1": [], "2": []}
+        l_map2 = {"0": [], "1": [], "2": []}
 
-            with open(file_path, "w+") as f:
-                w = csv.DictWriter(f, chunk[0].keys())
-                w.writeheader()
-                w.writerows(chunk)
+        while chunk:
+            if len(chunk) == window_size*freq:
+                label = Counter(list([x["label"]
+                                for x in chunk])).most_common(1)[0][0]
+
+                if np.random.uniform() < percent:
+                    # write to training set
+                    file_path = os.path.join(train_dir, f"{train_cnt}.csv")
+                    l[label] += 1
+                    l_map[label].append(file_path)
+                    train_cnt += 1
+                else:
+                    # write to test set
+                    file_path = os.path.join(test_dir, f"{test_cnt}.csv")
+                    l2[label] += 1
+                    l_map2[label].append(file_path)
+                    test_cnt += 1
+
+                with open(file_path, "w+") as f:
+                    w = csv.DictWriter(f, chunk[0].keys())
+                    w.writeheader()
+                    w.writerows(chunk)
 
             chunk = list(islice(raw_data, window_size * freq))
+        print(l)
+        print(l2)
+        m = min(l["0"], min(l["1"], l["2"]))
+        a = l_map["0"][m:]
+        for f in a:
+            os.remove(f)
+        m2 = min(len(l_map2["0"]), min(len(l_map2["1"]), len(l_map2["2"])))
+        for f in l_map2["0"][m2:]:
+            os.remove(f)
 
 
 if __name__ == "__main__":
