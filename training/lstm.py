@@ -3,10 +3,26 @@ import os
 import sys
 import tempfile
 from time import time
+from matplotlib import pyplot as plt
 import tensorflow as tf
 import numpy as np
 import csv
 import tensorflow_model_optimization as tfmot
+import lstm_metrics
+
+
+def get_label_for_chunk(chunk, f):
+    l = {"0": 0, "1": 0, "2": 0}
+    for c in chunk:
+        l[c["label"]] += 1
+    if l["0"] >= l["1"] and l["0"] >= l["2"]:
+        return 0
+    elif l["1"] >= l["0"] and l["1"] >= l["2"]:
+        return 1
+    elif l["2"] >= l["0"] and l["2"] >= l["1"]:
+        return 2
+    else:
+        raise Exception(f"get_label_for_chunk: wrong label {l} {f}")
 
 
 class LSTMGenerator(tf.keras.utils.Sequence):
@@ -17,8 +33,6 @@ class LSTMGenerator(tf.keras.utils.Sequence):
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.indexes = np.arange(len(self.file_paths))
-        if self.shuffle == True:
-            np.random.shuffle(self.indexes)
 
     def __len__(self):
         return int(len(self.file_paths) // self.batch_size) // self.split
@@ -33,7 +47,7 @@ class LSTMGenerator(tf.keras.utils.Sequence):
 
         file_paths_tmp = [self.file_paths[k] for k in indexes]
 
-        X = np.empty((self.batch_size, 6, self.dim))
+        X = np.empty((self.batch_size, 6, self.dim), dtype=float)
         Y = np.empty((self.batch_size), dtype=float)
 
         csv.field_size_limit(sys.maxsize)
@@ -42,22 +56,57 @@ class LSTMGenerator(tf.keras.utils.Sequence):
                 rows = list(csv.DictReader(f))
 
                 if len(rows) != self.dim:
-                    print(f"ho una size diversa {len(rows)}")
-                    l = len(rows)
-                    for _ in range(self.dim - l):
-                        rows.append({"ax": 0.0, "ay": 0.0, "az": 0.0, "gx": 0.0,
-                                    "gy": 0.0, "gz": 0.0, "label": 0.0, "subjectID": 0.0})
+                    raise Exception(f"ho una size diversa {len(rows)}")
 
-                X[i, 0, ] = [r["ax"] for r in rows]
-                X[i, 1, ] = [r["ay"] for r in rows]
-                X[i, 2, ] = [r["az"] for r in rows]
-                X[i, 3, ] = [r["gx"] for r in rows]
-                X[i, 4, ] = [r["gy"] for r in rows]
-                X[i, 5, ] = [r["gz"] for r in rows]
+                X[i, 0, ] = [float(r["ax"]) for r in rows]
+                X[i, 1, ] = [float(r["ay"]) for r in rows]
+                X[i, 2, ] = [float(r["az"]) for r in rows]
+                X[i, 3, ] = [float(r["gx"]) for r in rows]
+                X[i, 4, ] = [float(r["gy"]) for r in rows]
+                X[i, 5, ] = [float(r["gz"]) for r in rows]
 
-                Y[i] = Counter([r['label'] for r in rows]).most_common(1)[0][0]
+                Y[i] = get_label_for_chunk(rows, file)
+        a = tf.keras.utils.to_categorical(Y, num_classes=3)
 
-        return X, Y
+        return X, a
+
+
+def get_data(files, size):
+    X = np.zeros((len(files), 6, size), dtype=np.float32)
+    Y = np.zeros((len(files)))
+    print(X.shape)
+    for i, f in enumerate(files):
+        with open(f, "r") as c:
+            rows = list(csv.DictReader(c))
+            X[i, 0, ] = [float(r["ax"]) for r in rows]
+            X[i, 1, ] = [float(r["ay"]) for r in rows]
+            X[i, 2, ] = [float(r["az"]) for r in rows]
+            X[i, 3, ] = [float(r["gx"]) for r in rows]
+            X[i, 4, ] = [float(r["gy"]) for r in rows]
+            X[i, 5, ] = [float(r["gz"]) for r in rows]
+            Y[i] = get_label_for_chunk(rows, f)
+    # Y = tf.keras.utils.to_categorical(Y, num_classes=3)
+    return X, Y
+    
+def get_data2(file, size):
+    with open(file, "r") as c:
+        rows = list(csv.DictReader(c))
+        cs = len(rows) // size
+        X = np.zeros((cs, 6, size))
+        Y = np.zeros((cs))
+        i = 0
+        for x in range(0, len(rows), size):
+            chunk = rows[x:size+x]
+            X[i, 0, ] = [float(r["ax"]) for r in chunk]
+            X[i, 1, ] = [float(r["ay"]) for r in chunk]
+            X[i, 2, ] = [float(r["az"]) for r in chunk]
+            X[i, 3, ] = [float(r["gx"]) for r in chunk]
+            X[i, 4, ] = [float(r["gy"]) for r in chunk]
+            X[i, 5, ] = [float(r["gz"]) for r in chunk]
+            Y[i] = get_label_for_chunk(chunk, "f")
+            i+=1
+    Y = tf.keras.utils.to_categorical(Y, num_classes=3)
+    return X, Y
 
 
 def train_lstm(train_dir, test_dir, size, split):
@@ -70,104 +119,58 @@ def train_lstm(train_dir, test_dir, size, split):
     test_paths = [os.path.join(test_dir, f)
                   for f in os.listdir(test_dir) if f.endswith(".csv")]
 
-    train_gen = LSTMGenerator(train_paths, size, split=split)
-    test_gen = LSTMGenerator(test_paths, size, shuffle=False, split=split)
+    # train_gen = LSTMGenerator(train_paths, size, split=split)
+    # test_gen = LSTMGenerator(test_paths, size, shuffle=False, split=split)
+    # train_x, train_y = get_data(train_paths, size)
+    # test_x, test_y = get_data(test_paths, size)
+    d,l = get_data2("data/2/t.csv", size)
+    
+    # print(f"{train_x.shape} {train_y.shape} {test_x.shape} {test_y.shape}")
 
     # create the LSTM model to train
     model = tf.keras.Sequential()
     model.add(tf.keras.layers.Input(shape=(6, size)))
-    model.add(tf.keras.layers.LSTM(6, unroll=True))
-    model.add(tf.keras.layers.Dense(32))
+    model.add(tf.keras.layers.LayerNormalization())
+    # model.add(tf.keras.layers.LSTM(256, unroll=True, return_sequences=True))
+    # model.add(tf.keras.layers.LSTM(128, unroll=True, return_sequences=True))
+    model.add(tf.keras.layers.LSTM(85, unroll=True))
+    # model.add(tf.keras.layers.LayerNormalization())
+    # model.add(tf.keras.layers.Dropout(0.5))
+    model.add(tf.keras.layers.Dense(256))
+    # model.add(tf.keras.layers.Dense(128))
     model.add(tf.keras.layers.Dense(3))
     model.add(tf.keras.layers.Softmax())
 
     model.summary()
 
-    model.compile(loss='sparse_categorical_crossentropy',
-                  optimizer='adam', metrics=["sparse_categorical_accuracy"])
+    model.compile(loss='kullback_leibler_divergence',
+                  optimizer='adam', metrics=["accuracy"])
 
     start_time = time()
 
     # train the CNN model
-    model.fit(x=train_gen,
-              validation_data=test_gen,
-              epochs=100,
-              use_multiprocessing=True,
-              workers=2)
+    history = model.fit(x=d,
+                        y=l,
+                        validation_split=0.2,
+                        epochs=100,
+                        use_multiprocessing=True,
+                        workers=1)
 
     print(f"Training LSTM model done in {time()-start_time}s!")
+
+    plt.subplot(121)
+    plt.plot(history.history["accuracy"])
+    plt.plot(history.history["val_accuracy"])
+    plt.title("Model categorical accuracies")
+    plt.legend(['train', 'test'])
+    plt.subplot(122)
+    plt.plot(history.history["loss"])
+    plt.plot(history.history["val_loss"])
+    plt.title("Model losses")
+    plt.legend(['train', 'test'])
+    plt.show()
+
     return model
-
-
-def prune_lstm(model, train_dir, test_dir, size, split):
-    prune_low_magnitude = tfmot.sparsity.keras.prune_low_magnitude
-
-    train_paths = [os.path.join(train_dir, f)
-                   for f in os.listdir(train_dir) if f.endswith(".csv")]
-    test_paths = [os.path.join(test_dir, f)
-                  for f in os.listdir(test_dir) if f.endswith(".csv")]
-    # num_images = train_images.shape[0] * (1 - validation_split)
-    end_step = np.ceil(len(train_paths) / split).astype(np.int32)
-
-    # Define model for pruning.
-    pruning_params = {
-        'pruning_schedule': tfmot.sparsity.keras.PolynomialDecay(initial_sparsity=0.50,
-                                                                 final_sparsity=0.80,
-                                                                 begin_step=0,
-                                                                 end_step=end_step)
-    }
-
-    model_for_pruning = prune_low_magnitude(model, **pruning_params)
-
-    # `prune_low_magnitude` requires a recompile.
-    model_for_pruning.compile(optimizer='adam',
-                              loss=tf.keras.losses.SparseCategoricalCrossentropy(
-                                  from_logits=True),
-                              metrics=['accuracy'])
-
-    model_for_pruning.summary()
-
-    train_gen = LSTMGenerator(train_paths, size, split=split)
-    test_gen = LSTMGenerator(test_paths, size, split=split,
-                             shuffle=False)
-
-    logdir = tempfile.mkdtemp()
-
-    callbacks = [
-        tfmot.sparsity.keras.UpdatePruningStep(),
-        tfmot.sparsity.keras.PruningSummaries(log_dir=logdir),
-    ]
-
-    model_for_pruning.fit(train_gen, epochs=1, validation_data=test_gen,
-                          callbacks=callbacks)
-    model_for_export = tfmot.sparsity.keras.strip_pruning(model_for_pruning)
-
-    print("Model Pruned!")
-
-    cluster_weights = tfmot.clustering.keras.cluster_weights
-    CentroidInitialization = tfmot.clustering.keras.CentroidInitialization
-
-    clustering_params = {
-        'number_of_clusters': 16,
-        'cluster_centroids_init': CentroidInitialization.LINEAR
-    }
-
-    # Cluster a whole model
-    clustered_model = cluster_weights(model_for_export, **clustering_params)
-
-    # Use smaller learning rate for fine-tuning clustered model
-    opt = tf.keras.optimizers.Adam(learning_rate=1e-5)
-
-    clustered_model.compile(
-        loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-        optimizer=opt,
-        metrics=['accuracy'])
-
-    clustered_model.summary()
-    # Fine-tune model
-    clustered_model.fit(train_gen, epochs=1, validation_data=test_gen)
-    clustered_model = tfmot.clustering.keras.strip_clustering(clustered_model)
-    return clustered_model
 
 
 def generate_lstm(train_dir, test_dir, ws, freq, split, force):
@@ -177,7 +180,6 @@ def generate_lstm(train_dir, test_dir, ws, freq, split, force):
 
     if force or not os.path.exists(model_path):
         model = train_lstm(train_dir, test_dir, ws*freq, split)
-        # model = prune_lstm(model, train_dir, test_dir, ws*freq, split)
         model.save(model_path)
         print("Model saved!")
 
@@ -202,18 +204,17 @@ def generate_lstm(train_dir, test_dir, ws, freq, split, force):
     converter = tf.lite.TFLiteConverter.from_saved_model(model_path)
     converter.optimizations = [tf.lite.Optimize.DEFAULT]
     converter.post_training_quantize = True
-    converter.target_spec.supported_ops = [
-        tf.lite.OpsSet.TFLITE_BUILTINS, tf.lite.OpsSet.SELECT_TF_OPS]
+    # converter.target_spec.supported_ops = [
+    #     tf.lite.OpsSet.TFLITE_BUILTINS, tf.lite.OpsSet.SELECT_TF_OPS]
     # converter.experimental_new_converter = True
     # converter.allow_custom_ops = True
     # converter.target_spec.supported_ops = [
     #     tf.lite.OpsSet.TFLITE_BUILTINS_INT8,
     #     tf.lite.OpsSet.SELECT_TF_OPS]
-    converter.experimental_enable_resource_variables = True
-
-    converter.representative_dataset = rep_dataset_gen
-    converter.inference_input_type = tf.int8  # or tf.uint8
-    converter.inference_output_type = tf.int8  # or tf.uint8
+    # converter.experimental_enable_resource_variables = True
+    # converter.representative_dataset = rep_dataset_gen
+    # converter.inference_input_type = tf.int8  # or tf.uint8
+    # converter.inference_output_type = tf.int8  # or tf.uint8
 
     tflite_model = converter.convert()
 
@@ -221,3 +222,5 @@ def generate_lstm(train_dir, test_dir, ws, freq, split, force):
 
     with open(os.path.join(model_path, "model.tflite"), "wb+") as f:
         f.write(tflite_model)
+
+    lstm_metrics.run(ws, "models", "data")

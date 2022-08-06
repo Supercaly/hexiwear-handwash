@@ -2,9 +2,25 @@ from collections import Counter
 import csv
 from itertools import islice
 import os
+from random import shuffle
+import shutil
 from statistics import mean, stdev
 import click
 import numpy as np
+
+
+def get_label_for_chunk(chunk, f):
+    l = {"0": 0, "1": 0, "2": 0}
+    for c in chunk:
+        l[c["label"]] += 1
+    if l["0"] >= l["1"] and l["0"] >= l["2"]:
+        return 0
+    elif l["1"] >= l["0"] and l["1"] >= l["2"]:
+        return 1
+    elif l["2"] >= l["0"] and l["2"] >= l["1"]:
+        return 2
+    else:
+        raise Exception(f"get_label_for_chunk: wrong label {l} {f}")
 
 
 def load_raw_data(path):
@@ -15,33 +31,50 @@ def load_raw_data(path):
 
 
 def compute_features(chunk):
-    return {
-        "avg_ax": mean(list([float(x["ax"]) for x in chunk])),
-        "avg_ay": mean(list([float(x["ay"]) for x in chunk])),
-        "avg_az": mean(list([float(x["az"]) for x in chunk])),
-        "avg_gx": mean(list([float(x["gx"]) for x in chunk])),
-        "avg_gy": mean(list([float(x["gy"]) for x in chunk])),
-        "avg_gz": mean(list([float(x["gz"]) for x in chunk])),
-        "std_ax": stdev(list([float(x["ax"]) for x in chunk])),
-        "std_ay": stdev(list([float(x["ay"]) for x in chunk])),
-        "std_az": stdev(list([float(x["az"]) for x in chunk])),
-        "std_gx": stdev(list([float(x["gx"]) for x in chunk])),
-        "std_gy": stdev(list([float(x["gy"]) for x in chunk])),
-        "std_gz": stdev(list([float(x["gz"]) for x in chunk])),
-        "max_ax": max(list([float(x["ax"]) for x in chunk])),
-        "max_ay": max(list([float(x["ay"]) for x in chunk])),
-        "max_az": max(list([float(x["az"]) for x in chunk])),
-        "max_gx": max(list([float(x["gx"]) for x in chunk])),
-        "max_gy": max(list([float(x["gy"]) for x in chunk])),
-        "max_gz": max(list([float(x["gz"]) for x in chunk])),
-        "min_ax": min(list([float(x["ax"]) for x in chunk])),
-        "min_ay": min(list([float(x["ay"]) for x in chunk])),
-        "min_az": min(list([float(x["az"]) for x in chunk])),
-        "min_gx": min(list([float(x["gx"]) for x in chunk])),
-        "min_gy": min(list([float(x["gy"]) for x in chunk])),
-        "min_gz": min(list([float(x["gz"]) for x in chunk])),
-        "label": Counter(list([x["label"] for x in chunk])).most_common(1)[0][0]
-    }
+    return [
+        get_label_for_chunk(chunk, ""),  # "label":
+        mean(list([float(x["ax"]) for x in chunk])),  # "avg_ax":
+        mean(list([float(x["ay"]) for x in chunk])),  # "avg_ay":
+        mean(list([float(x["az"]) for x in chunk])),  # "avg_az":
+        mean(list([float(x["gx"]) for x in chunk])),  # "avg_gx":
+        mean(list([float(x["gy"]) for x in chunk])),  # "avg_gy":
+        mean(list([float(x["gz"]) for x in chunk])),  # "avg_gz":
+        stdev(list([float(x["ax"]) for x in chunk])),  # "std_ax":
+        stdev(list([float(x["ay"]) for x in chunk])),  # "std_ay":
+        stdev(list([float(x["az"]) for x in chunk])),  # "std_az":
+        stdev(list([float(x["gx"]) for x in chunk])),  # "std_gx":
+        stdev(list([float(x["gy"]) for x in chunk])),  # "std_gy":
+        stdev(list([float(x["gz"]) for x in chunk])),  # "std_gz":
+        max(list([float(x["ax"]) for x in chunk])),  # "max_ax":
+        max(list([float(x["ay"]) for x in chunk])),  # "max_ay":
+        max(list([float(x["az"]) for x in chunk])),  # "max_az":
+        max(list([float(x["gx"]) for x in chunk])),  # "max_gx":
+        max(list([float(x["gy"]) for x in chunk])),  # "max_gy":
+        max(list([float(x["gz"]) for x in chunk])),  # "max_gz":
+        min(list([float(x["ax"]) for x in chunk])),  # "min_ax":
+        min(list([float(x["ay"]) for x in chunk])),  # "min_ay":
+        min(list([float(x["az"]) for x in chunk])),  # "min_az":
+        min(list([float(x["gx"]) for x in chunk])),  # "min_gx":
+        min(list([float(x["gy"]) for x in chunk])),  # "min_gy":
+        min(list([float(x["gz"]) for x in chunk]))  # "min_gz":
+    ]
+
+
+def subset(features):
+    print("subset")
+    f0 = list(filter(lambda e: e[0] == 0, features))
+    f1 = list(filter(lambda e: e[0] == 1, features))
+    f2 = list(filter(lambda e: e[0] == 2, features))
+    # shuffle(f0)
+    # shuffle(f1)
+    # shuffle(f2)
+    f2 = f2
+    f1 = f1
+    f0 = f0[:len(f1)]
+    print(f"0: {len(f0)} 1: {len(f1)} 2: {len(f2)}")
+    f = f0+f1+f2
+    shuffle(f)
+    return f
 
 
 @click.command()
@@ -74,18 +107,36 @@ def main(src, mode, window_size, freq, dst, percent):
         train_file = open(os.path.join(train_dir, "train.csv"), "w+")
         test_file = open(os.path.join(test_dir, "test.csv"), "w+")
 
-        # split raw data by window_size
-        chunk = list(islice(raw_data, window_size * freq))
-        while chunk:
-            feats = compute_features(chunk)
-            pattern = f"{feats['label']} 1:{feats['avg_ax']} 2:{feats['avg_ay']} 3:{feats['avg_az']} 4:{feats['avg_gx']} 5:{feats['avg_gy']} 6:{feats['avg_gz']} 7:{feats['std_ax']} 8:{feats['std_ay']} 9:{feats['std_az']} 10:{feats['std_gx']} 11:{feats['std_gy']} 12:{feats['std_gz']} 13:{feats['max_ax']} 14:{feats['max_ay']} 15:{feats['max_az']} 16:{feats['max_gx']} 17:{feats['max_gy']} 18:{feats['max_gz']} 19:{feats['min_ax']} 20:{feats['min_ay']} 21:{feats['min_az']} 22:{feats['min_gx']} 23:{feats['min_gy']} 24:{feats['min_gz']}\n"
+        feats = []
+        if not os.path.exists(os.path.join(train_dir, "data.csv")):
+            # split raw data by window_size
+            chunk = list(islice(raw_data, window_size * freq))
+            while chunk:
+                feats.append(compute_features(chunk))
+                chunk = list(islice(raw_data, window_size * freq))
+            with open(os.path.join(train_dir, "data.csv"), "w+") as d:
+                w = csv.writer(d)
+                w.writerows(feats)
+        else:
+            with open(os.path.join(train_dir, "data.csv"), "r") as d:
+                feats = list(csv.reader(d))
+                feats = [[int(ff) if i == 0 else float(ff)
+                          for i, ff in enumerate(f)] for f in feats]
+
+        feats = subset(feats)
+        for feat in feats:
+            pattern = ""
+            for i, f in enumerate(feat):
+                if i != 0:
+                    pattern += f" {i}:"
+                pattern += f"{f}"
+            pattern += "\n"
             if np.random.uniform() < percent:
                 # write to training set
                 train_file.write(pattern)
             else:
                 # write to test set
                 test_file.write(pattern)
-            chunk = list(islice(raw_data, window_size * freq))
 
     else:
         train_dir = os.path.join(dst, "train")
@@ -99,30 +150,16 @@ def main(src, mode, window_size, freq, dst, percent):
         # write chunks in training file or test file
         # a chunk has 80% probability of going in the
         # training set adn 20% probability in test set.
-        train_cnt = 0
-        test_cnt = 0
-        l = {"0": 0, "1": 0, "2": 0}
-        l2 = {"0": 0, "1": 0, "2": 0}
-        l_map = {"0": [], "1": [], "2": []}
-        l_map2 = {"0": [], "1": [], "2": []}
+        cnt = 0
+        file_map = {"0": [], "1": [], "2": []}
 
         while chunk:
             if len(chunk) == window_size*freq:
-                label = Counter(list([x["label"]
-                                for x in chunk])).most_common(1)[0][0]
+                label = get_label_for_chunk(chunk, "")
 
-                if np.random.uniform() < percent:
-                    # write to training set
-                    file_path = os.path.join(train_dir, f"{train_cnt}.csv")
-                    l[label] += 1
-                    l_map[label].append(file_path)
-                    train_cnt += 1
-                else:
-                    # write to test set
-                    file_path = os.path.join(test_dir, f"{test_cnt}.csv")
-                    l2[label] += 1
-                    l_map2[label].append(file_path)
-                    test_cnt += 1
+                file_path = os.path.join(train_dir, f"{cnt}.csv")
+                file_map[str(label)].append(file_path)
+                cnt += 1
 
                 with open(file_path, "w+") as f:
                     w = csv.DictWriter(f, chunk[0].keys())
@@ -130,15 +167,24 @@ def main(src, mode, window_size, freq, dst, percent):
                     w.writerows(chunk)
 
             chunk = list(islice(raw_data, window_size * freq))
-        print(l)
-        print(l2)
-        m = min(l["0"], min(l["1"], l["2"]))
-        a = l_map["0"][m:]
+
+        m = min(len(file_map["0"]), min(
+            len(file_map["1"]), len(file_map["2"])))
+        shuffle(file_map["0"])
+        a = file_map["0"][m:]
+        file_map["0"] = file_map["0"][:m]
         for f in a:
             os.remove(f)
-        m2 = min(len(l_map2["0"]), min(len(l_map2["1"]), len(l_map2["2"])))
-        for f in l_map2["0"][m2:]:
-            os.remove(f)
+
+        for f in file_map["0"]:
+            if np.random.uniform() > percent:
+                shutil.move(f, os.path.join(test_dir, os.path.basename(f)))
+        for f in file_map["1"]:
+            if np.random.uniform() > percent:
+                shutil.move(f, os.path.join(test_dir, os.path.basename(f)))
+        for f in file_map["2"]:
+            if np.random.uniform() > percent:
+                shutil.move(f, os.path.join(test_dir, os.path.basename(f)))
 
 
 if __name__ == "__main__":
