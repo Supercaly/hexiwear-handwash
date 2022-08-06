@@ -1,24 +1,24 @@
 #include "features.h"
 
 #include <math.h>
-#include "log.h"
+// #include "log.h"
 
 void compute_features(RawSensorData *data, float *output)
 {
     // FIXME: Review all this code
-    log_info("data: %f %f %f %f %f %f \n", data->ax[0], data->ay[0], data->az[0], data->gx[0], data->gy[0], data->gz[0]);
-    log_info("data: %f %f %f %f %f %f \n", data->ax[1], data->ay[1], data->az[1], data->gx[1], data->gy[1], data->gz[1]);
-    log_info("data: %f %f %f %f %f %f \n", data->ax[2], data->ay[2], data->az[2], data->gx[2], data->gy[2], data->gz[2]);
-    log_info("data: %f %f %f %f %f %f \n", data->ax[3], data->ay[3], data->az[3], data->gx[3], data->gy[3], data->gz[3]);
-    log_info("data: %f %f %f %f %f %f \n", data->ax[4], data->ay[4], data->az[4], data->gx[4], data->gy[4], data->gz[4]);
+    // log_info("data: %f %f %f %f %f %f \n", data->ax[0], data->ay[0], data->az[0], data->gx[0], data->gy[0], data->gz[0]);
+    // log_info("data: %f %f %f %f %f %f \n", data->ax[1], data->ay[1], data->az[1], data->gx[1], data->gy[1], data->gz[1]);
+    // log_info("data: %f %f %f %f %f %f \n", data->ax[2], data->ay[2], data->az[2], data->gx[2], data->gy[2], data->gz[2]);
+    // log_info("data: %f %f %f %f %f %f \n", data->ax[3], data->ay[3], data->az[3], data->gx[3], data->gy[3], data->gz[3]);
+    // log_info("data: %f %f %f %f %f %f \n", data->ax[4], data->ay[4], data->az[4], data->gx[4], data->gy[4], data->gz[4]);
 
     float sum_ax = 0.0, sum_ay = 0.0, sum_az = 0.0, sum_gx = 0.0, sum_gy = 0.0, sum_gz = 0.0;
     float std_ax = 0.0, std_ay = 0.0, std_az = 0.0, std_gx = 0.0, std_gy = 0.0, std_gz = 0.0;
     float max_ax = 0.0, max_ay = 0.0, max_az = 0.0, max_gx = 0.0, max_gy = 0.0, max_gz = 0.0;
     float min_ax = 0.0, min_ay = 0.0, min_az = 0.0, min_gx = 0.0, min_gy = 0.0, min_gz = 0.0;
 
-    // FIXME: This works only because the overlap is 0.5 so the prev data
-    // and the new have the same size. For different overlap you need two for loops.
+    // log_info("window size: %d\n", FULL_WINDOW_SIZE);
+
     for (int i = 0; i < FULL_WINDOW_SIZE; ++i)
     {
         // Compute the sum of every component for the avg

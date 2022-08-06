@@ -14,6 +14,10 @@
 #error cannot find a machine learning library!
 #endif // HAS_SVM
 
+#define STR_H(x) #x
+#define STR(x) STR_H(x)
+#define SVM_MODEL_PATH "/sd/svm_" STR(WINDOW_SIZE) "/model.model"
+
 void prediction_thread_loop()
 {
     DataImporter importer;
@@ -40,7 +44,8 @@ void prediction_thread_loop()
 
 #ifdef HAS_SVM
     // Init SVM
-    if (!svm.init("/sd/model.model"))
+    log_info("open %s\n", SVM_MODEL_PATH);
+    if (!svm.init(SVM_MODEL_PATH))
     {
         log_error("error loading SVM model from file\n");
         return;
@@ -61,7 +66,7 @@ void prediction_thread_loop()
     int counter = 0;
     while (importer.next_chunk(&raw_chunk, &actual_label) && counter < 100)
     {
-        log_info("computing inference on new chunk of data...\n");
+        // log_info("computing inference on new chunk of data...\n");
 
 #ifdef HAS_SVM
         features_timer.reset();
@@ -88,13 +93,14 @@ void prediction_thread_loop()
         inference_timer.stop();
 #endif // HAS_SVM
 
-        log_info("predicted label: '%s', actual label: '%s'\n"
-                 "\tfeature time: %lldms\n"
-                 "\tinference time: %lldms\n\n",
-                 label_to_cstr(pred_label),
-                 label_to_cstr(actual_label),
-                 chrono::duration_cast<chrono::milliseconds>(features_timer.elapsed_time()).count(),
-                 chrono::duration_cast<chrono::milliseconds>(inference_timer.elapsed_time()).count());
+        // log_info("predicted label: '%s', actual label: '%s'\n"
+        //          "\tfeature time: %lldus\n"
+        //          "\tinference time: %lldms\n\n",
+        //          label_to_cstr(pred_label),
+        //          label_to_cstr(actual_label),
+        //          chrono::duration_cast<chrono::microseconds>(features_timer.elapsed_time()).count(),
+        //          chrono::duration_cast<chrono::milliseconds>(inference_timer.elapsed_time()).count());
+        log_info("%lld\n", chrono::duration_cast<chrono::microseconds>(features_timer.elapsed_time()).count());
         counter++;
     }
 }

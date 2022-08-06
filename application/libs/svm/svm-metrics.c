@@ -114,7 +114,7 @@ void predict(void)
         sumpt += predict_label * target_label;
         ++total;
 
-        confusion_matrix[3 * (int)predict_label + (int)target_label]++;
+        confusion_matrix[3 * (int)target_label + (int)predict_label]++;
     }
     int tp[3], tn[3], fp[3], fn[3];
 
