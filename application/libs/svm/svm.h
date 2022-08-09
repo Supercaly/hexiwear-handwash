@@ -3,8 +3,8 @@
 
 #include "libsvm/svm.h"
 
-#include "raw_sensor_data.h"
 #include "label.h"
+#include "raw_sensor_data.h"
 
 class SVM
 {
@@ -14,7 +14,7 @@ public:
 
     bool init(const char *model_path);
 
-    void predict(float *features, Label *label);
+    void predict(float *features, size_t features_size, Label *label);
 
 private:
     svm_model *_model;

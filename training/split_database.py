@@ -65,12 +65,12 @@ def subset(features):
     f0 = list(filter(lambda e: e[0] == 0, features))
     f1 = list(filter(lambda e: e[0] == 1, features))
     f2 = list(filter(lambda e: e[0] == 2, features))
-    # shuffle(f0)
-    # shuffle(f1)
-    # shuffle(f2)
-    f2 = f2
-    f1 = f1
-    f0 = f0[:len(f1)]
+    shuffle(f0)
+    shuffle(f1)
+    shuffle(f2)
+    f2 = f2[:200]
+    f1 = f1[:200]
+    f0 = f0[:200]
     print(f"0: {len(f0)} 1: {len(f1)} 2: {len(f2)}")
     f = f0+f1+f2
     shuffle(f)

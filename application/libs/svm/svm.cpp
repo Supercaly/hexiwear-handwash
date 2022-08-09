@@ -16,9 +16,10 @@ bool SVM::init(const char *model_path)
     return true;
 }
 
-void SVM::predict(float *features, Label *label)
+void SVM::predict(float *features, size_t features_size, Label *label)
 {
-    for (int i = 0; i < 24; i++)
+    reset_malloc_count();
+    for (int i = 0; i < features_size; i++)
     {
         _nodes[i].index = i + 1;
         _nodes[i].value = features[i];
