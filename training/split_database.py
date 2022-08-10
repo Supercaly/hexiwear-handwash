@@ -157,34 +157,37 @@ def main(src, mode, window_size, freq, dst, percent):
             if len(chunk) == window_size*freq:
                 label = get_label_for_chunk(chunk, "")
 
-                file_path = os.path.join(train_dir, f"{cnt}.csv")
-                file_map[str(label)].append(file_path)
-                cnt += 1
+                if np.random.uniform() < percent:
+                    file_path = os.path.join(train_dir, f"{cnt}.csv")
+                else:
+                    file_path = os.path.join(test_dir, f"{cnt}.csv")
+                # file_map[str(label)].append(file_path)
+                # cnt += 1
 
                 with open(file_path, "w+") as f:
                     w = csv.DictWriter(f, chunk[0].keys())
                     w.writeheader()
                     w.writerows(chunk)
-
+            cnt +=1
             chunk = list(islice(raw_data, window_size * freq))
 
-        m = min(len(file_map["0"]), min(
-            len(file_map["1"]), len(file_map["2"])))
-        shuffle(file_map["0"])
-        a = file_map["0"][m:]
-        file_map["0"] = file_map["0"][:m]
-        for f in a:
-            os.remove(f)
+        # m = min(len(file_map["0"]), min(
+        #     len(file_map["1"]), len(file_map["2"])))
+        # shuffle(file_map["0"])
+        # a = file_map["0"][m:]
+        # file_map["0"] = file_map["0"][:m]
+        # for f in a:
+        #     os.remove(f)
 
-        for f in file_map["0"]:
-            if np.random.uniform() > percent:
-                shutil.move(f, os.path.join(test_dir, os.path.basename(f)))
-        for f in file_map["1"]:
-            if np.random.uniform() > percent:
-                shutil.move(f, os.path.join(test_dir, os.path.basename(f)))
-        for f in file_map["2"]:
-            if np.random.uniform() > percent:
-                shutil.move(f, os.path.join(test_dir, os.path.basename(f)))
+        # for f in file_map["0"]:
+        #     if np.random.uniform() > percent:
+        #         shutil.move(f, os.path.join(test_dir, os.path.basename(f)))
+        # for f in file_map["1"]:
+        #     if np.random.uniform() > percent:
+        #         shutil.move(f, os.path.join(test_dir, os.path.basename(f)))
+        # for f in file_map["2"]:
+        #     if np.random.uniform() > percent:
+        #         shutil.move(f, os.path.join(test_dir, os.path.basename(f)))
 
 
 if __name__ == "__main__":

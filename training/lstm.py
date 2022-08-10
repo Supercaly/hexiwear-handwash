@@ -120,25 +120,23 @@ def train_lstm(train_dir, test_dir, size, split):
     test_paths = [os.path.join(test_dir, f)
                   for f in os.listdir(test_dir) if f.endswith(".csv")]
 
-    # train_gen = LSTMGenerator(train_paths, size, split=split)
-    # test_gen = LSTMGenerator(test_paths, size, shuffle=False, split=split)
+    train_gen = LSTMGenerator(train_paths, size, split=split)
+    test_gen = LSTMGenerator(test_paths, size, shuffle=False, split=split)
     # train_x, train_y = get_data(train_paths, size)
     # test_x, test_y = get_data(test_paths, size)
-    d, l = get_data2("data/2/t.csv", size)
-    t_x = d[:int(len(d)*.8)]
-    t_y = l[:int(len(d)*.8)]
-    v_x = d[int(len(d)*.8):]
-    v_y = l[int(len(d)*.8):]
+    # d, l = get_data2("data/2/t.csv", size)
+    # t_x = d[:int(len(d)*.8)]
+    # t_y = l[:int(len(d)*.8)]
+    # v_x = d[int(len(d)*.8):]
+    # v_y = l[int(len(d)*.8):]
 
     # print(f"{train_x.shape} {train_y.shape} {test_x.shape} {test_y.shape}")
 
     # create the LSTM model to train
     model = tf.keras.Sequential()
     model.add(tf.keras.layers.Input(shape=(6, size)))
-    model.add(tf.keras.layers.LayerNormalization())
-    model.add(tf.keras.layers.LSTM(2, unroll=True))
-    # model.add(tf.keras.layers.Dense(256))
-    model.add(tf.keras.layers.Dense(16))
+    model.add(tf.keras.layers.LSTM(8, unroll=True))
+    model.add(tf.keras.layers.Dense(32))
     model.add(tf.keras.layers.Dense(3))
     model.add(tf.keras.layers.Softmax())
 
@@ -150,61 +148,14 @@ def train_lstm(train_dir, test_dir, size, split):
     start_time = time()
 
     # train the CNN model
-    history = model.fit(x=t_x,
-                        y=t_y,
-                        validation_data=(v_x, v_y),
-                        epochs=100,
+    history = model.fit(x=train_gen,
+                        validation_data=test_gen,
+                        epochs=1,
                         use_multiprocessing=True,
                         workers=1)
 
     print(f"Training LSTM model done in {time()-start_time}s!")
 
-    # plt.subplot(121)
-    # plt.plot(history.history["accuracy"])
-    # plt.plot(history.history["val_accuracy"])
-    # plt.title("Model categorical accuracies")
-    # plt.legend(['train', 'test'])
-    # plt.subplot(122)
-    # plt.plot(history.history["loss"])
-    # plt.plot(history.history["val_loss"])
-    # plt.title("Model losses")
-    # plt.legend(['train', 'test'])
-    # plt.show()
-
-    cm = [0]*9
-    for i in range(len(v_x)):
-        plab = model(np.array([v_x[i]]))
-        # print(f"{np.argmax(v_y[i])} {np.argmax(plab)}")
-        cm[3*np.argmax(v_y[i]) + np.argmax(plab)] += 1
-
-    print(cm)
-    tp0 = cm[0]
-    tn0 = cm[4] + cm[5] + cm[7] + cm[8]
-    fp0 = cm[3] + cm[6]
-    fn0 = cm[1] + cm[2]
-    tp1 = cm[4]
-    tn1 = cm[0] + cm[2] + cm[6] + cm[8]
-    fp1 = cm[1] + cm[7]
-    fn1 = cm[3] + cm[5]
-    tp2 = cm[8]
-    tn2 = cm[0] + cm[1] + cm[3] + cm[4]
-    fp2 = cm[2] + cm[5]
-    fn2 = cm[6] + cm[7]
-
-    print(f"Class 0 tp: {tp0} tn: {tn0} fp: {fp0} fn: {fn0}")
-    print(f"Class 1 tp: {tp1} tn: {tn1} fp: {fp1} fn: {fn1}")
-    print(f"Class 2 tp: {tp2} tn: {tn2} fp: {fp2} fn: {fn2}")
-
-    prec = ((tp0/(tp0+fp0)) + (tp1/(tp1+fp1)) + (tp2/(tp2+fp2)))*(1/3.)
-    rec = ((tp0/(tp0+fn0)) + (tp1/(tp1+fn1)) + (tp2/(tp2+fn2)))*(1/3.)
-    acc = (((tp0+tn0)/(tp0+tn0+fp0+fn0))+((tp1+tn1)/(tp1+tn1+fp1+fn1)) +
-           ((tp2+tn2)/(tp2+tn2+fp2+fn2)))*(1/3.)
-    f1 = 2*((prec*rec)/(prec+rec))
-
-    print(f"Precision: {prec}")
-    print(f"Recall: {rec}")
-    print(f"F1 score:{f1}")
-    print(f"Accuracy: {acc}")
     return model
 
 
@@ -247,15 +198,15 @@ def generate_lstm(train_dir, test_dir, ws, freq, split, force):
     #     tf.lite.OpsSet.TFLITE_BUILTINS_INT8,
     #     tf.lite.OpsSet.SELECT_TF_OPS]
     # converter.experimental_enable_resource_variables = True
-    # converter.representative_dataset = rep_dataset_gen
-    # converter.inference_input_type = tf.int8  # or tf.uint8
-    # converter.inference_output_type = tf.int8  # or tf.uint8
+    converter.representative_dataset = rep_dataset_gen
+    converter.inference_input_type = tf.int8  # or tf.uint8
+    converter.inference_output_type = tf.int8  # or tf.uint8
 
     tflite_model = converter.convert()
 
     print("Model converted to TFLite!")
 
-    with open(os.path.join(model_path, "model.tflite"), "wb+") as f:
+    with open(os.path.join(model_path, "model2.tflite"), "wb+") as f:
         f.write(tflite_model)
 
-    lstm_metrics.run(ws, "models", "data")
+    # lstm_metrics.run(ws, "models", "data")

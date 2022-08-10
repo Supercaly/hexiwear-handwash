@@ -93,14 +93,14 @@ void prediction_thread_loop()
         inference_timer.stop();
 #endif // HAS_SVM
 
-        // log_info("predicted label: '%s', actual label: '%s'\n"
-        //          "\tfeature time: %lldus\n"
-        //          "\tinference time: %lldms\n\n",
-        //          label_to_cstr(pred_label),
-        //          label_to_cstr(actual_label),
-        //          chrono::duration_cast<chrono::microseconds>(features_timer.elapsed_time()).count(),
-        //          chrono::duration_cast<chrono::milliseconds>(inference_timer.elapsed_time()).count());
-        log_info("%lld\n", chrono::duration_cast<chrono::microseconds>(features_timer.elapsed_time()).count());
+        log_info("predicted label: '%s', actual label: '%s'\n"
+                 "\tfeature time: %lldus\n"
+                 "\tinference time: %lldms\n\n",
+                 label_to_cstr(pred_label),
+                 label_to_cstr(actual_label),
+                 chrono::duration_cast<chrono::microseconds>(features_timer.elapsed_time()).count(),
+                 chrono::duration_cast<chrono::milliseconds>(inference_timer.elapsed_time()).count());
+
         counter++;
     }
 }
