@@ -8,7 +8,7 @@ all: tesi.pdf
 
 tesi.pdf: $(PRINCIPALI) $(SORGENTI) $(FIGURE)
 	pdflatex tesi.tex
-	# pdflatex tesi.tex
+	pdflatex tesi.tex
 	#dvipdfm -o tesi.pdf tesi.dvi
 	# acroread tesi.pdf &
 

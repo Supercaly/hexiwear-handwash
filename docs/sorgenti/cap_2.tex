@@ -9,8 +9,7 @@ di riconoscere i movimenti delle mani dello staff di un un ospedale partendo da 
 Il rilevamento dei movimenti delle mani utilizzando sistemi video è stato studiato da diversi autori, per esempio Zhong et al. nel 2020 hanno proposto un sistema multi-camera
 in grado di riconoscere sette azioni specifiche legate all'igiene delle mani\cite{zhong2020multi}; più recentemente, Yue et al. sono stati in grado di identificare correttamente 
 sette passaggi del metodo di lavaggio delle mani prescritto da diversi ospedali utilizzando uno strumento di machine learning pre-addestrato chiamato YOLO v3\cite{yue2021intelligent}.
-Purtroppo uno dei problemi più grandi di questi sistemi è la privacy, per funzionare questo tipo di sistemi prevedono l'installazione di molteplici videocamere 
-in diverse stanze.
+Purtroppo uno dei problemi più grandi di questi sistemi è la privacy; per funzionare prevedono l'installazione di molteplici videocamere in diverse stanze.
 
 Un approccio ortogonale si concentra sul riconoscimento delle attività di lavaggio delle mani tramite sensori inerziali (IMU). In questo ambito è presente un piccolo numero di contributi 
 scientifici, molti dei quali si basano sul utilizzo di molteplici sensori ad alta sensitività e accuratezza, tipici degli strumenti scientifici\cite{galluzzi2015hand}\cite{bal2017system}\cite{li2018wristwash}. 
@@ -53,7 +52,7 @@ di quello polinomiale.
 \subsection{Ensemble Subspace con K-Nearest Neighbors (ES-KNN)}
 
 K-Nearest Neighbors (KNN) è un'altro algoritmo di apprendimento automatico molto utilizzato per la sua semplicità e prestazioni. L'algoritmo sfrutta una metrica di distanza per assegnare ad 
-ad un dato ignoto una classe in base alla maggioranza dei voti dei suoi k vicini. Il parametro k è un intero positivo non molto grande, se k=1 allora l'oggetto viene assegnato alla classe del suo vicino. 
+un dato ignoto una classe in base alla maggioranza dei voti dei suoi k vicini. Il parametro k è un intero positivo non molto grande, se k=1 allora l'oggetto viene assegnato alla classe del suo vicino. 
 
 Lo spazio viene partizionato in regioni in base alle posizioni e alle caratteristiche degli oggetti di apprendimento, ai fini del calcolo della distanza gli oggetti sono rappresentati attraverso 
 vettori in uno spazio multidimensionale, spesso si usa la distanza euclidea, ma anche altri tipi di distanza sono ugualmente utilizzabili, ad esempio la distanza Manhattan. 
@@ -67,7 +66,7 @@ randomicamente nei subspace.
 
 \subsection{Convolutional Neural Network (CNN)}
 
-Una CNN è uno strumento di classificazione dei dati che appartiene alla categoria del deep learning molto utilizzato negli ultimi anni grazie alla sua struttura che segue un approccio basato sulla 
+CNN è uno strumento di classificazione dei dati che appartiene alla categoria del deep learning, molto utilizzato negli ultimi anni grazie alla sua struttura che segue un approccio basato sulla 
 computer vision facendo uso delle informazioni spaziali e temporali ricavate dai dati. La struttura della CNN è ispirata dai processi biologici che avvengono nella corteccia visiva degli animali, 
 i cui neuroni sono disposti in maniera tale da rispondere alle regioni di sovrapposizione che tassellano il campo visivo.
 
@@ -76,7 +75,7 @@ di raccogliere i dati sotto forma di pixel di un immagine e passarli agli strati
 input; la convoluzione estrae automaticamente le feature più significative dai dati riducendo la dimensionalità, inoltre l'aggiunta di strati di pooling aiuta a ridurre ulteriormente la dimensione dei parametri 
 andando a fare un sub-sampling. Infine uno o più livelli densamente connessi si comportano come un Perceptron tradizionale prendendo le feature in input e producendo una classe in output.
 
-La struttura della Rete Neurale Convoluzionale utilizzata in questa tesi è visibile in Figura \ref{fig:cnn-model}; come si può ben notare prende come input un'immagine di dimensioni WSxWS con 12 canali di colore; 
+La struttura della Rete Neurale Convoluzionale utilizzata in questa tesi è visibile in Figura \ref{fig:cnn-model}; come si può notare prende come input un'immagine di dimensioni WSxWS con 12 canali di colore; 
 nel Capitolo \ref{cap:metodo} vedremo che questo dipende dall'utilizzo dei Gramian Angular Fields.
 
 \begin{figure}[!htb]
@@ -96,8 +95,8 @@ Un'unità LSTM è composta da una cella, un gate di input, un gate di output ed 
 dentro e fuori dalla cella prendendo decisioni su cosa ricordare e cosa dimenticare. Il nome LSTM si riferisce al fatto che questo modello ha sia una memoria a lungo termine che una a breve termine, 
 analoga alla struttura del cervello umano.
 
-Nella Figura \ref{fig:lstm-model} è possibile vedere la struttura della rete LSTM utilizzate in questa tesi; i dati sei assi di accelerometro e giroscopio sono passati non elaborati attraverso tre moduli 
-LSTM, infine si hanno tre livelli densamente connessi che, come nel caso della CNN si comportano come un Perceptron ricavando una singola classe.
+Nella Figura \ref{fig:lstm-model} è possibile vedere la struttura della rete LSTM utilizzate in questa tesi; i dati dei sei assi di accelerometro e giroscopio sono passati non elaborati attraverso tre moduli 
+LSTM, infine si hanno tre livelli densamente connessi che, come nel caso della CNN, si comportano come un Perceptron ricavando una singola classe.
 
 \begin{figure}[!htb]
     \centering
@@ -123,11 +122,11 @@ All'interno dell'HEXIWEAR sono inoltre presenti una grande quantità di sensori 
 \end{itemize}
 
 Inoltre sono presenti anche un display OLED da 1.1 pollici, una batteria ricaricabile Li-Po da 190mAh e diverse interfacce come: USB, UART, SPI, I2C e SD-card.
-Per facilitare lo sviluppo ed il debug delle applicazioni HEXIWEAR ha anche una docking station al quale è possibile connetter lo smartwatch ed estendere le sue feature con oltre 200 
+Per facilitare lo sviluppo ed il debug delle applicazioni HEXIWEAR ha anche una docking station al quale è possibile connettere lo smartwatch ed estendere le sue feature con oltre 200 
 apposite schede dette click boards.
 
 Per sviluppare le applicazioni dell'HEXIWEAR si è deciso di utilizzare la piattaforma MbedOS. Mbed è un sistema operativo real-tile open-source creato da ARM per i dispositivi 
 embedded con memoria limitata e che richiedono un basso consumo di corrente. 
-Mbed fornisce agli sviluppatori un livello di astrazione tramite il quale possono creare applicazioni IoT scrivendole direttamente in C/C++ ed eseguendole su ogni dispositivo supportato; 
-esso consiste nelle librerie principali che forniscono i driver per le periferiche del microcontrollore, la rete, l'ambiente RTOS, strumenti di build e script di test e debug. 
+Mbed fornisce agli sviluppatori un livello di astrazione tramite il quale possono creare applicazioni IoT scrivendole direttamente in C/C++; esso consiste in un insieme di librerie che 
+forniscono i driver per le periferiche del microcontrollore, l'accesso alla rete, il controllo dell'ambiente RTOS, gli strumenti di build e degli script per test e debug. 
 Inoltre è disponibile una repository online dalla quale é possibile scaricare librerie esterne create dalla community.
