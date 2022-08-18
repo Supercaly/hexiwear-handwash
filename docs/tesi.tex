@@ -1,9 +1,9 @@
-%\documentclass[a4paper,twoside,11pt]{report}
+% \documentclass[a4paper,twoside,11pt]{report}
 \documentclass[a4paper,singleside,11pt]{report}
 
 \usepackage{ia_urb_thesis}
 \usepackage[italian]{babel}
-\usepackage[latin1]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 %\usepackage{lmodern}
 \usepackage{amsmath,
@@ -14,26 +14,24 @@
 	    stmaryrd,
 	    latexsym,
 	    %enumitem,
-	    proof,
+	    % proof,
 	    graphicx,
 	    epsfig,
 	    color,
+		caption,
+		subcaption,
 	    %hyperref,
 	    comment}
 
 \begin{document}
 
-\titolo{Riduzione del Consumo di Potenza \\[5mm]
-        in Reti Locali Wireless}
-\candidato{Andrea Rossi}
-\relatore{Chiar.mo Prof.~Mario Bianchi}
-\correlatori{Chiar.mo Prof.~Davide Verdi \\
-             Dott.~Giuseppe Gialli}
-%\correlatore{Chiar.mo Prof.~Davide Verdi} 
+\titolo{Machine Learning su dispositivi mobili \\[5mm]}
+\candidato{Lorenzo Calisti}
+\relatore{Chiar.mo Prof.~Emanuele Lattanzi}
 \annoaccademico{2021-2022}
 
 \copertinatesi 
-\dedica{Ai miei genitori}
+\dedica{Ai miei genitori...}
 \indice
 \indicefigure
 \indicetabelle
@@ -41,15 +39,15 @@
 
 \include{sorgenti/cap_1}
 \include{sorgenti/cap_2}
-%\include{sorgenti/cap_3}
-%\include{sorgenti/cap_4}
-%\include{sorgenti/cap_5}
+\include{sorgenti/cap_3}
+\include{sorgenti/cap_4}
+\include{sorgenti/cap_5}
 %\include{sorgenti/cap_6}
 %\include{sorgenti/cap_7}
 %\include{sorgenti/cap_8}
 
 \appendix
-\include{sorgenti/app_a}
+% \include{sorgenti/app_a}
 \include{sorgenti/biblio}
 
 \ringraziamenti
