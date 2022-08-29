@@ -4,7 +4,7 @@
 \section{I dataset}
 \label{sec:dataset}
 
-Prima di poter valutare l'accuratezza dei modelli di machine learning proposti è necessario addestrarli con un apposito dataset; in questa tesi i modelli sono stati valutati utilizzandone due: uno creato ad hoc per questa ricerca ed il Daily Living Activities (DLA) disponibile pubblicamente\cite{leotta2021daily}.
+Prima di poter valutare l'accuratezza dei modelli di machine learning proposti è necessario addestrarli con un apposito dataset; in questa tesi i modelli sono stati valutati utilizzandone due: uno creato ad hoc per questa tesi ed il Daily Living Activities (DLA) disponibile pubblicamente\cite{leotta2021daily}.
 
 Al momento della ricerca non sono disponibili dataset pubblici contenenti dati di lavaggi e sanificazioni delle mani mediante segnali di accelerometro e giroscopio; per questo motivo si è deciso di crearne uno personalizzato raccogliendo i dati da una Inertial Measurement Unit (IMU) posizionata sul polso della mano dominante di quattro partecipanti durante attività di vita reale.
 
@@ -127,7 +127,7 @@ Per valutare la qualità dei modelli proposti effettuiamo un test di k-fold cros
 \section{Porting dei modelli sullo smartwatch}
 \label{sec:porting-dei-modelli-sullo-smartwatch}
 
-In questa sezione vediamo nel dettaglio il porting dei modelli di machine learning sul dispositivo indossabile HEXIWEAR; come detto nella Sezione \ref{sec:hexiwear} questo smartwatch ha al suo interno 1024KB di memoria Flash e 256KB di memoria RAM, il che, visto il trend dei moderni dispositivi mobile, non è una grande quantità di memoria, infatti sul mercato già in questo momento sono disponibili smartwatch che hanno a disposizione addirittura più di 1GB di memoria RAM, ma il loro costo è molto superiore e fanno uso di un ambiente di sviluppo proprietario più restrittivo.
+In questa sezione vediamo nel dettaglio il porting dei modelli di machine learning sul dispositivo indossabile HEXIWEAR; come detto nella Sezione \ref{sec:hexiwear} questo smartwatch ha al suo interno 1024KB di memoria Flash e 256KB di memoria RAM, il che, visto il trend dei moderni dispositivi mobile, non è una grande quantità di memoria, infatti sul mercato già in questo momento sono disponibili smartwatch che hanno a disposizione addirittura più di 1GB di memoria RAM, ma il loro costo è molto superiore, fanno uso di un ambiente di sviluppo proprietario più restrittivo ed hanno un consumo di energia tale che la batteria generalmente dura meno di una giornata.
 
 Per via di queste limitazioni fisiche abbiamo dovuto modificare i modelli descritti in precedenza restringendone la struttura e riducendo il numero di parametri da addestrare, ma, nonostante svariati tentativi, siamo stati comunque costretti a scartare i modelli di CNN e ERS-KNN lasciando solo SVM ed LSTM, ma, appartenendo il primo alla categoria di machine learning classica ed il secondo a quella di deep learning, siamo comunque in grado di valutare entrambe le categorie. Nel caso del CNN il fattore limitante è la memoria richiesta sia per contenere tutti i pesi dei parametri della rete che per salvare ed elaborare le 12 immagini GASF/GADF; nel caso dell'ERS-KNN invece, non siamo stati in grado di trovare nessuna libreria che eseguisse l'inferenza sfruttando la tecnica di Ensemble Random Subspace direttamente sui dispositivi embedded e consumando poche risorse.
 
@@ -141,26 +141,6 @@ Per quanto riguarda l'SVM nella fase di addestramento abbiamo pre-calcolato le f
 
 \begin{figure}[!htb]
     \centering
-    % \begin{subfigure}{.45\textwidth}
-    %     \includegraphics[width=\textwidth]{figure/lstm_model_64.png}
-    %     \caption{}
-    %     \label{fig:lstm-models-port:64}
-    % \end{subfigure}
-    % \begin{subfigure}{.45\textwidth}
-    %     \includegraphics[width=\textwidth]{figure/lstm_model_32.png}
-    %     \caption{}
-    %     \label{fig:lstm-models-port:32}
-    % \end{subfigure}
-    % \begin{subfigure}{.45\textwidth}
-    %     \includegraphics[width=\textwidth]{figure/lstm_model_16.png}
-    %     \caption{}
-    %     \label{fig:lstm-models-port:16}
-    % \end{subfigure}
-    % \begin{subfigure}{.45\textwidth}
-    %     \includegraphics[width=\textwidth]{figure/lstm_model_8.png}
-    %     \caption{}
-    %     \label{fig:lstm-models-port:8}
-    % \end{subfigure}
     \includegraphics[width=\textwidth]{figure/lstm_model_64.png}
     \caption{Modello LSTM ridotto per il porting sullo smartwatch HEXIWEAR.}
     \label{fig:lstm-models-port}
