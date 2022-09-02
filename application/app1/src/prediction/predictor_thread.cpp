@@ -9,12 +9,12 @@ void predictor_thread_loop()
 {
     Predictor predictor;
     RawSensorData *local_samples;
-    TFliteError status;
+    PredictorError status;
 
     status = predictor.init();
-    if (status != TFliteError::OK)
+    if (status != PredictorError::OK)
     {
-        log_error("Predictor init error: %s\n", tflite_error_to_cstr(status));
+        log_error("Predictor init error: %s\n", predictor_error_to_cstr(status));
         return;
     }
 
@@ -29,10 +29,10 @@ void predictor_thread_loop()
         // Exit critical section
 
         Label predicted_label;
-        status = predictor.predict(local_samples, g_config.get_wrist(), &predicted_label);
-        if (status != TFliteError::OK)
+        status = predictor.predict_label(local_samples, Wrist::LEFT, &predicted_label);
+        if (status != PredictorError::OK)
         {
-            log_error("Predictor error: %s\n", tflite_error_to_cstr(status));
+            log_error("Predictor error: %s\n", predictor_error_to_cstr(status));
         }
 
         delete local_samples;

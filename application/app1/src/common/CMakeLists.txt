@@ -5,6 +5,5 @@ target_include_directories(${APP_NAME} PRIVATE .)
 
 target_sources(${APP_NAME} 
     PRIVATE
-        config.cpp
         haptic_feedback.cpp
 )

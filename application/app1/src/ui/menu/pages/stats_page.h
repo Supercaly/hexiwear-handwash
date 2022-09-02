@@ -26,8 +26,7 @@ private:
     Navigator *_nav;
     char _str[5];
     oled::TextProperties _text_prop;
-    oled::DynamicArea _none_area,
-        _wash_area,
+    oled::DynamicArea _wash_area,
         _san_area;
     int _none_count,
         _wash_count,

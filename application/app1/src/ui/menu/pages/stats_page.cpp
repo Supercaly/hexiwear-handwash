@@ -7,37 +7,30 @@ StatsPage::StatsPage(Navigator *nav) : _nav(nav)
     _wash_count = 0;
     _san_count = 0;
 
-    _none_area = {
-        .xCrd = 57,
-        .yCrd = 8,
-        .width = 30,
-        .height = 20};
     _wash_area = {
         .xCrd = 57,
-        .yCrd = 31,
+        .yCrd = 19,
         .width = 30,
         .height = 20};
     _san_area = {
         .xCrd = 57,
-        .yCrd = 54,
+        .yCrd = 44,
         .width = 30,
         .height = 20};
 }
 
 void StatsPage::draw(oled::SSD1351 *display, oled::Transition t)
 {
-    display->draw_screen(stats_bg_bmp, t);
+    display->draw_screen(stats_bg_revisited_bmp, t);
 }
 
 void StatsPage::on_draw(oled::SSD1351 *display)
 {
+    _wash_count = 5;
+    _san_count = 9;
     display->get_text_properties(&_text_prop);
     _text_prop.alignParam = TEXT_ALIGN_CENTER | TEXT_ALIGN_VCENTER;
     display->set_text_properties(&_text_prop);
-
-    display->set_dynamic_area(_none_area);
-    sprintf(_str, "%d", _none_count);
-    display->text_box(_str);
 
     display->set_dynamic_area(_wash_area);
     sprintf(_str, "%d", _wash_count);
@@ -62,10 +55,6 @@ void StatsPage::event_right(Navigator *nav) {}
 void StatsPage::update_none()
 {
     _none_count++;
-    if (_nav->is_top(this))
-    {
-        _nav->redraw();
-    }
 }
 void StatsPage::update_wash()
 {

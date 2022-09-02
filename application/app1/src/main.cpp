@@ -25,7 +25,6 @@ FileSystem *FileSystem::get_default_instance()
 Mutex g_sensors_lock;
 RawSensorData g_raw_sensor_data;
 Queue<Label, 5> g_labels_queue;
-Config g_config;
 
 int main()
 {
@@ -33,7 +32,6 @@ int main()
     Thread prediction_thread;
     Thread display_thread;
 
-    g_config.init();
     sensor_thread.start(collector_thread_loop);
     prediction_thread.start(predictor_thread_loop);
     display_thread.start(display_thread_loop);

@@ -51,7 +51,7 @@ MenuItem main_menu_stats = {
 MenuItem main_menu_list[] = {main_menu_stats, main_menu_settings};
 Menu main_menu(main_menu_list, 2);
 
-Navigator menu_nav(&g_oled, &main_menu);
+Navigator menu_nav(&g_oled, &stats_page);
 
 static void btn_up_fn()
 {

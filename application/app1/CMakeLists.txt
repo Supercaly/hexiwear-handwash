@@ -26,3 +26,9 @@ target_link_libraries(${APP_NAME}
     prediction
     utils
 )
+
+if(${ML_MODE} STREQUAL "svm")
+    target_link_libraries(${APP_NAME} svm)
+elseif(${ML_MODE} STREQUAL "cnn" OR ${ML_MODE} STREQUAL "lstm")
+    target_link_libraries(${APP_NAME} ml)
+endif()
