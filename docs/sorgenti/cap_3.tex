@@ -9,12 +9,20 @@ Prima di poter valutare l'accuratezza dei modelli di machine learning proposti �
 Al momento della ricerca non sono disponibili dataset pubblici contenenti dati di lavaggi e sanificazioni delle mani mediante segnali di accelerometro e giroscopio; per questo motivo si è deciso di crearne uno personalizzato raccogliendo i dati da una Inertial Measurement Unit (IMU) posizionata sul polso della mano dominante di quattro partecipanti durante attività di vita reale.
 
 Per raccogliere i dati abbiamo utilizzato una IMU Shimmer3 equipaggiata con un accelerometro e un giroscopio tri-assale\cite{shimmer}; questo dispositivo, visibile in Figura \ref{fig:shimmer}, è progettato appositamente per essere indossato ed è spesso utilizzato nel monitoraggio delle attività nell'ambito delle scienze sportive e mediche. Al suo interno monta una serie di sensori wide-range con campionamento a 14 bit, range da $\pm2.0g$ fino a $\pm16.0g$ ed una sensitività da $1mg/LSB$ fino a $12mg/LSB$; lo Shimmer3 può essere considerato una buona rappresentazione delle IMU correntemente equipaggiate all'interno degli smartwatch commerciali. Il dispositivo indossabile è stato programmato per campionare il suo accelerometro e giroscopio ad una frequenza di 100Hz e salvare i dati raccolti in una SD-card interna. Per rimuovere il bias dei sensori il dispositivo è stato calibrato all'inizio della ricerca lasciandolo su una superficie piana per circa 30 secondi in modo da ottenere una traccia di calibrazione.
+In Figura \ref{fig:acc-gyro-plot} vediamo un'esempio delle sei tracce di accelerometro e giroscopio raccolte durante un'attività di sanificazione delle mani.
 
 \begin{figure}[!htb]
     \centering
     \includegraphics[width=.4\textwidth]{figure/shimmer.jpg}
     \caption{IMU Shimmer3 dotata di bracciale per essere indossata al polso dell'utente.}
     \label{fig:shimmer}
+\end{figure}
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=\textwidth]{figure/acc_gyr_plot.pdf}
+    \caption{Tracce di accelerometro e giroscopio prodotte durante un'attività di sanificazione delle mani.}
+    \label{fig:acc-gyro-plot}
 \end{figure}
 
 \`E importante notare che i soggetti non sono istruiti sulla corretta maniera in cui lavare o sanificare le mani e sono stati lasciati completamente liberi di usare il loro metodo abituale in modo da raccogliere dati il più possibile non strutturati. La Tabella \ref{tab:activity-duration} mostra la durata media e la deviazione standard degli eventi di lavaggio e sanificazione per ognuno dei quattro soggetti assieme ad una media e deviazione standard cumulativa. Come si può notare la durata media dipende significativamente dal soggetto.

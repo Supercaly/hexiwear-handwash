@@ -34,58 +34,6 @@ Per quanto riguarda il dataset DLA il modello CNN supera gli altri modelli in og
 
 \`E importante notare che per entrambi i dataset i risultati migliori sono stati ottenuti con finestre di lunghezza: SVM=12s, ERS-KNN=8s, CNN=6s, LSTM=2s e, nel caso di SVM ed ERS-KNN, utilizzando tutte le feature.
 
-% \begin{figure}[!htb]
-%     \centering
-%     \begin{subfigure}{.45\textwidth}
-%         \includegraphics[width=\textwidth]{figure/svm_conf.png}
-%         \caption{SVM}
-%         \label{fig:confusion-matrix:svm}
-%     \end{subfigure}
-%     \begin{subfigure}{.45\textwidth}
-%         \includegraphics[width=\textwidth]{figure/knn_conf.png}
-%         \caption{ERS-KNN}
-%         \label{fig:confusion-matrix:knn}
-%     \end{subfigure}
-%     \begin{subfigure}{.45\textwidth}
-%         \includegraphics[width=\textwidth]{figure/cnn_conf.png}
-%         \caption{CNN}
-%         \label{fig:confusion-matrix:cnn}
-%     \end{subfigure}
-%     \begin{subfigure}{.45\textwidth}
-%         \includegraphics[width=\textwidth]{figure/lstm_conf.png}
-%         \caption{LSTM}
-%         \label{fig:confusion-matrix:lstm}
-%     \end{subfigure}
-%     \caption{Matrici di confusione calcolate sul dataset ad hoc dai modelli SVM(\subref{fig:confusion-matrix:svm}), ERS-KNN(\subref{fig:confusion-matrix:knn}), CNN(\subref{fig:confusion-matrix:cnn}), LSTM(\subref{fig:confusion-matrix:lstm}).}
-%     \label{fig:confusion-matrix}
-% \end{figure}
-
-% \begin{figure}[!htb]
-%     \centering
-%     \begin{subfigure}{.45\textwidth}
-%         \includegraphics[width=\textwidth]{figure/svm_conf_dla.png}
-%         \caption{SVM}
-%         \label{fig:confusion-matrix-dla:svm}
-%     \end{subfigure}
-%     \begin{subfigure}{.45\textwidth}
-%         \includegraphics[width=\textwidth]{figure/knn_conf_dla.png}
-%         \caption{ERS-KNN}
-%         \label{fig:confusion-matrix-dla:knn}
-%     \end{subfigure}
-%     \begin{subfigure}{.45\textwidth}
-%         \includegraphics[width=\textwidth]{figure/cnn_conf_dla.png}
-%         \caption{CNN}
-%         \label{fig:confusion-matrix-dla:cnn}
-%     \end{subfigure}
-%     \begin{subfigure}{.45\textwidth}
-%         \includegraphics[width=\textwidth]{figure/lstm_conf_dla.png}
-%         \caption{LSTM}
-%         \label{fig:confusion-matrix-dla:lstm}
-%     \end{subfigure}
-%     \caption{Matrici di confusione calcolate sul dataset DLA dai modelli SVM(\subref{fig:confusion-matrix-dla:svm}), ERS-KNN(\subref{fig:confusion-matrix-dla:knn}), CNN(\subref{fig:confusion-matrix-dla:cnn}), LSTM(\subref{fig:confusion-matrix-dla:lstm}).}
-%     \label{fig:confusion-matrix-dla}
-% \end{figure}
-
 \subsection{Riconoscimento degli utenti}
 \label{ssec:riconoscimento-degli-utenti}
 
@@ -141,22 +89,22 @@ La dimensione della finestra di processing influisce in molti modi sulla classif
 \begin{figure}[!htb]
     \centering
     \begin{subfigure}{.45\textwidth}
-        \includegraphics[width=\textwidth]{figure/svm_window.png}
+        \includegraphics[width=\textwidth]{figure/svm_window.pdf}
         \caption{SVM}
         \label{fig:window:svm}
     \end{subfigure}
     \begin{subfigure}{.45\textwidth}
-        \includegraphics[width=\textwidth]{figure/knn_window.png}
+        \includegraphics[width=\textwidth]{figure/knn_window.pdf}
         \caption{ERS-KNN}
         \label{fig:window:knn}
     \end{subfigure}
     \begin{subfigure}{.45\textwidth}
-        \includegraphics[width=\textwidth]{figure/cnn_window.png}
+        \includegraphics[width=\textwidth]{figure/cnn_window.pdf}
         \caption{CNN}
         \label{fig:window:cnn}
     \end{subfigure}
     \begin{subfigure}{.45\textwidth}
-        \includegraphics[width=\textwidth]{figure/lstm_window.png}
+        \includegraphics[width=\textwidth]{figure/lstm_window.pdf}
         \caption{LSTM}
         \label{fig:window:lstm}
     \end{subfigure}
@@ -210,7 +158,7 @@ Dopo aver svolto tutti gli esperimenti sui modelli di machine learning visti in 
 Questo tipo di test è spesso usato in medicina per valutare gli effetti dei trattamenti, e, negli ultimi anni, nell'ambito del machine learning per comparare due modelli di grandi dimensioni senza doverli addestrare più volte. Il test di McNemar si assicura che il disaccordo fra i due casi corrisponda, commentando sul fatto che i due modelli siano in disaccordo fra loro (oppure non lo siano affatto); questo test non dice nulla sul fatto che uno dei due modelli sia più o meno accurato dell'altro.
 
 La Tabella \ref{tab:mc-nemar-results} mostra i risultati dei tre test condotti per ogni coppia di classificatori.
-Per ogni test, viene riportato il valore booleano $h$ che rappresenta la decisione del test quando si verifica l'ipotesi nulla, ovvero che i due test siano in disaccordo fra loro nello stesso modo.
+Per ogni test, viene riportato il valore booleano $h$ che rappresenta la decisione del test quando si verifica l'ipotesi nulla, ovvero che i due classificatori abbiamo la stessa accuratezza nella predizione del risultato atteso.
 Inoltre, viene riportato anche il valore $p$ che indica quanto è forte l'evidenza nel rifiutare o meno l'ipotesi nulla; ad esempio, quando si confrontano ERS-KNN con SVM, le tre varianti del test di McNemar concordano sull'accettare l'ipotesi nulla mentre, sia per ERS-KNN/LSTM che ERS-KNN/CNN, l'ipotesi nulla deve essere rifiutata. In questi casi, il valore $p$ per ogni test è vicino allo zero, rivelando una forte prova nel rifiutare l'ipotesi nulla.
 
 Anche il confronto tra SVM/LSTM, SVM/CNN, e LSTM/CNN, porta a forti rifiuti dell'ipotesi nulla con p-value molto vicini allo zero, infatti, in questo scenario, solo gli strumenti di machine learning standard, ovvero SVM e ERS-KNN, possono essere considerati statisticamente equivalenti dal punto di vista delle prestazioni di classificazione.
@@ -252,7 +200,7 @@ Di seguito esaminiamo la variazione delle performance del modello SVM al variare
 
 \begin{figure}[!htb]
     \centering
-    \includegraphics[width=.8\textwidth]{figure/svm_performance.png}
+    \includegraphics[width=.8\textwidth]{figure/svm_performance.pdf}
     \caption{Metriche ricavate dal modello SVM al variare della lunghezza della finestra.}
     \label{fig:metrics-svm-window-hexi}
 \end{figure}
@@ -298,6 +246,8 @@ Come possiamo immaginare il modello che produce i risultati migliori è quello c
     \centering
     \begin{tabular}{l c c c c}
         \hline
+        & \multicolumn{4}{c}{Parametri interni} \\
+        \hline
         & 64/256 & 32/128 & 16/64 & 8/32 \\
         \hline
         Accuracy & \textbf{0.877} & 0.849 & 0.812 & 0.774 \\
@@ -317,7 +267,7 @@ Per valutare meglio le performance complessive dei modelli di machine learning e
 
 La Tabella \ref{tab:memory-hexi} mostra i modelli con i risultati migliori fra quelli visti negli esperimenti precedenti. I parametri tempo e memoria dei sensori rappresentano il tempo in millisecondi e la memoria in byte occupati durante la fase di raccolta dei dati non elaborati dai sensori di accelerometro e giroscopio; questi due valori dipendono fortemente dalla lunghezza della finestra di processing, per questo motivo sono uguali per i due modelli SVM, che utilizzano entrambi una finestra di 12 secondi, e sono minori per il modello LSTM, che invece fa uso di una finestra di 2 secondi.
 
-Il tempo e la memoria occupata per il calcolo delle feature sono presenti solo nei modelli SVM e, come possiamo immaginare, sono minori nel caso in cui viene calcolato un numero minore di feature. Per quanto riguarda il tempo d'inferenza notiamo una piccola differenza fra i modelli SVM, mentre il modello LSTM impiega circa il doppio del tempo, invece la memoria impiegata per l'inferenza ha valori simili fra LSTM e l'esperimento SVM con la finestra ed è minore per l'SVM con meno feature. Infine vediamo che il consumo di energia è simile fra i due modelli SVM, ma è molto minore per l'LSTM, che consuma 5 volte di meno.
+Il tempo e la memoria occupata per il calcolo delle feature sono presenti solo nei modelli SVM e, come possiamo immaginare, sono minori nel caso in cui viene calcolato un numero minore di feature. Per quanto riguarda il tempo d'inferenza notiamo una piccola differenza fra i modelli SVM, mentre il modello LSTM impiega circa il doppio del tempo, invece la memoria impiegata per l'inferenza ha valori simili fra LSTM e l'esperimento SVM con la finestra ed è minore per l'SVM con meno feature. Infine vediamo che la potenza è maggiore per il modello LSTM ed è simile fra i due modelli SVM, con l'esperimento sulle feature che ha la potenza minore.
 
 \begin{table}
     \centering
@@ -334,7 +284,7 @@ Il tempo e la memoria occupata per il calcolo delle feature sono presenti solo n
         mem. inferenza [B] & 10398 & \textbf{4390} & 13401 \\
         mem. modello [B] & 126989 & \textbf{68625} & 111040 \\
         \hline
-        energia [J] & 0.1016 & 0.1010 & \textbf{0.0260} \\
+        potenza [mW] & 8.47 & \textbf{8.42} & 13.03 \\
         \hline
     \end{tabular}
     \caption{Tempistiche d'esecuzione, memoria utilizzata e consumo d'energia dei modelli eseguiti sul dispositivo HEXIWEAR.}
@@ -344,40 +294,50 @@ Il tempo e la memoria occupata per il calcolo delle feature sono presenti solo n
 L'ultima analisi svolta consiste nel paragonare alcune delle metriche di tempo, memoria ed energia con il valore della loss per i modelli presi in esame; la funzione loss indica il costo in termini di prestazioni del modello ed è pari ad $1 - Accuracy$.
 
 I grafici in Figura \ref{fig:performance-svm-hexi} riportano sull'\textit{asse x} il valore della loss e sull'\textit{asse y} la memoria totale ed il consumo di energia paragonando il modello SVM dell'esperimento sulla lunghezza della finestra di processing con quello sul calcolo delle feature. 
-Nel grafico loss vs. memoria totale (Figura \ref{fig:performance-svm-hexi:svm-memory-loss}) vediamo una grande dispersione dei punti al variare della loss, mentre nel grafico loss vs. consumo d'energia (Figura \ref{fig:performance-svm-hexi:svm-power-loss}) notiamo un'andamento pressoché costante, in particolare per quanto riguarda l'esperimento del numero di feature calcolate; questo è sinonimo di buone performance energetiche da parte del classificatore.
+Nei grafici memoria totale vs. loss (Figura \ref{fig:performance-svm-hexi:svm-memory-loss-window} e Figura \ref{fig:performance-svm-hexi:svm-memory-loss-feature}) vediamo che i classificatori migliori risultano essere quello con una finestra di lunghezza 2 e quello con le feature calcolate A+M, poiché sono i due ad avere un basso utilizzo di memoria mantenendo anche un valore per la loss basso; allo stesso modo nei grafici consumo d'energia vs. loss (Figura \ref{fig:performance-svm-hexi:svm-power-loss-window} e Figura \ref{fig:performance-svm-hexi:svm-power-loss-feature}) i migliori risultano essere quello con finestra di lunghezza 12 e quello con le feature calcolate A+S.
 
-Analogamente i grafici in Figura \ref{fig:performance-lstm-hexi} confrontano il valore della loss con l'energia, il tempo d'inferenza ed il peso del modello LSTM nell'esperimento sulla variazione dei parametri interni. Come vediamo tutti e tre i grafici mostrano una repentina diminuzione dei valori all'aumentare della loss, ovvero quando vengono considerati modelli con un numero minore di parametri interni.
+Analogamente i grafici in Figura \ref{fig:performance-lstm-hexi} confrontano il valore della loss con l'energia, il tempo d'inferenza ed il peso del modello LSTM nell'esperimento sulla variazione dei parametri interni. Come vediamo tutti e tre i grafici mostrano una repentina diminuzione dei valori all'aumentare della loss, ovvero quando vengono considerati modelli con un numero minore di parametri interni. In tutti e tre i casi il classificatore con le migliori performance rispetto alla loss risulta essere quello con 32 unità LSTM e 128 neuroni nel primo strato nascosto.
 
-\begin{figure}[!htb]
+\begin{figure}[!htbp]
     \centering
-    \begin{subfigure}{.45\textwidth}
-        \includegraphics[width=\textwidth]{figure/svm_memory_loss.png}
-        \caption{memoria totale vs. loss per gli esperimenti sulla lunghezza della finestra e sulle feature calcolate}
-        \label{fig:performance-svm-hexi:svm-memory-loss}
+    \begin{subfigure}[t]{.45\textwidth}
+        \includegraphics[width=\textwidth]{figure/svm_window_loss_memory.pdf}
+        \caption{memoria totale vs. loss per gli esperimenti sulla lunghezza della finestra}
+        \label{fig:performance-svm-hexi:svm-memory-loss-window}
     \end{subfigure}
-    \begin{subfigure}{.45\textwidth}
-        \includegraphics[width=\textwidth]{figure/svm_power_loss.png}
-        \caption{consumo d'energia vs. loss per gli esperimenti sulla lunghezza della finestra e sulle feature calcolate}
-        \label{fig:performance-svm-hexi:svm-power-loss}
+    \begin{subfigure}[t]{.45\textwidth}
+        \includegraphics[width=\textwidth]{figure/svm_feat_loss_memory.pdf}
+        \caption{memoria totale vs. loss per gli esperimenti sulle feature calcolate}
+        \label{fig:performance-svm-hexi:svm-memory-loss-feature}
     \end{subfigure}
-    \caption{Grafici prodotti dai modelli SVM confrontando memoria totale(\subref{fig:performance-svm-hexi:svm-memory-loss}) e consumo d'energia(\subref{fig:performance-svm-hexi:svm-power-loss}) con la loss.}
+    \begin{subfigure}[t]{.45\textwidth}
+        \includegraphics[width=\textwidth]{figure/svm_window_loss_power.pdf}
+        \caption{consumo d'energia vs. loss per gli esperimenti sulla lunghezza della finestra}
+        \label{fig:performance-svm-hexi:svm-power-loss-window}
+    \end{subfigure}
+    \begin{subfigure}[t]{.45\textwidth}
+        \includegraphics[width=\textwidth]{figure/svm_feat_loss_power.pdf}
+        \caption{consumo d'energia vs. loss per gli esperimenti sulle feature calcolate}
+        \label{fig:performance-svm-hexi:svm-power-loss-feature}
+    \end{subfigure}
+    \caption{Grafici prodotti dai modelli SVM confrontando memoria totale e consumo d'energia con la loss.}
     \label{fig:performance-svm-hexi}
 \end{figure}
 
 \begin{figure}[!htb]
     \centering
     \begin{subfigure}{.45\textwidth}
-        \includegraphics[width=\textwidth]{figure/lstm_energy_loss.png}
+        \includegraphics[width=\textwidth]{figure/lstm_energy_loss.pdf}
         \caption{consumo di energia vs. loss}
         \label{fig:performance-lstm-hexi:lstm-energy-loss}
     \end{subfigure}
     \begin{subfigure}{.45\textwidth}
-        \includegraphics[width=\textwidth]{figure/lstm_time_loss.png}
+        \includegraphics[width=\textwidth]{figure/lstm_time_loss.pdf}
         \caption{tempo d'inferenza vs. loss}
         \label{fig:performance-lstm-hexi:lstm-time-loss}
     \end{subfigure}
     \begin{subfigure}{.45\textwidth}
-        \includegraphics[width=\textwidth]{figure/lstm_size_loss.png}
+        \includegraphics[width=\textwidth]{figure/lstm_size_loss.pdf}
         \caption{dimensione modello vs. loss}
         \label{fig:performance-lstm-hexi:lstm-size-loss}
     \end{subfigure}
