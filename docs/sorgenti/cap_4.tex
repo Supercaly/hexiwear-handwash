@@ -64,13 +64,13 @@ Il riconoscimento degli utenti è un compito più semplice rispetto al riconosci
 
 Per valutare la complessità dei modelli di machine learning proposti, durante ogni esperimento, abbiamo misurato le performance e l'utilizzo di memoria di ogni classificatore; in particolare, i modelli sono stati implementati nella piattaforma Matlab2021a\textsuperscript{\textregistered} utilizzando gli strumenti di machine learning integrati e sono stati eseguiti su un PC desktop con una CPU Intel\textsuperscript{\textregistered} Core i9 equipaggiata con 32GB di memoria RAM ed una GPU Nvidia\textsuperscript{\textregistered} Quadro\textsuperscript{\textregistered} RTXTM 4000. Sia la fase di addestramento che quella d'inferenza sono state svolte impostando la GPU come ambiente d'esecuzione in modo da sfruttare a pieno le potenzialità del parallelismo CUDA\textsuperscript{\textregistered}.
 
-La Tabella \ref{tab:memory} mostra le performance e l'utilizzo di memoria di ogni modello, come atteso la fase di addestramento dei modelli di deep learning è la più lunga con un massimo di 470 secondi misurati per l'LSTM, mentre l'ES-KNN risulta essere il più veloce da addestrare con 5.8 secondi. Dal punto di vista dell'inferenza l'SVM sorpassa di molto gli altri modelli con 160$\mu$s; è importante notare che nel caso dell'SVM e dell'ES-KNN le tempistiche prevedono anche l'estrazione delle feature il cui costo non è trascurabile nel momento del passaggio all'esecuzione sul dispositivo embedded.
+La Tabella \ref{tab:memory} mostra le performance e l'utilizzo di memoria di ogni modello, come atteso la fase di addestramento dei modelli di deep learning è la più lunga con un massimo di 470 secondi misurati per l'LSTM, mentre l'ERS-KNN risulta essere il più veloce da addestrare con 5.8 secondi. Dal punto di vista dell'inferenza l'SVM sorpassa di molto gli altri modelli con 160$\mu$s; è importante notare che nel caso dell'SVM e dell'ERS-KNN le tempistiche prevedono anche l'estrazione delle feature il cui costo non è trascurabile nel momento del passaggio all'esecuzione sul dispositivo embedded.
 
 \begin{table}
     \centering
     \begin{tabular}{l c c c c}
         \hline
-        & SVM & ES-KNN & CNN & LSTM \\
+        & SVM & ERS-KNN & CNN & LSTM \\
         \hline
         Tempo d'addestramento(s) & 7.191 & \textbf{5.803} & 299.551  & 472.069 \\
         Tempo d'inferenza(ms) & \textbf{0.016} & 0.331 & 0.505  & 1.749 \\
@@ -108,7 +108,7 @@ La dimensione della finestra di processing influisce in molti modi sulla classif
         \caption{LSTM}
         \label{fig:window:lstm}
     \end{subfigure}
-    \caption{Performance dei modelli SVM(a), ES-KNN(b), CNN(c) ed LSTM(d) al variare della lunghezza della finestra di processing.}
+    \caption{Performance dei modelli SVM(a), ERS-KNN(b), CNN(c) ed LSTM(d) al variare della lunghezza della finestra di processing.}
     \label{fig:window}
 \end{figure}
 
@@ -238,7 +238,7 @@ La Tabella \ref{tab:metrics-svm-feat-hexi} mostra le performance al variare dei 
 L'ultimo esperimento che prendiamo in esame sull'HEXIWEAR riguarda le performance del modello di deep learning LSTM variando alcuni dei suoi parametri interni. 
 La rete LSTM caricata sull'HEXIWEAR (Figura \ref{fig:lstm-models-port}) è composta dal un singolo modulo LSTM e da due livelli densamente connessi; nel seguente esperimento abbiamo preso come parametri interni il numero di unità nel modulo LSTM ed il numero di neuroni nascosti all'interno del primo livello densamente connesso, mentre l'ultimo livello denso è stato settato costante pari al numero di etichette. 
 
-In Figura \ref{tab:metrics-lstm-param-hexi} vediamo le metriche calcolate al variare dei seguenti parametri: 64/256, 32/128, 16/64, 8/32, in cui il primo numero rappresenta il parametro del modulo LSTM ed il secondo rappresenta il numero di neuroni nello strato denso. 
+In Tabella \ref{tab:metrics-lstm-param-hexi} vediamo le metriche calcolate al variare dei seguenti parametri: 64/256, 32/128, 16/64, 8/32, in cui il primo numero rappresenta il parametro del modulo LSTM ed il secondo rappresenta il numero di neuroni nello strato denso. 
 
 Come possiamo immaginare il modello che produce i risultati migliori è quello con i parametri 64/256 con un'Accuracy dell'87\%, ed una Recall dell'88\% anche se gli altri modelli mostrano una riduzione lineare delle performance solo di circa il 3\% ad ogni riduzione dei parametri della rete.
 

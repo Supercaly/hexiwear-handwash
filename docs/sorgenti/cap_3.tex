@@ -41,7 +41,7 @@ In Figura \ref{fig:acc-gyro-plot} vediamo un'esempio delle sei tracce di acceler
         media & $50.92 \pm 22.29s$  & $23.59 \pm 7.33s$ \\
         \hline
     \end{tabular}
-    \caption{Durata delle attività registrate in secondi.}
+    \caption{Durata delle attività registrate dal dataset ad hoc in secondi.}
     \label{tab:activity-duration}
 \end{table}
 
@@ -143,9 +143,9 @@ Per eseguire i modelli sullo smartwatch sono state utilizzate due librerie: Tens
 TensorFlow è una libreria open-source sviluppata da Google nel 2015 per facilitare le ricerche sul machine learning e le intelligenze artificiali; supporta vari tipi di tecnologie, ma si concentra particolarmente sull'addestramento e l'inferenza di reti neurali profonde(deep neural networks)\cite{abadi2016tensorflow}. In particolare, per l'inferenza sull'HEXIWEAR abbiamo utilizzato TensorFlow 2.0 Lite Micro, una versione di TensorFlow 2.0 pensata appositamente per l'ambito mobile ed i micro-controllori. 
 LibSVM\cite{chang2011libsvm} è una libreria di machine learning open-source sviluppata dalla National Taiwan University e scritta in C++ con l'obbiettivo di semplificare l'utilizzo dei modelli SVM da parte di sviluppatori non specializzati. LibSVM supporta sia la classificazione(C-SVC, nu-SVC) che la regressione(epsilon-SVR, nu-SVR) offrendo varie funzionalità tra cui: efficiente classificazione multi-classe, cross-validation con k-fold, strumenti per la stima delle probabilità, supporto per diversi tipi di kernel ed estensioni per interagire con i più comuni linguaggi di programmazione.
 
-In Figura \ref{fig:lstm-models-port} possiamo vedere la struttura dei modelli LSTM dopo la riduzione in cui è presente un solo livello LSTM seguito da due livelli densamente connessi ed un Softmax per convertire i pesi interni in un'etichetta di classificazione. Su questa rete abbiamo condotto due tipologie di esperimenti: il primo tiene fissa la lunghezza della finestra di processing e varia il numero di parametri della rete, il secondo fissa i parametri e varia la lunghezza della finestra.
+In Figura \ref{fig:lstm-models-port} possiamo vedere la struttura dei modelli LSTM dopo la riduzione in cui è presente un solo livello LSTM seguito da due livelli densamente connessi ed un Softmax per convertire i pesi interni in un'etichetta di classificazione. Su questa rete abbiamo condotto un esperimento tenendo fissa la lunghezza della finestra di processing e variando il numero di parametri interni della rete.
 
-Per quanto riguarda l'SVM nella fase di addestramento abbiamo pre-calcolato le feature ed abbiamo addestrato i modelli su un loro sottoinsieme equamente distribuito di 2000 sample, in questo modo abbiamo ridotto notevolmente il peso complessivo dei modelli potendoli caricare in memoria; anche in questo caso abbiamo condotto due tipologie di esperimenti: uno variando la lunghezza della finestra di processing e l'altro variando il numero di feature calcolate.
+Per quanto riguarda l'SVM nella fase di addestramento abbiamo pre-calcolato le feature ed abbiamo addestrato i modelli su un loro sottoinsieme equamente distribuito di 2000 sample, in questo modo abbiamo ridotto notevolmente il peso complessivo dei modelli potendoli caricare in memoria; in questo caso abbiamo condotto due tipologie di esperimenti: uno variando la lunghezza della finestra di processing e l'altro variando il numero di feature calcolate.
 
 \begin{figure}[!htb]
     \centering
