@@ -2,13 +2,14 @@
 #define STATS_PAGE_H_
 
 #include "navigator.h"
+#include "menu/menu.h"
 
 // Class representing the statistics page
 // This class has methods to display the current wash/san counts
 class StatsPage : public Page
 {
 public:
-    StatsPage(Navigator *nav);
+    StatsPage(Navigator *nav, Page *menu);
 
     void draw(oled::SSD1351 *display, oled::Transition t) override;
     void on_draw(oled::SSD1351 *display) override;
@@ -22,8 +23,12 @@ public:
     void update_wash();
     void update_san();
 
+    void reset();
+
 private:
     Navigator *_nav;
+    Page *_menu;
+
     char _str[5];
     oled::TextProperties _text_prop;
     oled::DynamicArea _wash_area,

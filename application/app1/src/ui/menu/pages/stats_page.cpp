@@ -1,7 +1,7 @@
 #include "stats_page.h"
 #include "resources/menu_resources.h"
 
-StatsPage::StatsPage(Navigator *nav) : _nav(nav)
+StatsPage::StatsPage(Navigator *nav, Page *menu) : _nav(nav), _menu(menu)
 {
     _none_count = 0;
     _wash_count = 0;
@@ -26,8 +26,6 @@ void StatsPage::draw(oled::SSD1351 *display, oled::Transition t)
 
 void StatsPage::on_draw(oled::SSD1351 *display)
 {
-    _wash_count = 5;
-    _san_count = 9;
     display->get_text_properties(&_text_prop);
     _text_prop.alignParam = TEXT_ALIGN_CENTER | TEXT_ALIGN_VCENTER;
     display->set_text_properties(&_text_prop);
@@ -45,12 +43,12 @@ void StatsPage::event_up(Navigator *nav) {}
 
 void StatsPage::event_down(Navigator *nav) {}
 
-void StatsPage::event_left(Navigator *nav)
-{
-    nav->navigate_back();
-}
+void StatsPage::event_left(Navigator *nav) {}
 
-void StatsPage::event_right(Navigator *nav) {}
+void StatsPage::event_right(Navigator *nav)
+{
+    nav->navigate_to(_menu);
+}
 
 void StatsPage::update_none()
 {
@@ -67,6 +65,17 @@ void StatsPage::update_wash()
 void StatsPage::update_san()
 {
     _san_count++;
+    if (_nav->is_top(this))
+    {
+        _nav->redraw();
+    }
+}
+
+void StatsPage::reset()
+{
+    _none_count = 0;
+    _wash_count = 0;
+    _san_count = 0;
     if (_nav->is_top(this))
     {
         _nav->redraw();
