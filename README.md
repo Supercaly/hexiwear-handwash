@@ -14,6 +14,12 @@ To compile and flash the program run this command
 $ mbed-tools compile -t GCC_ARM -m HEXIWEAR -f
 ```
 
+To build C/C++ code for the ARM processor using the `GCC_ARM` compile you need the gcc-arm-embedded toolchain. Install it on macos with homebrew:
+
+```console
+$ brew install --cask gcc-arm-embedded
+```
+
 ### Program the KW40Z
 
 Tho have access to the Bluetooth Low Energy and the buttons of the Hexiwear you need to flash the KW40Z binary file downloadable [here](https://github.com/MikroElektronika/HEXIWEAR/blob/master/SW/KW40%20IAR/HEXIWEAR_bluetooth/binary/HEXIWEAR_KW40_v100.bin).
